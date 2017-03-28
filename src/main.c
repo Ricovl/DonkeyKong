@@ -59,8 +59,6 @@ void main(void) {
 	bool quit = false;
 	uint8_t i = 0;
 
-	malloc(0);
-
 	srand(rtc_Time());
 	gfx_Begin(gfx_8bpp);
 
@@ -68,7 +66,7 @@ void main(void) {
 	gfx_SetClipRegion(48, 16, 272, 239);
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
 	gfx_SetTransparentColor(0x15);
-	prepare_images();
+
 	gfx_SetDrawBuffer();
 
 	memset(&game, 0, sizeof(game));
