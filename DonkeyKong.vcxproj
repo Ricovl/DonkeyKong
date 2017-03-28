@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5B129396-91A3-4ACB-AC47-BDABF0699010}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make &amp; "C:\Program Files\CEmu\CEmu.exe" --no-reset -a D:\Programming\TI84PCE\Projects\#W.I.P\DonkeyKongCopy\bin\DKONG.8xp</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean &amp; make</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IntDir>obj\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)obj\$(Configuration)\</OutDir>
+    <ExecutablePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</IncludePath>
+    <ReferencePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</ReferencePath>
+    <LibraryPath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</LibraryPath>
+    <LibraryWPath>
+    </LibraryWPath>
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean &amp; make</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)obj\$(Configuration)\</OutDir>
+    <ExecutablePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</IncludePath>
+    <ReferencePath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</ReferencePath>
+    <LibraryPath>D:\Programming\TI84PCE\CEdev\include;D:\Programming\TI84PCE\CEdev\include\lib\std;D:\Programming\TI84PCE\CEdev\include\lib\ce</LibraryPath>
+    <LibraryWPath>
+    </LibraryWPath>
+    <ExcludePath />
+    <IntDir>obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <BuildLog>
+      <Path>obj\$(IntDir)$(MSBuildProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <BuildLog>
+      <Path>obj\$(IntDir)$(MSBuildProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\barrels.c" />
+    <ClCompile Include="src\bonus_scores.c" />
+    <ClCompile Include="src\conveyors.c" />
+    <ClCompile Include="src\drawsprites.c" />
+    <ClCompile Include="src\elevators.c" />
+    <ClCompile Include="src\firefoxes.c" />
+    <ClCompile Include="src\gfx\barrel_ladder0.c" />
+    <ClCompile Include="src\gfx\barrel_ladder1.c" />
+    <ClCompile Include="src\gfx\barrel_ladder_blue0.c" />
+    <ClCompile Include="src\gfx\barrel_ladder_blue1.c" />
+    <ClCompile Include="src\gfx\barrel_rolling0.c" />
+    <ClCompile Include="src\gfx\barrel_rolling1.c" />
+    <ClCompile Include="src\gfx\barrel_rolling2.c" />
+    <ClCompile Include="src\gfx\barrel_rolling3.c" />
+    <ClCompile Include="src\gfx\barrel_rolling_blue0.c" />
+    <ClCompile Include="src\gfx\barrel_rolling_blue1.c" />
+    <ClCompile Include="src\gfx\barrel_rolling_blue2.c" />
+    <ClCompile Include="src\gfx\barrel_rolling_blue3.c" />
+    <ClCompile Include="src\gfx\barrel_standing.c" />
+    <ClCompile Include="src\gfx\conveyor.c" />
+    <ClCompile Include="src\gfx\donkeyKong_holding.c" />
+    <ClCompile Include="src\gfx\donkeyKong_left.c" />
+    <ClCompile Include="src\gfx\donkeyKong_right.c" />
+    <ClCompile Include="src\gfx\donkeyKong_standing.c" />
+    <ClCompile Include="src\gfx\firefox_left0.c" />
+    <ClCompile Include="src\gfx\firefox_left1.c" />
+    <ClCompile Include="src\gfx\firefox_right0.c" />
+    <ClCompile Include="src\gfx\firefox_right1.c" />
+    <ClCompile Include="src\gfx\flame0.c" />
+    <ClCompile Include="src\gfx\flame1.c" />
+    <ClCompile Include="src\gfx\flame2.c" />
+    <ClCompile Include="src\gfx\flame3.c" />
+    <ClCompile Include="src\gfx\girder.c" />
+    <ClCompile Include="src\gfx\girder_circle.c" />
+    <ClCompile Include="src\gfx\ladder.c" />
+    <ClCompile Include="src\gfx\life.c" />
+    <ClCompile Include="src\gfx\mario_climb_left.c" />
+    <ClCompile Include="src\gfx\mario_climb_right.c" />
+    <ClCompile Include="src\gfx\mario_dead0.c" />
+    <ClCompile Include="src\gfx\mario_dead1.c" />
+    <ClCompile Include="src\gfx\mario_dead2.c" />
+    <ClCompile Include="src\gfx\mario_dead3.c" />
+    <ClCompile Include="src\gfx\mario_dead4.c" />
+    <ClCompile Include="src\gfx\mario_dead5.c" />
+    <ClCompile Include="src\gfx\mario_jump_left.c" />
+    <ClCompile Include="src\gfx\mario_jump_right.c" />
+    <ClCompile Include="src\gfx\mario_stand.c" />
+    <ClCompile Include="src\gfx\mario_walk_left0.c" />
+    <ClCompile Include="src\gfx\mario_walk_left1.c" />
+    <ClCompile Include="src\gfx\mario_walk_left2.c" />
+    <ClCompile Include="src\gfx\mario_walk_right0.c" />
+    <ClCompile Include="src\gfx\mario_walk_right1.c" />
+    <ClCompile Include="src\gfx\mario_walk_right2.c" />
+    <ClCompile Include="src\gfx\num100.c" />
+    <ClCompile Include="src\gfx\num200.c" />
+    <ClCompile Include="src\gfx\num300.c" />
+    <ClCompile Include="src\gfx\num500.c" />
+    <ClCompile Include="src\gfx\num800.c" />
+    <ClCompile Include="src\gfx\oil.c" />
+    <ClCompile Include="src\gfx\rivet.c" />
+    <ClCompile Include="src\gfx\text_bonus.c" />
+    <ClCompile Include="src\gfx\tiles_gfx.c" />
+    <ClCompile Include="src\gfx\x_character.c" />
+    <ClCompile Include="src\jumpman.c" />
+    <ClCompile Include="src\kong.c" />
+    <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\overlay.c" />
+    <ClCompile Include="src\scorescreen.c" />
+    <ClCompile Include="src\images.c" />
+    <ClCompile Include="src\stages.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\barrels.h" />
+    <ClInclude Include="src\bonus_scores.h" />
+    <ClInclude Include="src\conveyors.h" />
+    <ClInclude Include="src\defines.h" />
+    <ClInclude Include="src\drawsprites.h" />
+    <ClInclude Include="src\elevators.h" />
+    <ClInclude Include="src\firefoxes.h" />
+    <ClInclude Include="src\gfx\tiles_gfx.h" />
+    <ClInclude Include="src\images.h" />
+    <ClInclude Include="src\jumpman.h" />
+    <ClInclude Include="src\kong.h" />
+    <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\overlay.h" />
+    <ClInclude Include="src\scorescreen.h" />
+    <ClInclude Include="src\stages.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="makefile" />
+    <None Include="src\collision.asm" />
+    <None Include="src\routines.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
