@@ -1,2 +1,0 @@
-convpng
-pause
