@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <graphx.h>
 #include "stdlib.h"
-#include "gfx\tiles_gfx.h"
+#include "gfx\sprites_gfx.h"
 
-void prepare_images(void);
+void decompress_images(void);
 
 // Jumpman
 extern gfx_image_t *jumpman_sprite[2][15];
@@ -20,7 +20,8 @@ extern gfx_image_t *rolling_barrel[2][6];
 extern gfx_image_t *firefox_sprite[2][4];
 
 // Kong
-extern gfx_image_t *kong_sprite[10];
+extern gfx_image_t *kong_goofy;
+extern gfx_image_t *kong_sprite[12];
 
 // Bonus sprites
 extern gfx_image_t *bonus_score_sprite[5];

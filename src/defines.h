@@ -73,14 +73,14 @@ typedef struct {
 	uint8_t moveIndicator;				// 0A	
 	uint8_t moveCounter;				// 0B	
 	
-	bool isJumping;						// 0C	1 when jumping, else 0																														12
-	uint8_t jumpDir;					// 0D	0 = right, #FF = left, 0 = up																												13
-	uint8_t jumpDirIndicator;			// 0E	0 when jumping straight up, #80 when jumping left or right																					14
-	uint8_t jumpCounter;				// 0F	jumpCounter counts from 0 when jumpman start jupming																						15
-	uint8_t jumpCounterX, jumpCounterY;	// 10, 11																																			16, 17
-	uint8_t velocityY;					// 12	0x48 when jumpman starts jumping																											18
-	bool movingUp;						// 13	1 when jumping 0 when falling																												19
-	uint8_t comingDown;					// 14	1 when mario is at apex or on it's way down from a jump else 0. Counting down from 4 to 0 after jump										20
+	bool isJumping;						// 0C	1 when jumping, else 0
+	uint8_t jumpDir;					// 0D	0 = right, #FF = left, 0 = up
+	uint8_t jumpDirIndicator;			// 0E	0 when jumping straight up, #80 when jumping left or right
+	uint8_t jumpCounter;				// 0F	jumpCounter counts from 0 when jumpman start jupming
+	uint8_t jumpCounterX, jumpCounterY;	// 10, 11
+	uint8_t velocityY;					// 12	0x48 when jumpman starts jumping
+	bool movingUp;						// 13	1 when jumping 0 when falling
+	uint8_t comingDown;					// 14	1 when mario is at apex or on it's way down from a jump else 0. Counting down from 4 to 0 after jump
 	uint8_t originalY;					// 15	This contains jumpmans y-position from where he started jumping
 	bool fallingTooFar;					// 16	1 when jumpman is falling too far, so when he hits the ground he dies
 

@@ -25,7 +25,7 @@
 #include "conveyors.h"
 #include "images.h"
 #include "elevators.h"
-#include "gfx\tiles_gfx.h"
+#include "gfx\sprites_gfx.h"
 
 
 /* Draws the stage itself to the screen */
@@ -36,7 +36,7 @@ void draw_stage() {
 		uint24_t x, x1;
 		tile_t tile;
 		
-		memcpy(&tile, array_b, sizeof(tile));
+		memcpy(&tile, array_b, sizeof(tile_t));
 		x1 = tile.x1 + 48;
 		x = tile.x + 48;
 
@@ -108,7 +108,7 @@ void initialize_stage(uint8_t stage) {
 
 	gfx_FillScreen(COLOR_BACKGROUND);
 	// Change the palette to the standard palette
-	gfx_SetPalette(tiles_gfx_pal, sizeof(tiles_gfx_pal), 0);
+	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	draw_stage();
 
 	init_jumpman(95, 231);
@@ -185,7 +185,7 @@ void initialize_stage(uint8_t stage) {
 		num_pies = 0;
 
 	// Hammers
-	memset(&hammer, 0, sizeof(hammer) * 2);
+	memset(&hammer, 0, sizeof(hammer_t) * 2);
 	if (game.stage != STAGE_ELEVATORS) {
 		for (i = 0; i < 2; i++) {
 			uint8_t location = (game.stage >> 1) + i;
@@ -196,6 +196,7 @@ void initialize_stage(uint8_t stage) {
 		}
 		num_hammers = 2;
 	}
+	hammerActive = 0;
 
 	// Bonus items
 	if (game.stage != STAGE_BARRELS) {

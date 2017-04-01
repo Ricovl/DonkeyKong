@@ -16,7 +16,7 @@
 // donkeykong stuff
 #include "defines.h"
 #include "overlay.h"
-#include "gfx\tiles_gfx.h"
+#include "gfx\sprites_gfx.h"
 
 
 /* Draw the 1UP, HIGH SCORE and 2UP */
@@ -30,32 +30,35 @@ void draw_player_score(void) {
 #endif
 	if (game.score > game.Hscore)
 		game.Hscore = game.score;
-	gfx_SetTextXY(136, 8);	//HIGH  SCORE
+	gfx_SetTextXY(200, 8);	//HIGH  SCORE
 	gfx_PrintUInt(game.Hscore, 6);
 	gfx_BlitLines(gfx_buffer, 8, 7);	//1UP, HIGH  SCORE and 2UP
 }
+
+#define BONUS_BOX_X 273
+#define BONUS_BOX_Y 16
 
 /* Draw the bonus timer value */
 void draw_bonus_time(void) {
 	gfx_SetTextFGColor(COLOR_LADDER);
 	if (game.bonusTimer < 10)
 		gfx_SetTextFGColor(COLOR_RED);
-	gfx_SetTextXY(279, 48);
+	gfx_SetTextXY(BONUS_BOX_X + 6, BONUS_BOX_Y + 8);
 	gfx_PrintUInt(game.bonusTimer * 100, 4);
-	gfx_BlitArea(gfx_buffer, 279, 48, 31, 7);
+	gfx_BlitArea(gfx_buffer, BONUS_BOX_X + 6, BONUS_BOX_Y + 8, 31, 7);
 }
 
 /* Draws the bonus box(not included in draw_overlay_full because it is not shown on the menu screens) */
 void draw_bonus_box(void) {
 	gfx_SetColor(COLOR_FLOOR);	// Inner square
-	gfx_Rectangle_NoClip(275, 46, 39, 11);
-	gfx_Sprite_NoClip(text_bonus, 278, 40);
+	gfx_Rectangle_NoClip(BONUS_BOX_X + 2, BONUS_BOX_Y + 6, 39, 11);
+	gfx_Sprite_NoClip(text_bonus, BONUS_BOX_X + 5, BONUS_BOX_Y);
 	gfx_SetColor(COLOR_LADDER);	// Outer square
-	gfx_VertLine_NoClip(273, 41, 17);
-	gfx_VertLine_NoClip(315, 41, 17);
-	gfx_HorizLine_NoClip(274, 40, 3);
-	gfx_HorizLine_NoClip(312, 40, 3);
-	gfx_HorizLine_NoClip(274, 58, 41);
+	gfx_VertLine_NoClip(BONUS_BOX_X, BONUS_BOX_Y + 1, 17);
+	gfx_VertLine_NoClip(BONUS_BOX_X + 42, BONUS_BOX_Y + 1, 17);
+	gfx_HorizLine_NoClip(BONUS_BOX_X + 1, BONUS_BOX_Y, 3);
+	gfx_HorizLine_NoClip(BONUS_BOX_X + 39, BONUS_BOX_Y, 3);
+	gfx_HorizLine_NoClip(BONUS_BOX_X + 1, BONUS_BOX_Y + 18, 41);
 
 	draw_bonus_time();
 }
@@ -67,13 +70,13 @@ void draw_overlay_full(void) {
 	// Draw the strings
 	gfx_SetTextFGColor(COLOR_RED);	// Set the text color to red
 	//gfx_PrintStringXY("1UP", 28, 0);			// 1UP
-	gfx_PrintStringXY("HIGH  SCORE", 120, 0);	// HIGH SCORE
+	gfx_PrintStringXY("HIGH  SCORE", 185, 0);	// HIGH SCORE
 	//gfx_PrintStringXY("2UP", 279, 0);			// 2UP
 
 	gfx_SetTextFGColor(COLOR_BLUE); // Set the text color to blue
-	gfx_PrintStringXY("L=", 272, 24);			// L=
+	gfx_PrintStringXY("L=", 272, 0);			// L=
 
-	gfx_SetTextXY(287, 24);						// L= NUMBER
+	gfx_SetTextXY(287, 0);						// L= NUMBER
 	gfx_PrintUInt(game.level, 2);
 
 	// Draw the lives

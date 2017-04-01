@@ -15,7 +15,7 @@
 #include "defines.h"
 #include "scorescreen.h"
 #include "overlay.h"
-#include "gfx\tiles_gfx.h"
+#include "images.h"
 
 
 const char *rank_num[] = { "ST", "ND", "RD", "TH", "TH" };

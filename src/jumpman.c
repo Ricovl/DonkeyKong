@@ -28,7 +28,7 @@
 
 /* Initialize all the variables for the jumpman */
 void init_jumpman(uint24_t x, uint8_t y) {
-	memset(&jumpman, 0, sizeof(jumpman));
+	memset(&jumpman, 0, sizeof(jumpman_t));
 
 	jumpman.x_old = jumpman.x = x;
 	jumpman.y_old = jumpman.y = y;
@@ -377,11 +377,7 @@ uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t h
 
 
 void jumpman_falling(void) {
-
 	if (!jumpman.onLadder && !jumpman.isJumping && !jumpman.onElevator) {
-
-		//dbg_sprintf(dbgout, "test: %d\n", ~(((jumpman.dir - 1) ^ 2)) | 1);
-
 		if (((jumpman.x & 7) == (4 - jumpman.dir)) && gfx_GetPixel(jumpman.x, jumpman.y + 2) == COLOR_BACKGROUND) {
 		//if (gfx_GetPixel(jumpman.x - (((jumpman.dir - 1) ^ 2) | 1), jumpman.y + 2) == COLOR_BACKGROUND) {
 			// jumpman is falling
@@ -501,7 +497,7 @@ void hammer_stuff(void) {
 						num_hammers--;
 
 						// Restore the firefoxes' palette
-						gfx_SetPalette(tiles_gfx_pal + 6, 6, 6);
+						gfx_SetPalette(sprites_gfx_pal + 6, 6, 6);
 						// Restore jumpmans sprite(Could maybe just set the sprite to 0)
 						jumpman.sprite = 0;
 						return;

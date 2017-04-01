@@ -23,7 +23,6 @@
 
 kong_t kong;
 
-// before this way of drawing: 54255 bytes; after: 53956
 /* Draw kong to the screen and the buffer(does not work if y position or height has changed) */
 void draw_kong(void) {
 	uint8_t width_old = kong.background_data[0];
@@ -186,7 +185,39 @@ void end_stage_cinematic(void) {
 	kong.y_old = kong.y += 32;
 
 	if (game.stage == STAGE_RIVETS) {			// Stage Rivets
+		uint8_t x, y, i;
+		draw_pauline(false);
+		kong.sprite = 0;
+		render_kong();
+
+		gfx_FillRectangle_NoClip(104, 72, 112, 160);
+		for (y = 200; y <= 224; y += 8)
+			for (x = 112; x <= 200; x += 8)
+				gfx_Sprite_NoClip(girder_circle, x, y);
+
+		gfx_BlitRectangle(gfx_buffer, 104, 72, 112, 160);
+
+		kong.sprite = 4;
+		for (i = 0; i < 15; i++) {
+			waitTicks(8);
+			kong.sprite ^= 1;
+			render_kong();
+		}
 		waitTicks(8);
+
+		kong.sprite = 0;
+		render_kong();
+		waitTicks(32);
+
+		kong.sprite = 10;
+		kong.y += 31; // = maybe smaller
+		render_kong();
+
+		while (kong.y < 200) {
+			kong.y++;
+			render_kong();
+			waitTicks(1);
+		}
 	}
 	else {										// Stage Barrels, Elevators or Conveyors
 		// Step 1 of 6: update kong and draw heart(1 of 5 for conveyors)
@@ -198,7 +229,7 @@ void end_stage_cinematic(void) {
 		if (game.stage == STAGE_CONVEYORS) {	// Stage Conveyors
 			// Step 2 of 5:
 			conveyor[Top].reverseCounter = 0;
-			if (kong.x > 104 && conveyor[Top].direction < 127 || kong.x < 104 < conveyor[Top].direction > 127)
+			if (kong.x > 104 && conveyor[Top].direction < 127 || kong.x < 104 && conveyor[Top].direction > 127)
 				conveyor[Top].reverseCounter = 1;
 
 			while (kong.x != 104) {

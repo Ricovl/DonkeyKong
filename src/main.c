@@ -59,21 +59,23 @@ void main(void) {
 	bool quit = false;
 	uint8_t i = 0;
 
+	malloc(0);
 	srand(rtc_Time());
 	gfx_Begin(gfx_8bpp);
 
-	gfx_SetPalette(tiles_gfx_pal, sizeof(tiles_gfx_pal), 0);
+	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	gfx_SetClipRegion(48, 16, 272, 239);
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
 	gfx_SetTransparentColor(0x15);
 
+	decompress_images();
 	gfx_SetDrawBuffer();
-
-	memset(&game, 0, sizeof(game));
+	
+	memset(&game, 0, sizeof(game_t));
 	game.lives = 3;
 	game.level = 1;
 	game.round = 1;
-	game.stage = STAGE_CONVEYORS;
+	game.stage = STAGE_BARRELS;
 
 	timer_Control = TIMER1_DISABLE;
 	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
@@ -148,7 +150,7 @@ void main(void) {
 
 		if (!jumpman.isAlive)
 			animate_jumpman_dead();
-		else if(!quit){
+		else if(!quit) {
 			end_stage_cinematic();
 			next_stage();
 		}
@@ -156,6 +158,7 @@ void main(void) {
 	} while (!(quit));
 
 	/* Usual cleanup */
+	free(kong_goofy);
 	gfx_End();
 	prgm_CleanUp();
 }
