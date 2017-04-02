@@ -75,7 +75,7 @@ void main(void) {
 	game.lives = 3;
 	game.level = 1;
 	game.round = 1;
-	game.stage = STAGE_BARRELS;
+	game.stage = STAGE_RIVETS;
 
 	timer_Control = TIMER1_DISABLE;
 	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
@@ -150,7 +150,8 @@ void main(void) {
 
 		if (!jumpman.isAlive)
 			animate_jumpman_dead();
-		else if(!quit) {
+		else //if(!quit) 
+		{
 			end_stage_cinematic();
 			next_stage();
 		}

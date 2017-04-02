@@ -138,7 +138,7 @@ void update_screen(void) {
 		this_barrel->x_old = this_barrel->x; this_barrel->y_old = this_barrel->y;
 	}
 
-	for (i = 0; i < num_pies; i++) {	// Bouncers
+	for (i = 0; i < num_pies; i++) {		// Bouncers
 		pie_t *this_pie = &pie[i];
 
 		gfx_Sprite((gfx_image_t*)this_pie->background_data, this_pie->x_old, this_pie->y_old);

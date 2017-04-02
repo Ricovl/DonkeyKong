@@ -32,8 +32,8 @@ void draw_kong(void) {
 	if (kong.sprite) {
 		if		(kong.sprite == 1)	x -= 4;
 		else if (kong.sprite == 3)	x++;
-		else if (kong.sprite == 4)	x -= 5;
-		else if (kong.sprite == 5)	x += 5;
+		else if (kong.sprite == 4)	x -= 4;
+		else if (kong.sprite == 5)	x -= 2;
 	}
 
 	// Clear kong in buffer and store background
@@ -136,12 +136,13 @@ void draw_pauline(bool help) {
 }
 
 
-
+gfx_image_t *kong_knockedout_spite[2] = { knockedout_sprite1, knockedout_sprite0 };
+gfx_image_t *kong_eye[2] = { kong_eye2, kong_eye1 };
 
 void waitTicks(uint8_t ticks) {
 	while (--ticks) {
-		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
-		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
+while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
+timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
 	}
 }
 
@@ -151,13 +152,20 @@ void render_kong(void) {
 	if (kong.sprite) {
 		if (kong.sprite == 1)	x -= 4;
 		else if (kong.sprite == 3 || kong.sprite == 7 || kong.sprite == 9)	x++;
-		else if (kong.sprite == 4)	x -= 5;
-		else if (kong.sprite == 5)	x += 5;
+		else if (kong.sprite == 4)	x -= 4;
+		else if (kong.sprite == 5)	x -= 2;
 		else if (kong.sprite == 6 || kong.sprite == 8)	x += 6;
 	}
 
 	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 	gfx_TransparentSprite(kong_sprite[kong.sprite], x, kong.y - 32);
+	if (kong.sprite == 11) {
+		if ((frameCounter % 3) != 0) {
+			gfx_Sprite_NoClip(kong_eye[(frameCounter % 3) - 1], 155, 193);
+		}
+		gfx_TransparentSprite_NoClip(kong_knockedout_spite[frameCounter & 1], 152, 195);
+	}
+
 	gfx_SwapDraw();
 	gfx_Sprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 
@@ -186,6 +194,7 @@ void end_stage_cinematic(void) {
 
 	if (game.stage == STAGE_RIVETS) {			// Stage Rivets
 		uint8_t x, y, i;
+		pauline.sprite = 1;
 		draw_pauline(false);
 		kong.sprite = 0;
 		render_kong();
@@ -209,15 +218,49 @@ void end_stage_cinematic(void) {
 		render_kong();
 		waitTicks(32);
 
+		// Kong is falling
 		kong.sprite = 10;
-		kong.y += 31; // = maybe smaller
-		render_kong();
+		kong.y += 32; // = might be smaller
 
 		while (kong.y < 200) {
-			kong.y++;
 			render_kong();
 			waitTicks(1);
+			if (kong.y == 198) {
+				gfx_FillRectangle_NoClip(104, 32, 112, 40);
+				for (x = 104; x <= 208; x += 8)
+					gfx_Sprite_NoClip(girder_circle, x, 72);
+				gfx_BlitRectangle(gfx_buffer, 104, 32, 112, 48);
+			}
+			kong.y++;
 		}
+
+		// move pauline down
+		gfx_FillRectangle_NoClip(pauline.x, pauline.y, 16, 22);
+		gfx_BlitRectangle(gfx_buffer, pauline.x, pauline.y, 16, 22);
+		pauline.y = 50;
+		pauline.dir = 0;
+		draw_pauline(false);
+
+		// Roll kongs eyes
+		kong.sprite = 11;
+
+		for (frameCounter = 0; frameCounter < 32; frameCounter++) {
+			render_kong();
+			
+			if (frameCounter == 4) {
+				gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+				gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 15, 16);
+				gfx_TransparentSprite_NoClip(jumpman_walk_right0, 120, 56);
+				gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
+			}
+			if (frameCounter == 8) {
+				draw_heart(heart, 136, 42);
+			}
+
+			waitTicks(8);
+		}
+
+		waitTicks(128);
 	}
 	else {										// Stage Barrels, Elevators or Conveyors
 		// Step 1 of 6: update kong and draw heart(1 of 5 for conveyors)
