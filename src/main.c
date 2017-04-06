@@ -66,6 +66,7 @@ void main(void) {
 	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	gfx_SetClipRegion(48, 16, 272, 239);
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
+	gfx_SetColor(COLOR_BACKGROUND);
 	gfx_SetTransparentColor(0x15);
 
 	decompress_images();
@@ -82,10 +83,12 @@ void main(void) {
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
+	intro_cinematic();
+
 	do {
 		// how high can you get?
 		pre_round_screen();
-		for (i = 0; i < 90; i++) {
+		for (i = 0; i < 160; i++) {
 			while (!(timer_IntStatus & TIMER1_RELOADED));
 			timer_IntStatus = TIMER1_RELOADED;
 		}

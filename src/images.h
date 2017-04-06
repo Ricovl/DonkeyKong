@@ -21,7 +21,10 @@ extern gfx_image_t *firefox_sprite[2][4];
 
 // Kong
 extern gfx_image_t *kong_goofy;
-extern gfx_image_t *kong_sprite[12];
+extern gfx_image_t *kong_sprite[13];
+
+extern gfx_image_t *kong_crazy_eye[2];
+extern gfx_image_t *kong_knockedout_sprite[2];
 
 // Bonus sprites
 extern gfx_image_t *bonus_score_sprite[5];

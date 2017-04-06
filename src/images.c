@@ -33,7 +33,10 @@ gfx_image_t *firefox_sprite[2][4] =   { { firefox_left0 , firefox_left1 , fireba
 
 // Kong
 gfx_image_t *kong_goofy;
-gfx_image_t *kong_sprite[12];		 // { kong_standing, kong_left, kong_holding, kong_right, kong_arm_left, kong_arm_right, kong_climbing_left0, kong_climbing_right0, kong_climbing_left1, kong_climbing_right1, kong_onhead };
+gfx_image_t *kong_sprite[13];		 // { kong_standing, kong_left, kong_holding, kong_right, kong_arm_left, kong_arm_right, kong_climbing_left0, kong_climbing_right0, kong_climbing_left1, kong_climbing_right1, kong_onhead, kong_knockedOut, kong_teeth };
+
+gfx_image_t *kong_crazy_eye[2] =		{ kong_eye2, kong_eye1 };
+gfx_image_t *kong_knockedout_sprite[2] ={ knockedout_sprite1, knockedout_sprite0 };
 
 // Bonus sprites
 gfx_image_t *bonus_score_sprite[5] =	{ num100, num200, num300, num500, num800 };
@@ -110,6 +113,9 @@ void decompress_images(void) {
 	tmp_ptr = gfx_MallocSprite(40, 32);
 	dzx7_Standard(kong_knockedout_compressed, tmp_ptr);
 	kong_sprite[11] = tmp_ptr;
+
+	tmp_ptr = gfx_MallocSprite(40, 32);
+	kong_sprite[12] = gfx_RotateSpriteHalf(kong_sprite[10], tmp_ptr);
 
 	kong_goofy = gfx_MallocSprite(46, 32);
 	dzx7_Standard(kong_goofy_compressed, kong_goofy);

@@ -19,8 +19,11 @@
 #include "conveyors.h"
 #include "barrels.h"
 #include "images.h"
+#include "stages.h"
+#include "overlay.h"
 
 
+/* Updates kong and pauline */
 void update_kong(void) {
 	if (game.stage == STAGE_CONVEYORS) {
 		kong.x += conveyorVector_top;
@@ -142,9 +145,6 @@ void draw_pauline(bool help) {
 
 
 
-gfx_image_t *kong_knockedout_spite[2] = { knockedout_sprite1, knockedout_sprite0 };
-gfx_image_t *kong_eye[2] = { kong_eye2, kong_eye1 };
-
 void waitTicks(uint8_t ticks) {
 	timer_1_Counter = (ONE_TICK);
 	while (--ticks) {
@@ -156,6 +156,7 @@ void waitTicks(uint8_t ticks) {
 /* Draws kong for use in cinematics */
 void render_kong(void) {
 	uint24_t x = kong.x;
+	uint8_t y = kong.y;
 
 	if (kong.sprite) {
 		if (kong.sprite == 1)	x -= 4;
@@ -163,15 +164,16 @@ void render_kong(void) {
 		else if (kong.sprite == 4)	x -= 4;
 		else if (kong.sprite == 5)	x -= 2;
 		else if (kong.sprite == 6 || kong.sprite == 8)	x += 6;
+		if (kong.sprite == 9) y += 4;
 	}
 
 	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
-	gfx_TransparentSprite(kong_sprite[kong.sprite], x, kong.y - 32);
+	gfx_TransparentSprite(kong_sprite[kong.sprite], x, y - 32);
 	if (kong.sprite == 11) {
 		if ((frameCounter % 3) != 0) {
-			gfx_Sprite_NoClip(kong_eye[(frameCounter % 3) - 1], 155, 193);
+			gfx_Sprite_NoClip(kong_crazy_eye[(frameCounter % 3) - 1], 155, 193);
 		}
-		gfx_TransparentSprite_NoClip(kong_knockedout_spite[frameCounter & 1], 152, 195);
+		gfx_TransparentSprite_NoClip(kong_knockedout_sprite[frameCounter & 1], 152, 195);
 	}
 
 	gfx_SwapDraw();
@@ -180,7 +182,7 @@ void render_kong(void) {
 	kong.background_data[0] = *(uint8_t*)kong_sprite[kong.sprite];
 	kong.background_data[1] = *(uint8_t*)((uint8_t*)kong_sprite[kong.sprite] + 1);
 	kong.x_old = x;
-	kong.y_old = kong.y;
+	kong.y_old = y;
 }
 
 void kong_climb_ladder(void) {
@@ -323,6 +325,99 @@ void end_stage_cinematic(void) {
 			kong_climb_ladder();
 		}
 		// step 6 of 6: determine next level and add bonus to score(same as step 5 from conveyors)
-		waitTicks(0x30);
+		waitTicks(0x60);
 	}
 }
+
+
+void remove_ladder(uint8_t y) {
+	gfx_TempSprite(background_data, 8, 8);
+	gfx_GetSprite(background_data, 152, y);
+	gfx_Sprite_NoClip(background_data, 160, y);
+	gfx_Sprite_NoClip(background_data, 176, y);
+	gfx_BlitRectangle(gfx_buffer, 160, y, 24, 8);
+}
+
+void intro_cinematic(void) {
+	uint8_t i, jump;
+	
+	gfx_FillScreen(COLOR_BACKGROUND);
+	draw_overlay_full();
+
+	draw_stage(&stage_barrels_intro_data);
+	gfx_Blit(gfx_buffer);
+	waitTicks(0x40);
+
+	kong.sprite = 8;
+	kong.x_old = kong.x = 152;
+	kong.y_old = kong.y = 221;
+	kong.background_data[0] = 40;
+	kong.background_data[1] = 32;
+	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
+	render_kong();
+
+	// Kong climbing ladder with pauline
+	while (kong.y > 97) {
+		waitTicks(7);
+
+		if ((kong.sprite & 1) == 1 && kong.y < 216) {
+			remove_ladder(kong.y + 15);
+		}
+
+		waitTicks(1);
+		kong.sprite ^= 1;
+		kong.y -= 4;
+		render_kong();
+	}
+	waitTicks(0x22);
+
+	// kong jumping up
+	for (i = 0; i < sizeof(kong_jumpup_table); i++) {
+		kong.y += kong_jumpup_table[i];
+		render_kong();
+		waitTicks(2);
+	}
+
+	kong.y += 5;
+	kong.sprite = 0;
+	render_kong();
+
+	// Kong landed on girder; draw pauline, remove ladder and angle top girder
+	pauline.x = 136;
+	pauline.y = 18;
+	pauline.dir = FACE_RIGHT;
+	pauline.sprite = 0;
+	draw_pauline(false);
+	for (i = 76; i < 120; i += 8)
+		remove_ladder(i);
+	draw_stage(&stage_barrels_slanted_top);
+	gfx_BlitLines(gfx_buffer, 68, 12);
+
+	waitTicks(0x20);
+
+	// Kong jumping to the left
+	for (jump = 0; jump < 5; jump++) {
+		for (i = 0; i < sizeof(kong_jumpleft_table); i++) {
+			kong.y += kong_jumpleft_table[i];
+			kong.x--;
+			render_kong();
+			waitTicks(2);
+		}
+		draw_stage(&stage_barrels_slanted[jump * 11]);
+		gfx_BlitLines(gfx_buffer, 93 + jump * 33, 20);
+	}
+	waitTicks(0x18);
+
+	kong.sprite = 12;
+	render_kong();
+	waitTicks(0x78);
+
+	kong.sprite = 0;
+	render_kong();
+	waitTicks(0x26);
+}
+
+
+// Lookup tables
+uint8_t kong_jumpup_table[22] = { 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x01, 0x01, 0x01 };
+uint8_t kong_jumpleft_table[16] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01 };

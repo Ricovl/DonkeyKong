@@ -124,9 +124,9 @@ TranspColorIndex : 0
 TranspColor : 0x016F
 13:
  kong_climbing_right0 : converted! (compress: 1190 -> 206 bytes)
- kong_climbing_right1 : converted! (compress: 1550 -> 220 bytes)
+ kong_climbing_right1 : converted! (compress: 1378 -> 256 bytes)
  kong_climbing_left0 : converted! (compress: 1190 -> 211 bytes)
- kong_climbing_left1 : converted! (compress: 1370 -> 222 bytes)
+ kong_climbing_left1 : converted! (compress: 1370 -> 250 bytes)
  kong_knockedout : converted! (compress: 1282 -> 287 bytes)
  kong_arm_right : converted! (compress: 1474 -> 301 bytes)
  kong_arm_left : converted! (compress: 1474 -> 307 bytes)
@@ -137,7 +137,7 @@ TranspColor : 0x016F
  kong_right : converted! (compress: 1378 -> 232 bytes)
  kong_left : converted! (compress: 1378 -> 236 bytes)
 
-Converted in 4 s
+Converted in 1 s
 
 [warning] image quality might be too low.
 please try grouping similar images, reducing image colors, 

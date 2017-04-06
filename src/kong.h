@@ -7,6 +7,7 @@ void update_kong(void);
 void draw_kong(void);
 void draw_pauline(bool help);
 void end_stage_cinematic(void);
+void intro_cinematic(void);
 
 // Kong
 typedef struct {
@@ -33,5 +34,8 @@ typedef struct {
 } pauline_t;
 
 extern pauline_t pauline;
+
+extern uint8_t kong_jumpup_table[22];
+extern uint8_t kong_jumpleft_table[16];
 
 #endif

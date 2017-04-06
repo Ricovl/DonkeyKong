@@ -5,6 +5,7 @@
 #include "stdlib.h"
 
 void initialize_stage(uint8_t stage);
+void draw_stage(uint8_t *array_b);
 void next_stage(void);
 
 typedef struct {
@@ -25,5 +26,11 @@ extern const uint8_t stage_conveyors_data[];
 extern const uint8_t stage_elevators_data[];
 
 extern const uint8_t stage_rivets_data[];
+
+extern const uint8_t stage_barrels_intro_data[];
+
+extern const uint8_t stage_barrels_slanted_top[];
+
+extern const uint8_t stage_barrels_slanted[];
 
 #endif

@@ -69,7 +69,7 @@ void draw_overlay_full(void) {
 
 	// Draw the strings
 	gfx_SetTextFGColor(COLOR_RED);	// Set the text color to red
-	//gfx_PrintStringXY("1UP", 28, 0);			// 1UP
+	gfx_PrintStringXY("1UP", 28, 0);			// 1UP
 	gfx_PrintStringXY("HIGH  SCORE", 185, 0);	// HIGH SCORE
 	//gfx_PrintStringXY("2UP", 279, 0);			// 2UP
 
