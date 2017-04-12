@@ -7,11 +7,12 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <tice.h>
+#include <intce.h>
 #include <debug.h>
 
 // shared libraries
-#include <lib/ce/graphx.h>
-#include <lib/ce/keypadc.h>
+#include <graphx.h>
+#include <keypadc.h>
 
 // donkeykong stuff
 #include "defines.h"

@@ -10,8 +10,8 @@
 #include <debug.h>
 
 // shared libraries
-#include <lib/ce/graphx.h>
-#include <lib/ce/keypadc.h>
+#include <graphx.h>
+#include <keypadc.h>
 
 // donkeykong stuff
 #include "defines.h"
@@ -69,14 +69,14 @@ void draw_overlay_full(void) {
 
 	// Draw the strings
 	gfx_SetTextFGColor(COLOR_RED);	// Set the text color to red
-	gfx_PrintStringXY("1UP", 28, 0);			// 1UP
-	gfx_PrintStringXY("HIGH  SCORE", 185, 0);	// HIGH SCORE
+	gfx_PrintStringXY("1UP", 27, 0);			// 1UP
+	gfx_PrintStringXY("HIGH SCORE", 184, 0);	// HIGH SCORE
 	//gfx_PrintStringXY("2UP", 279, 0);			// 2UP
 
 	gfx_SetTextFGColor(COLOR_BLUE); // Set the text color to blue
 	gfx_PrintStringXY("L=", 272, 0);			// L=
 
-	gfx_SetTextXY(287, 0);						// L= NUMBER
+	gfx_SetTextXY(288, 0);						// L= NUMBER
 	gfx_PrintUInt(game.level, 2);
 
 	// Draw the lives

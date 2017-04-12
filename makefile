@@ -2,10 +2,6 @@
 
 #Change TARGET to specify the output program name
 #Change DEBUGMODE to "DEBUG" in order to compile debug.h functions in, and "NDEBUG" to not compile debugging functions
-#----------------------------
-
-#Change TARGET to specify the output program name
-#Change DEBUGMODE to "DEBUG" in order to compile debug.h functions in, and "NDEBUG" to not compile debugging functions
 #Change ARCHIVED to "YES" to mark the output as archived, and "NO" to not
 #Change ICONPNG to change the name of the png file that should be made into the icon
 #Change DESCRIPTION to modify what is displayed within a compatible shell (Not compiled in if icon is not present)
@@ -18,7 +14,7 @@ ARCHIVED ?= NO
 COMPRESSED ?= NO
 #----------------------------
 ICONPNG ?= iconc.png
-DESCRIPTION ?= "Donkey Kong v0.3"
+DESCRIPTION ?= "Donkey Kong v0.7"
 #----------------------------
 
 #Add shared library names to the L varible, for instance:
@@ -49,4 +45,4 @@ INIT_LOC := D1A87F
 USE_FLASH_FUNCTIONS ?= NO
 #----------------------------
 
-include $(CEDEV)/bin/main_makefile
+include $(CEDEV)/include/.makefile

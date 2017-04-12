@@ -11,8 +11,8 @@
 #include <debug.h>
 
 // shared libraries
-#include <lib\ce\graphx.h>
-#include <lib\ce\keypadc.h>
+#include <graphx.h>
+#include <keypadc.h>
 
 // donkeykong stuff
 #include "defines.h"
@@ -28,6 +28,7 @@
 #include "stages.h"
 #include "elevators.h"
 #include "images.h"
+#include "font.h"
 
 
 game_t game;
@@ -56,7 +57,6 @@ void handle_rivets(void);
 
 
 void main(void) {
-	bool quit = false;
 	uint8_t i = 0;
 
 	malloc(0);
@@ -65,9 +65,11 @@ void main(void) {
 
 	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	gfx_SetClipRegion(48, 16, 272, 239);
-	gfx_SetTextBGColor(COLOR_BACKGROUND);
-	gfx_SetColor(COLOR_BACKGROUND);
 	gfx_SetTransparentColor(0x15);
+
+	gfx_SetTextBGColor(COLOR_BACKGROUND);
+	gfx_SetFontData((&font_data) - 32 * 8);
+	gfx_SetMonospaceFont(8);
 
 	decompress_images();
 	gfx_SetDrawBuffer();
@@ -83,87 +85,86 @@ void main(void) {
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
-	intro_cinematic();
+	for (;;) {
+		bool quit = false;
 
-	do {
-		// how high can you get?
-		pre_round_screen();
-		for (i = 0; i < 160; i++) {
-			while (!(timer_IntStatus & TIMER1_RELOADED));
-			timer_IntStatus = TIMER1_RELOADED;
-		}
-
-		initialize_stage(game.stage);
+		main_screen();
 
 		do {
-			flash_1up();	// make this interrupt?
-			increase_difficulty();
+			// how high can you get?
+			pre_round_screen();
+			for (i = 0; i < 160; i++) {
+				while (!(timer_IntStatus & TIMER1_RELOADED));
+				timer_IntStatus = TIMER1_RELOADED;
+			}
 
-			update_bonus_scores();
+			initialize_stage(game.stage);
 
-			move_jumpman();
+			do {
+				flash_1up();	// make this interrupt?
+				increase_difficulty();
 
-			move_barrels();
-			deploy_barrel();
-			spawn_barrel();
+				update_bonus_scores();
 
-			update_firefoxes();
+				move_jumpman();
 
-			move_bouncers();
+				move_barrels();
+				deploy_barrel();
+				spawn_barrel();
 
-			move_pies();
+				update_firefoxes();
 
-			release_firefox();
+				move_bouncers();
 
-			hammer_stuff();	// wrong place?
+				move_pies();
 
-			move_retractable_ladders();
+				release_firefox();
 
-			handle_rivets();
+				hammer_stuff();	// wrong place?
 
-			jumpman_falling();
+				move_retractable_ladders();
 
-			move_elevators();
+				handle_rivets();
 
-			handle_conveyor_dirs();
+				jumpman_falling();
 
-			bonus_item_picked_up();
+				move_elevators();
 
-			update_kong();
+				handle_conveyor_dirs();
 
-			// ..collision check
+				bonus_item_picked_up();
 
-			handle_time_ran_out();
+				update_kong();
 
-			handle_bonus_timer();
+				// ..collision check
 
+				handle_time_ran_out();
+
+				handle_bonus_timer();
+
+				update_screen();
+
+				while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
+				timer_IntStatus = TIMER1_RELOADED;	// Acknowledge the reload
+
+				frameCounter--;
+
+				if (kb_Data[kb_group_6] & kb_Clear)
+					quit = true;
+			} while (!(quit) && jumpman.isAlive && !check_end_stage());
+
+			jumpman.sprite = num_barrels = num_firefoxes = num_bonus_scores = 0;
 			update_screen();
 
-			while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
-			timer_IntStatus = TIMER1_RELOADED;	// Acknowledge the reload
+			if (!jumpman.isAlive)
+				animate_jumpman_dead();
+			else if (!quit) {
+				end_stage_cinematic();
+				next_stage();
+			}
 
-			frameCounter--;
-
-			if (kb_Data[kb_group_6] & kb_Clear)
-				quit = true;
-		} while (!(quit) && jumpman.isAlive && !check_end_stage());
-
-		jumpman.sprite = num_barrels = num_firefoxes = num_bonus_scores = 0;
-		update_screen();
-
-		if (!jumpman.isAlive)
-			animate_jumpman_dead();
-		else if(!quit) {
-			end_stage_cinematic();
-			next_stage();
-		}
-
-	} while (!(quit));
-
-	/* Usual cleanup */
-	free(kong_goofy);
-	gfx_End();
-	prgm_CleanUp();
+		} while (!(quit));
+	}
 }
 
 
@@ -215,7 +216,7 @@ void handle_time_ran_out(void) {
 
 /* Counts down the bonusTimer on non-barrel stages */
 void handle_bonus_timer(void) {
-	if (game.stage != STAGE_BARRELS) {
+	if (game.stage != STAGE_BARRELS && game.bonusTimer) {
 		game.bonusDelay--;
 		if (game.bonusDelay == 0) {
 			game.bonusDelay = game.initialBonusDelay;
@@ -244,7 +245,7 @@ void flash_1up(void) {
 			// Set the text color to red to draw text
 			gfx_SetTextFGColor(COLOR_RED);
 		}
-		gfx_PrintStringXY("1UP", 28, 0);	// 1UP
+		gfx_PrintStringXY("1UP", 27, 0);	// 1UP
 		gfx_BlitRectangle(gfx_buffer, 28, 0, 22, 7);
 	}
 }
@@ -343,14 +344,11 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
- * Reduce sprite data because total sprite data is 36165 bytes! 15042 bytes are from kong sprites.
  * Crazy barrels can escape out of the screen(leave artifacts)?
  * Fix offset of bonus_scores from jumpman facing left
  * Check for jumping over firefoxes, pies and flame
- * Make bonusTimer not show value below 0(or > 127) on end of not barrel stage
  * Check if firefox edge detection is exactly right
  * Fix jumpman edge of girder collision checking
  * add hammer hit animation and yellow sprite
- * end level(rivets only) and start game animations
  * start menu and end screen
  */

@@ -19,8 +19,8 @@ enum COLOR {
 	COLOR_COLLISION		= 0x04, // 151,  0,  0
 	COLOR_RED_DARK		= 0x0D, // 151,  1,  0
 
-	COLOR_GREEN			= 0x12, // 0  ,255,  0
-	COLOR_YELLOW		= 0x14, // 255,255,  0
+	COLOR_GREEN			= 0x14, // 0  ,255,  0
+	COLOR_YELLOW		= 0x13, // 255,255,  0
 	COLOR_COLLISION		= 0x04, // red_dark
 };
 

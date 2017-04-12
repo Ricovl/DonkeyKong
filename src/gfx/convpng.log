@@ -137,7 +137,7 @@ TranspColor : 0x016F
  kong_right : converted! (compress: 1378 -> 232 bytes)
  kong_left : converted! (compress: 1378 -> 236 bytes)
 
-Converted in 1 s
+Converted in 5 s
 
 [warning] image quality might be too low.
 please try grouping similar images, reducing image colors, 

@@ -10,8 +10,8 @@
 #include <debug.h>
 
 // shared libraries
-#include <lib/ce/graphx.h>
-#include <lib/ce/keypadc.h>
+#include <graphx.h>
+#include <keypadc.h>
 
 // kong stuff
 #include "defines.h"
@@ -143,8 +143,6 @@ void draw_pauline(bool help) {
 }
 
 
-
-
 void waitTicks(uint8_t ticks) {
 	timer_1_Counter = (ONE_TICK);
 	while (--ticks) {
@@ -199,12 +197,14 @@ void draw_heart(gfx_image_t* sprite, uint8_t x, uint8_t y) {
 
 /* play end cinematic for all four stages */
 void end_stage_cinematic(void) {
+	uint8_t i;
+
 	gfx_Blit(gfx_screen);
 	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
 	kong.y_old = kong.y += 32;
 
 	if (game.stage == STAGE_RIVETS) {			// Stage Rivets
-		uint8_t x, y, i;
+		uint8_t x, y;
 		pauline.sprite = 1;
 		draw_pauline(false);
 		kong.sprite = 0;
@@ -278,7 +278,7 @@ void end_stage_cinematic(void) {
 			waitTicks(8);
 		}
 
-		waitTicks(224);
+		i = 0xE0;
 	}
 	else {										// Stage Barrels, Elevators or Conveyors
 		// Step 1 of 6: update kong and draw heart(1 of 5 for conveyors)
@@ -306,15 +306,18 @@ void end_stage_cinematic(void) {
 			kong.sprite = 3;
 			render_kong();
 			waitTicks(0x20);
+			
 			// Step 3 of 6: prepare kong for climbing
 			kong.x = 104;
 		}
 
 		kong.sprite = 6;
+		
 		// Step 4 of 6: climb ladder without pauline(same as step 3 from conveyors)
 		while (kong.y > 48) {
 			kong_climb_ladder();
 		}
+
 		// step 5 of 6: climb ladder with pauline(same as step 4 from conveyors)
 		kong.sprite = 8;
 		draw_heart(heart_broken, 153, 10);
@@ -324,9 +327,15 @@ void end_stage_cinematic(void) {
 		while (kong.y >= 16) {
 			kong_climb_ladder();
 		}
+
 		// step 6 of 6: determine next level and add bonus to score(same as step 5 from conveyors)
-		waitTicks(0x60);
+		i = 0x60;
 	}
+
+	// Add bonusTimer value to score
+	game.score += game.bonusTimer * 100;
+	draw_player_score();
+	waitTicks(i);
 }
 
 
@@ -404,7 +413,7 @@ void intro_cinematic(void) {
 			waitTicks(2);
 		}
 		draw_stage(&stage_barrels_slanted[jump * 11]);
-		gfx_BlitLines(gfx_buffer, 93 + jump * 33, 20);
+		gfx_BlitLines(gfx_buffer, 93 + jump * 33, 20 - 5 * (jump == 4));	// This works, but there might be a better way
 	}
 	waitTicks(0x18);
 
