@@ -19,6 +19,15 @@
 #include "gfx\sprites_gfx.h"
 
 
+/* Draw the lives */
+void draw_player_lives(void) {
+	uint8_t i;
+
+	for (i = 1; i < game.lives; i++)
+		gfx_Sprite_NoClip(life, 3 + i * 8, 24);
+	gfx_BlitRectangle(gfx_buffer, 11, 24, 47, 8);
+}
+
 /* Draw the 1UP, HIGH SCORE and 2UP */
 void draw_player_score(void) {
 	gfx_SetTextFGColor(COLOR_WHITE); //Set the text color to white
@@ -30,6 +39,10 @@ void draw_player_score(void) {
 #endif
 	if (game.score > game.Hscore)
 		game.Hscore = game.score;
+	if (!jumpman.extraLifeAwarded && game.score >= ExtraLifeThreshold) {
+		game.lives++;
+		draw_player_lives();
+	}
 	gfx_SetTextXY(200, 8);	//HIGH  SCORE
 	gfx_PrintUInt(game.Hscore, 6);
 	gfx_BlitLines(gfx_buffer, 8, 7);	//1UP, HIGH  SCORE and 2UP
@@ -70,7 +83,7 @@ void draw_overlay_full(void) {
 	// Draw the strings
 	gfx_SetTextFGColor(COLOR_RED);	// Set the text color to red
 	gfx_PrintStringXY("1UP", 27, 0);			// 1UP
-	gfx_PrintStringXY("HIGH SCORE", 184, 0);	// HIGH SCORE
+	gfx_PrintStringXY("HIGH%SCORE", 184, 0);	// HIGH SCORE
 	//gfx_PrintStringXY("2UP", 279, 0);			// 2UP
 
 	gfx_SetTextFGColor(COLOR_BLUE); // Set the text color to blue
@@ -79,10 +92,8 @@ void draw_overlay_full(void) {
 	gfx_SetTextXY(288, 0);						// L= NUMBER
 	gfx_PrintUInt(game.level, 2);
 
-	// Draw the lives
-	for (i = 1; i < game.lives; i++)
-		gfx_Sprite_NoClip(life, 3 + i * 8, 24);
-
-	// Draw the scores and bonus time
+	
+	// Draw the scores, bonus time and lives
 	draw_player_score();
+	draw_player_lives();
 }

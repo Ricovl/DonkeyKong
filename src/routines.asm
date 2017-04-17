@@ -8,10 +8,6 @@ _handle_jumping
 	ex (sp),ix		; store the given struct address in ix
 	push hl			; push the return address back in the stack
 
-	; These lines change the barrels/jumpmans x-position
-	ld a,(ix+10h)	; load a with jumpcounterX
-	add a,(ix+0Eh)	; add jumpDirIndicator #80 for left or right, 0 for up, this way left en right jumping is slower than walking		
-	ld (ix+10h),A	; save in jumpcounterX
 
 	ld bc,-1
 	ld a,(ix+0Dh)	; load a with jumpDir
@@ -20,6 +16,11 @@ _handle_jumping
 	inc bc			; else increase bc to 0
 right:
 	ld c,a
+
+	; These lines change the barrels/jumpmans x-position
+	ld a,(ix+10h)	; load a with jumpcounterX
+	add a,(ix+0Eh)	; add jumpDirIndicator #80 for left or right, 0 for up, this way left en right jumping is slower than walking		
+	ld (ix+10h),a	; save in jumpcounterX
 	
 	ld hl,(ix+2)	; load object's X position
 	adc hl,bc		; add jumpDir. Note this is add with carry

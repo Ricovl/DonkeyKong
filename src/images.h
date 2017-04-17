@@ -9,7 +9,7 @@
 void decompress_images(void);
 
 // Jumpman
-extern gfx_image_t *jumpman_sprite[2][15];
+extern gfx_image_t *jumpman_sprite[2][18];
 
 extern gfx_image_t *jumpman_dead[6];
 
@@ -30,7 +30,7 @@ extern gfx_image_t *kong_knockedout_sprite[2];
 extern gfx_image_t *bonus_score_sprite[5];
 
 // Hammer sprites
-extern gfx_image_t *hammer_sprite[2][2];
+extern gfx_image_t *hammer_sprite[2][4];
 
 // Flame on top of oilcan
 extern gfx_image_t *fire[4];

@@ -168,5 +168,4 @@ void update_screen(void) {
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
 		gfx_Sprite_NoClip((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
-	
 }

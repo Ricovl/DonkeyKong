@@ -143,13 +143,6 @@ void draw_pauline(bool help) {
 }
 
 
-void waitTicks(uint8_t ticks) {
-	timer_1_Counter = (ONE_TICK);
-	while (--ticks) {
-		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
-		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
-	}
-}
 
 /* Draws kong for use in cinematics */
 void render_kong(void) {
@@ -199,7 +192,6 @@ void draw_heart(gfx_image_t* sprite, uint8_t x, uint8_t y) {
 void end_stage_cinematic(void) {
 	uint8_t i;
 
-	gfx_Blit(gfx_screen);
 	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
 	kong.y_old = kong.y += 32;
 
@@ -268,7 +260,7 @@ void end_stage_cinematic(void) {
 			if (frameCounter == 4) {
 				gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 				gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 15, 16);
-				gfx_TransparentSprite_NoClip(jumpman_walk_right0, 120, 56);
+				gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
 				gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
 			}
 			if (frameCounter == 8) {
@@ -355,7 +347,7 @@ void intro_cinematic(void) {
 
 	draw_stage(&stage_barrels_intro_data);
 	gfx_Blit(gfx_buffer);
-	waitTicks(0x40);
+	waitTicks(0x48);
 
 	kong.sprite = 8;
 	kong.x_old = kong.x = 152;
@@ -367,7 +359,7 @@ void intro_cinematic(void) {
 
 	// Kong climbing ladder with pauline
 	while (kong.y > 97) {
-		waitTicks(7);
+		waitTicks(8);
 
 		if ((kong.sprite & 1) == 1 && kong.y < 216) {
 			remove_ladder(kong.y + 15);

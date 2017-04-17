@@ -25,7 +25,6 @@
 #include "conveyors.h"
 #include "images.h"
 #include "elevators.h"
-#include "gfx\sprites_gfx.h"
 
 
 /* Draws the stage itself to the screen */
@@ -246,13 +245,13 @@ void initialize_stage(uint8_t stage) {
 		memset(firefox, 0, sizeof(firefox_t) * 2);
 		firefox[0].x_old = firefox[0].x = 0x58 + 33;
 		firefox[0].actualY = firefox[0].y_old = firefox[0].y = 0x80 - 9;
-		firefox[0].background_data[0] = 15;
-		firefox[0].background_data[1] = 16;
+		firefox[0].background_data[0] =
+			firefox[0].background_data[1] = 16;
 
 		firefox[1].x_old = firefox[1].x = 0xEB + 33;
 		firefox[1].actualY = firefox[1].y_old = firefox[1].y = 0x60 - 9;
-		firefox[1].background_data[0] = 15;
-		firefox[1].background_data[1] = 16;
+		firefox[1].background_data[0] =
+			firefox[1].background_data[1] = 16;
 		num_firefoxes = 2;
 
 		elevatorTimer = 0x34;

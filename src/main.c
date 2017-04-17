@@ -24,12 +24,14 @@
 #include "kong.h"
 #include "overlay.h"
 #include "conveyors.h"
-#include "scorescreen.h"
+#include "screens.h"
 #include "stages.h"
 #include "elevators.h"
 #include "images.h"
 #include "font.h"
 
+
+#define DEBUG_MODE 1
 
 game_t game;
 jumpman_t jumpman;
@@ -57,7 +59,8 @@ void handle_rivets(void);
 
 
 void main(void) {
-	uint8_t i = 0;
+	uint8_t i;
+	bool debug = false;
 
 	malloc(0);
 	srand(rtc_Time());
@@ -68,7 +71,7 @@ void main(void) {
 	gfx_SetTransparentColor(0x15);
 
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
-	gfx_SetFontData((&font_data) - 32 * 8);
+	gfx_SetFontData((&font_data) - 37 * 8);
 	gfx_SetMonospaceFont(8);
 
 	decompress_images();
@@ -80,23 +83,19 @@ void main(void) {
 	game.round = 1;
 	game.stage = STAGE_BARRELS;
 
-	timer_Control = TIMER1_DISABLE;
-	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
 	for (;;) {
 		bool quit = false;
 
+		timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
+
 		main_screen();
 
 		do {
 			// how high can you get?
 			pre_round_screen();
-			for (i = 0; i < 160; i++) {
-				while (!(timer_IntStatus & TIMER1_RELOADED));
-				timer_IntStatus = TIMER1_RELOADED;
-			}
 
 			initialize_stage(game.stage);
 
@@ -126,7 +125,9 @@ void main(void) {
 
 				handle_rivets();
 
-				jumpman_falling();
+				check_jumpman_falling();
+
+				handle_jumpman_falling();
 
 				move_elevators();
 
@@ -147,17 +148,43 @@ void main(void) {
 				while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
 				timer_IntStatus = TIMER1_RELOADED;	// Acknowledge the reload
 
+#if DEBUG_MODE
+				if (debug) {
+					while (!(kb_ScanGroup(kb_group_6) & kb_Add) && !(kb_Data[kb_group_6] & kb_Sub));
+					if (kb_Data[kb_group_6] & kb_Sub)
+						debug = false;
+					while ((kb_ScanGroup(kb_group_6) & kb_Add) || (kb_Data[kb_group_6] & kb_Sub));
+				}
+				else if (kb_Data[kb_group_6] & kb_Sub) {
+					debug = true;
+					while ((kb_ScanGroup(kb_group_6) & kb_Sub));
+				}
+#endif
+
 				frameCounter--;
 
 				if (kb_Data[kb_group_6] & kb_Clear)
 					quit = true;
 			} while (!(quit) && jumpman.isAlive && !check_end_stage());
 
-			jumpman.sprite = num_barrels = num_firefoxes = num_bonus_scores = 0;
+			num_barrels = num_firefoxes = num_bonus_scores = num_hammers = 0;
+			gfx_Blit(gfx_buffer);
 			update_screen();
 
-			if (!jumpman.isAlive)
+			if (!jumpman.isAlive) {
 				animate_jumpman_dead();
+				game.lives--;
+				if (game.lives == 0) {
+					gfx_SetDrawScreen();
+					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+					gfx_FillRectangle_NoClip(104, 144, 112, 40);
+					gfx_SetTextFGColor(COLOR_LADDER);
+					gfx_PrintStringXY("GAME%%OVER", 121, 160);
+					gfx_SetDrawBuffer();
+					waitTicks(0xC0);
+					quit = true;
+				}
+			}
 			else if (!quit) {
 				end_stage_cinematic();
 				next_stage();
@@ -189,6 +216,7 @@ bool check_end_stage(void) {
 		jumpman.dir = FACE_LEFT;
 	else
 		jumpman.dir = FACE_RIGHT;
+	jumpman.sprite = 0;
 
 	return true;
 }
@@ -296,6 +324,14 @@ void handle_rivets(void) {
 	}
 }
 
+void waitTicks(uint8_t ticks) {
+	timer_1_Counter = (ONE_TICK);
+	while (--ticks) {
+		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
+		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
+	}
+}
+
 /*timer_Control = TIMER1_DISABLE;
 timer_1_Counter = 0;
 timer_Control = TIMER1_ENABLE | TIMER1_CPU | TIMER1_NOINT | TIMER1_UP;
@@ -316,7 +352,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 ; arrive here from #0701 when playing
 
  *197A  CALL    #1DBD         ; check for bonus items and jumping scores, rivets																			update_bonus_scores()
-197D  CALL    #1E8C         ; do stuff for items hit with hammer
+197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		
  *1980  CALL    #1AC3         ; mario movement																												update_jumpman()
  *1983  CALL    #1F72         ; roll barrels																												move_barrels()
  *1986  CALL    #2C8F         ; deploy barrels ?																											deploy_barrel()
@@ -328,14 +364,14 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  *1998  CALL    #2ED4         ; do stuff for hammer																											hammer_stuff()		not done
  *199B  CALL    #2207         ; do stuff for conveyors(ladders)																								move_retractable_ladders()
  *199E  CALL    #1A33         ; check for and handle running over rivets																					handle_rivets()
- *19A1  CALL    #2A85         ; check for mario falling																										jumpman_falling()
- *19A4  CALL    #1F46         ; handle mario falling																										jumpman_falling()
+ *19A1  CALL    #2A85         ; check for mario falling																										check_jumpman_falling()
+ *19A4  CALL    #1F46         ; handle mario falling																										handle_jumpman_falling()
  *19A7  CALL    #26FA         ; do stuff for elevators																										move_elevators()
  *19AA  CALL    #25F2         ; handle conveyor dirs, adjust Mario's speed based on conveyor dirs															handle_conveyor_dirs()
  *19AD  CALL    #19DA         ; check for mario picking up bonus item																						bonus_item_picked_up()
  *19B0  CALL    #03FB         ; check for kong beating chest and animate girl and her screams																update_kong()
 19B3  CALL    #2808         ; check for collisions with hostile sprites [set to NOPS to make mario invincible to enemy sprites]
-19B6  CALL    #281D         ; do stuff for hammers
+19B6  CALL    #281D         ; do stuff for hammers																					hammer collision		
  *19B9  CALL    #1E57         ; check for end of level																										check_end_stage()
  *19BC  CALL    #1A07         ; handle when the bonus timer has run out																						handle_time_ran_out()
  *19BF  CALL    #2FCB         ; for non-girder levels, checks for bonus timer changes. if the bonus counts down, sets a possible new fire to be released,	handle_bonus_timer()
@@ -344,10 +380,10 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
+ * fix ground checking for all entities
  * Crazy barrels can escape out of the screen(leave artifacts)?
  * Fix offset of bonus_scores from jumpman facing left
  * Check for jumping over firefoxes, pies and flame
- * Check if firefox edge detection is exactly right
  * Fix jumpman edge of girder collision checking
  * add hammer hit animation and yellow sprite
  * start menu and end screen

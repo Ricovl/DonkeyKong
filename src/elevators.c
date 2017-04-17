@@ -105,13 +105,8 @@ void move_elevators(void) {
 			}
 
 		jumpman_falling:
-			memset(&jumpman.jumpDir, 0, 7);
-
 			jumpman.onElevator = false;
-			jumpman.isJumping =
-				jumpman.comingDown = true;
-
-			jumpman.originalY = jumpman.y;
+			jumpman.startFalling = true;
 		}
 	}
 }

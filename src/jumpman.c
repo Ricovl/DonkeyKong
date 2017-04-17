@@ -34,13 +34,44 @@ void init_jumpman(uint24_t x, uint8_t y) {
 	jumpman.y_old = jumpman.y = y;
 
 	jumpman.dir = FACE_RIGHT;
-	jumpman.moveIndicator = 2;
+	jumpman.moveIndicator = 1;
 
 	jumpman.isAlive = true;
-	jumpman.buffer_data[0] = 15;
+	jumpman.buffer_data[0] = 16;
 	jumpman.buffer_data[1] = 16;
 }
 
+
+bool girder_collision(void) {
+	uint24_t x = jumpman.x;
+
+	if (game.stage == STAGE_BARRELS) {
+		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION || jumpman.y <= jumpman.originalY - 13)
+			return false;
+	}
+	else {
+		x -= 3;
+		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION) {
+			x += 7;
+			if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION)
+				return false;
+		}
+
+		// check if jumping in edge of girder
+		if (gfx_GetPixel(x + (jumpman.x_old - jumpman.x), jumpman.y) == COLOR_BACKGROUND && (jumpman.y & 7) != 0) {
+			if (jumpman.dir == 0xFF)
+				jumpman.x = (jumpman.x | 7) - 4;
+			else
+				jumpman.x = ((jumpman.x - 8) | 7) + 4;
+			jumpman.startFalling = true;
+			return false;
+		}
+	}
+
+	while (gfx_GetPixel(x, jumpman.y) <= COLOR_COLLISION)
+		jumpman.y--; 
+	return true;
+}
 
 void handle_jumping(jumpman_t *jumpman);
 void handle_bouncing(jumpman_t *jumpman);
@@ -52,8 +83,6 @@ void move_jumpman(void) {
 
 	// Jumpman is jumping
 	if (jumpman.isJumping) {
-		unsigned int testX = jumpman.x;
-		uint8_t testY = jumpman.y;
 		handle_jumping(&jumpman);
 
 		// Check if jumpman hits the border of the screen or the area where kong is in elevators or barrels; if so bounce him the other way
@@ -83,49 +112,12 @@ void move_jumpman(void) {
 
 			handle_jumping(&jumpman);
 		}
-		
-		if (game.stage == STAGE_ELEVATORS && collision_elevator())
-			goto jumpman_collided;
 
-
-		// Player's new y position is colliding with the ground; so move him up till there is no collision
-		if (((gfx_GetPixel(jumpman.x + 3 + jumpman.dir, jumpman.y) <= COLOR_COLLISION || gfx_GetPixel(jumpman.x - 4 + jumpman.dir, jumpman.y) <= COLOR_COLLISION) && !(game.stage == STAGE_BARRELS && jumpman.y <= jumpman.originalY - 13))) {	// should get changed
-			uint8_t test = 0;
-
-			// Jumpman collision with side of girder detection test(doesn't work exactly like the original)
-			if (testX - jumpman.x != 0) {	// jumpman is in girder and is moving horizontal
-				dbg_sprintf(dbgout, "jumpman might be colliding with the side of a girder!\n");							// maybe don't stop jumpman if he is going up and y%7 is 0 or 1(dy > 1? && Y%7 < 1?)?
-				dbg_sprintf(dbgout, "dx: %d, dy: %d, y&7: %d\n", testX - jumpman.x, testY - jumpman.y, jumpman.y & 7);	// Print some numbers that might be usefull to determine if he is colliding with side
-				// not if jumpman.y & 7 == 0 and jumpman is going up?
-				if ((jumpman.y & 7) != 0) {	// || ((jumpman.y & 7) == 1 && testY - jumpman.y == -2)
-					if(!((jumpman.y & 7) == (testY - jumpman.y - 1)))	// I don't think this does anything
-						dbg_sprintf(dbgout, "collided with side?\n");	// works better I think
-				}
-			}
-
-			for (; gfx_GetPixel(jumpman.x + 3 + jumpman.dir, jumpman.y) <= COLOR_COLLISION || gfx_GetPixel(jumpman.x - 4 + jumpman.dir, jumpman.y) <= COLOR_COLLISION; jumpman.y--) { test++; }
-			//dbg_sprintf(dbgout, "%d\n", test);
-
-			// Other jumpman collision with side of girder detection test(doesn't work exactly like the original)
-			if (gfx_GetPixel(jumpman.x - ((jumpman.dir - 1) | 1), jumpman.y + test) > COLOR_COLLISION && test > 1) {
-				//dbg_sprintf(dbgout, "jumped in side\n");
-				jumpman.y += test;
-				jumpman.jumpDir =
-					jumpman.jumpDirIndicator = 0;
-				if (!jumpman.comingDown) {
-					jumpman.comingDown = true;
-					jumpman.movingUp =
-						jumpman.velocityY =
-						jumpman.jumpCounter = 0;
-				}
-				return;
-			}
-
-		jumpman_collided:
-
+		if (girder_collision() || (game.stage == STAGE_ELEVATORS && collision_elevator())) {
 			jumpman.isAlive = jumpman.fallingTooFar ^ 1;
 
-			jumpman.comingDown = 6;
+			jumpman.sprite = 14;
+			jumpman.comingDown = 4;
 			jumpman.isJumping = false;
 		}
 		else if (!jumpman.comingDown) {
@@ -136,7 +128,7 @@ void move_jumpman(void) {
 				check_jump_over();
 				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 4, 6, sizeof(hammer_t));
 			}
-			jumpman.sprite = 3;
+			jumpman.sprite = 13;
 		}
 		else {
 			if (jumpman.y - 14 >= jumpman.originalY) {
@@ -159,8 +151,6 @@ void move_jumpman(void) {
 				hammer[hammerActive - 1].background_data[0] = 17;
 			}
 		}
-		else
-			jumpman.sprite = 4;
 
 		return;
 	}
@@ -168,7 +158,7 @@ void move_jumpman(void) {
 	if (!hammerActive) {
 		// Jumpman is climbing a ladder
 		if (jumpman.onLadder) {
-			climb_ladder(key);
+			climb_ladder();
 			return;
 		}
 
@@ -179,12 +169,10 @@ void move_jumpman(void) {
 
 			jumpman.jumpDir = 0;
 			jumpman.jumpDirIndicator = 0x80;
-			if (key & kb_Left) {
+			if (key & kb_Left)
 				jumpman.jumpDir = 0xFF;
-			}
-			else if (!(key & kb_Right)) {
+			else if (!(key & kb_Right))
 				jumpman.jumpDirIndicator = 0;
-			}
 
 			jumpman.movingUp = true;
 			jumpman.velocityY = 0x48;
@@ -221,13 +209,13 @@ void move_jumpman(void) {
 			}
 
 			// If stage is barrels, then check if the girder if going up or down
-			if (game.stage == STAGE_BARRELS) {
-				if ((jumpman.x & 15) == (jumpman.dir ^ 1) * 15) {
-					if (gfx_GetPixel(jumpman.x, jumpman.y) <= COLOR_COLLISION)
-						jumpman.y--;
-					else if (gfx_GetPixel(jumpman.x, jumpman.y + 1) > COLOR_COLLISION)
-						jumpman.y++;
-				}
+			if (game.stage == STAGE_BARRELS && jumpman.x < 257 && jumpman.x > 62) {
+				uint8_t pixel = gfx_GetPixel(jumpman.x, jumpman.y + 1);
+
+				if (pixel == COLOR_COLLISION)
+					jumpman.y--;
+				else if (pixel > COLOR_COLLISION)
+					jumpman.y++;
 			}
 
 			jumpman.moveIndicator--;
@@ -243,13 +231,15 @@ void move_jumpman(void) {
 	}
 
 	if (!hammerActive && ladder_in_range()) {
-		climb_ladder(key);
+		climb_ladder();
 	}
 }
 
 
 /* Handles jumpman climbing a ladder */
-void climb_ladder(kb_key_t key) {
+void climb_ladder(void) {
+	uint8_t key = kb_Data[kb_group_7];
+
 	if ((key & kb_Up || key & kb_Down) && !(key & kb_Up && key & kb_Down)) {
 		if (!jumpman.moveIndicator) {
 
@@ -268,19 +258,19 @@ void climb_ladder(kb_key_t key) {
 
 				// Check if player is at the top or bottem of ladder.
 				if (jumpman.y == jumpman.ladderBottom || jumpman.y == jumpman.ladderTop) {
-					jumpman.sprite = 8;
+					jumpman.sprite = 6;
 					jumpman.onLadder = false;
 					return;
 				}
 
 				if (climbingHeight == 12) {
-					jumpman.sprite = 6;
+					jumpman.sprite = 4;
 				}
 				else if (climbingHeight == 8) {
-					jumpman.sprite = 7;
+					jumpman.sprite = 5;
 				}
 				else {
-					jumpman.sprite = 5;
+					jumpman.sprite = 3;
 				}
 
 			}
@@ -311,7 +301,7 @@ bool ladder_in_range(void) {
 				if ((kb_Data[kb_group_7] & kb_Up   && jumpman.y + 1 == *(array + 4)) || 
 					(kb_Data[kb_group_7] & kb_Down && jumpman.y + 1 == *(array + 2) && !(*array))) {
 					// There is a ladder nearby; initialize all variables for ladder movement
-					jumpman.sprite = 8;
+					jumpman.sprite = 6;
 					jumpman.x = *(array + 1) + 51;
 					jumpman.brokenLadder = *array;
 					jumpman.ladderTop = *(array + 2) - 1;
@@ -354,7 +344,7 @@ void check_jump_over(void) {
 const uint8_t jumpman_walking_sprite_table[] = { 0, 2, 0, 1 };
 
 
-/* checks for collision */
+/* checks for collision(temporary) */
 uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t height, uint8_t offsetx, uint8_t offsety, uint8_t size) {
 	int8_t distance;
 	uint8_t i;
@@ -376,21 +366,32 @@ uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t h
 }
 
 
-void jumpman_falling(void) {
+void check_jumpman_falling(void) {
 	if (!jumpman.onLadder && !jumpman.isJumping && !jumpman.onElevator) {
-		if (((jumpman.x & 7) == (4 - jumpman.dir)) && gfx_GetPixel(jumpman.x, jumpman.y + 2) == COLOR_BACKGROUND) {
-		//if (gfx_GetPixel(jumpman.x - (((jumpman.dir - 1) ^ 2) | 1), jumpman.y + 2) == COLOR_BACKGROUND) {
-			// jumpman is falling
-			memset(&jumpman.jumpDir, 0, 7);
+		uint24_t x = jumpman.x + 4;
 
-			jumpman.isJumping =
-				jumpman.comingDown = true;
-
-			jumpman.originalY = jumpman.y;
+		if (gfx_GetPixel(x, jumpman.y + 4) == COLOR_BACKGROUND) {
+			if(gfx_GetPixel(x - 7, jumpman.y + 4) == COLOR_BACKGROUND)
+				jumpman.startFalling = true;
 		}
-
+		/*if (((jumpman.x & 7) == (4 - jumpman.dir)) && gfx_GetPixel(jumpman.x, jumpman.y + 4) == COLOR_BACKGROUND) { 144
+			// jumpman is falling
+			jumpman.startFalling = true;
+		}*/
 	}
+}
 
+/* Initialize variables to make jumpman fall */
+void handle_jumpman_falling(void) {
+	if (jumpman.startFalling) {
+		jumpman.startFalling = false;
+		memset(&jumpman.jumpDir, 0, 7);
+
+		jumpman.isJumping = true;
+		jumpman.comingDown = true;
+
+		jumpman.originalY = jumpman.y;
+	}
 }
 
 
@@ -424,30 +425,26 @@ void bonus_item_picked_up(void) {
 
 /* Animate jumpman dead */
 void animate_jumpman_dead(void) {
-	uint8_t i, delay;
+	uint8_t i, dir;
+	waitTicks(0x40);
 
-	gfx_SetDrawScreen();
-	jumpman.dir ^= 1;
+	jumpman.sprite = 15;
+	dir = jumpman.dir;
+	jumpman.dir = 1;
 
 	for (i = 13 + 2; i > 0; i--) {
-		gfx_BlitRectangle(gfx_buffer, jumpman.x - 7, jumpman.y - 15, 16, 16);
-		gfx_TransparentSprite_NoClip(jumpman_dead[jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
+		update_screen();
+		waitTicks(8);
 
-		for (delay = 0; delay < 12; delay++) {
-			while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
-			timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
+		jumpman.sprite ^= 31;
+		if ((i & 1) != dir)
+			jumpman.dir ^= 1;
+		if (i <= 3) {			// laying on ground
+			jumpman.sprite = 17;
+			jumpman.dir = dir;
 		}
-
-		jumpman.sprite = (jumpman.sprite + ((jumpman.dir - 1) | 1)) & 3;
-
-		if (i <= 3)			// laying on ground
-			jumpman.sprite = jumpman.dir + 4;
 	}
-
-	if (game.lives)
-		game.lives--;
-
-	gfx_SetDrawBuffer();
+	waitTicks(0x68);
 }
 
 
@@ -466,7 +463,7 @@ void hammer_stuff(void) {
 			this_hammer->dir = jumpman.dir;
 
 			if (jumpman.sprite < 4)
-				jumpman.sprite += 9;
+				jumpman.sprite = 7 + jumpman.sprite * 2;
 
 			if (hammerTimer == 0) {
 				gfx_SetPalette(firefox_hammer_palette, 6, 6);
@@ -504,23 +501,29 @@ void hammer_stuff(void) {
 					}
 				}
 
-				if (jumpman.sprite >= 12)
-					jumpman.sprite -= 3;
-				else
-					jumpman.sprite += 3;
+				if (hammerLength == 1 && ((frameCounter >> 3) & 1) == 1) {
+					this_hammer->sprite ^= 2;
+				}
 
+				//jumpman.sprite = ((jumpman.sprite - 7) ^ 1) + 7;
+				/*jumpman.sprite -= 7;
+				if ((this_hammer->sprite & 1) == 0)
+					jumpman.sprite |= 1;
+				else
+					jumpman.sprite &= -2;
+				jumpman.sprite += 7;*/
 			}
 						
 		}
 
 		// Move the hammer sprite to an offset from jumpman
-		if ((this_hammer->sprite & 1) == 0) {
+		if ((this_hammer->sprite & 1) == 0) {	// Above jumpman
 			this_hammer->x = jumpman.x - 3;
 			this_hammer->y = jumpman.y - 25;
 		}
-		else {
+		else {									// Next to jumpman
 			if (jumpman.dir == FACE_LEFT)
-				this_hammer->x = jumpman.x - 24;
+				this_hammer->x = jumpman.x - 23;
 			else
 				this_hammer->x = jumpman.x + 8;
 			this_hammer->y = jumpman.y - 9;

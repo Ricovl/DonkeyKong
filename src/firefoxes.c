@@ -50,7 +50,7 @@ void update_firefoxes(void) {
 
 		this_firefox->isSpawning = true;
 
-		this_firefox->background_data[0] = 15;
+		this_firefox->background_data[0] = 16;
 		this_firefox->background_data[1] = 16;
 		num_firefoxes++;
 
@@ -128,31 +128,32 @@ void move_firefoxes(void) {
 
 				animate_firefox(this_firefox);
 
-				if (gfx_GetPixel(this_firefox->x - ((this_firefox->dir & 1) ^ 1), this_firefox->y + 2) > COLOR_COLLISION) {
+				if (gfx_GetPixel(this_firefox->x, this_firefox->y + 2) > COLOR_COLLISION) {
 					if (this_firefox->dir & FACE_RIGHT) {
 						this_firefox->dir = 2;
-						this_firefox->x--;
+						this_firefox->x -= 2;
 					}
 					else {
 						this_firefox->dir = FACE_RIGHT;
-						this_firefox->x++;
+						this_firefox->x += 2;
 					}
 				}
 
+				// Move firefox up/down if on slanted girder
 				if (game.stage == STAGE_BARRELS) {
-					// increases/decreases y-pos if the middle of the firefox is in the ground or above nothing
-					if (gfx_GetPixel(this_firefox->x - ((this_firefox->dir & 1) ^ 1), this_firefox->y) <= COLOR_COLLISION)
+					uint8_t color = gfx_GetPixel(this_firefox->x, this_firefox->y + 1);
+
+					if (color == COLOR_COLLISION)
 						this_firefox->y--;
-					else if (gfx_GetPixel(this_firefox->x - ((this_firefox->dir & 1) ^ 1), this_firefox->y + 1) > COLOR_COLLISION) {
+					else if (color > COLOR_COLLISION)
 						this_firefox->y++;
-					}
 				}
 
 				// Check if fireball has reached left edge of screen
 				if (this_firefox->x < 55)
 					this_firefox->dir = FACE_RIGHT;
 				// Check if fireball has reached right edge of screen
-				if (this_firefox->x > 264)
+				if (this_firefox->x > 271)
 					this_firefox->dir = 2;
 			}
 
@@ -163,7 +164,8 @@ void move_firefoxes(void) {
 
 			// Add bobbing effect to firefox movement
 			this_firefox->actualY =
-				this_firefox->y + firefox_bobbingTable[this_firefox->jumpCounter];
+				this_firefox->y;
+				//+ firefox_bobbingTable[this_firefox->jumpCounter];
 			this_firefox->jumpCounter--;
 		}
 		else handle_firefox_spawning(this_firefox);
@@ -236,7 +238,7 @@ void mount_dismount_ladder(firefox_t *this_firefox) {
 			uint8_t *array = stage_data[game.stage - 1];
 
 			while (*array < 2) {
-				if (this_firefox->x == *(array + 1) + 52 - (this_firefox->dir & 1)) {
+				if (this_firefox->x == *(array + 1) + 51) {
 					if (this_firefox->y + 1 == *(array + 4)) {
 						this_firefox->dismountY = *(array + 2) - 1;
 						this_firefox->onLadder = true;
@@ -331,7 +333,6 @@ void handle_firefox_spawning(firefox_t *this_firefox) {
 		this_firefox->isSpawning = false;
 		this_firefox->dir = FACE_LEFT;
 		this_firefox->sprite = 2;
-		this_firefox->background_data[0] = 16;
 	}
 	this_firefox->actualY = this_firefox->y;
 }

@@ -4,9 +4,12 @@
 #include <stdint.h>
 #include "stdlib.h"
 
-#define ONE_TICK		32768/60
+#define ONE_SECOND		  32768/1
+#define ONE_TICK		  32768/60
 
 #define ExtraLifeThreshold 7000 // 7000(standard), 10000, 15000 or 20000
+
+void waitTicks(uint8_t ticks);
 
 enum COLOR {
 	COLOR_BACKGROUND	= 0x1A,	//  0,  0,  0
@@ -89,10 +92,12 @@ typedef struct {
 	bool brokenLadder;					// 19	1 when the ladder jumpman is on is a broken or moving ladder
 	uint8_t ladderTop, ladderBottom;	// 1A	ladderTop contains the y-position of the ground above ladder, and ladderBottom the y-position of the ground underneath the ladder
 	
-	bool onElevator;					// 1B	
+	bool onElevator;					// 1B
+	bool startFalling;
 
-	bool isAlive;						// 1D	1 when alive 0 if death
-	uint8_t buffer_data[15 * 16 + 2];	// 2E	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
+	bool isAlive;						// 1C	1 when alive 0 if death
+	bool extraLifeAwarded;				// 1D
+	uint8_t buffer_data[16 * 16 + 2];	// 2E	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
 } jumpman_t;
 
 extern jumpman_t jumpman;

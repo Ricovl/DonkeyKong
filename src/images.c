@@ -18,32 +18,30 @@
 
 
 // Jumpman
-gfx_image_t *jumpman_sprite[2][15] =  { { jumpman_walk_left0 , jumpman_walk_left1 , jumpman_walk_left2 , jumpman_jump_left , jumpman_slide_left , jumpman_climb_left0 , jumpman_climb_left1 , jumpman_climb_left2 , jumpman_standing, jumpman_hammer_left0 , jumpman_hammer_left1 , jumpman_hammer_left2 , jumpman_hammer_left3 , jumpman_hammer_left4 , jumpman_hammer_left5 },
-										{ jumpman_walk_right0, jumpman_walk_right1, jumpman_walk_right2, jumpman_jump_right, jumpman_slide_right, jumpman_climb_right0, jumpman_climb_right1, jumpman_climb_right2, jumpman_standing, jumpman_hammer_right0, jumpman_hammer_right1, jumpman_hammer_right2, jumpman_hammer_right3, jumpman_hammer_right4, jumpman_hammer_right5 }, };
-
-gfx_image_t *jumpman_dead[6] =			{ jumpman_dead0, jumpman_dead1, jumpman_dead2, jumpman_dead3, jumpman_dead5, jumpman_dead4 };
+gfx_image_t *jumpman_sprite[2][18] =  { { jumpman_left_walking0  , jumpman_left_walking1  , jumpman_left_walking2  , jumpman_left_climbing0  , jumpman_left_climbing1  , jumpman_left_climbing2  , jumpman_standing , jumpman_left_hammer00  , jumpman_left_hammer01 , jumpman_left_hammer10  , jumpman_left_hammer11  , jumpman_left_hammer20  , jumpman_left_hammer21  , jumpman_left_jumping  , jumpman_left_landing , jumpman_left_dying0 , jumpman_left_dying1 , jumpman_left_dying2  },
+										{ jumpman_right_walking0 , jumpman_right_walking1 , jumpman_right_walking2 , jumpman_right_climbing0 , jumpman_right_climbing1 , jumpman_right_climbing2 , jumpman_standing , jumpman_right_hammer00 , jumpman_right_hammer01, jumpman_right_hammer10 , jumpman_right_hammer11 , jumpman_right_hammer20 , jumpman_right_hammer21 , jumpman_right_jumping , jumpman_right_landing, jumpman_right_dying0, jumpman_right_dying1, jumpman_right_dying2 }, };
 
 // Barrels
-gfx_image_t *rolling_barrel[2][6] =   { { barrel_rolling_N0, barrel_rolling_N1, barrel_rolling_N2, barrel_rolling_N3, barrel_ladder_N0, barrel_ladder_N1 },
-										{ barrel_rolling_B0, barrel_rolling_B1, barrel_rolling_B2, barrel_rolling_B3, barrel_ladder_B0, barrel_ladder_B1 }, };
+gfx_image_t *rolling_barrel[2][6] =   { { barrel_rolling_N0, barrel_rolling_N1, barrel_rolling_N2, barrel_rolling_N3, barrel_falling_N0, barrel_falling_N1 },
+										{ barrel_rolling_B0, barrel_rolling_B1, barrel_rolling_B2, barrel_rolling_B3, barrel_falling_B0, barrel_falling_B1 }, };
 
 // Firefoxes
-gfx_image_t *firefox_sprite[2][4] =   { { firefox_left0 , firefox_left1 , fireball_left0 , fireball_left1  },
-										{ firefox_right0, firefox_right1, fireball_right0, fireball_right1 }, };
+gfx_image_t *firefox_sprite[2][4] =   { { fireball_left0 , fireball_left1 , firefox_left0 , firefox_left1  },
+										{ fireball_right0, fireball_right1, firefox_right0, firefox_right1 }, };
 
 // Kong
 gfx_image_t *kong_goofy;
 gfx_image_t *kong_sprite[13];		 // { kong_standing, kong_left, kong_holding, kong_right, kong_arm_left, kong_arm_right, kong_climbing_left0, kong_climbing_right0, kong_climbing_left1, kong_climbing_right1, kong_onhead, kong_knockedOut, kong_teeth };
 
-gfx_image_t *kong_crazy_eye[2] =		{ kong_eye2, kong_eye1 };
+gfx_image_t *kong_crazy_eye[2] =		{ kong_eye1, kong_eye0 };
 gfx_image_t *kong_knockedout_sprite[2] ={ knockedout_sprite1, knockedout_sprite0 };
 
 // Bonus sprites
 gfx_image_t *bonus_score_sprite[5] =	{ num100, num200, num300, num500, num800 };
 
 // Hammer sprites
-gfx_image_t *hammer_sprite[2][2] =    { { hammer_left0, hammer_left1 },
-										{ hammer_right0, hammer_right1 } };
+gfx_image_t *hammer_sprite[2][4] =    { { hammer_left_N0 , hammer_left_N1 , hammer_left_Y0 , hammer_left_Y1  },
+										{ hammer_right_N0, hammer_right_N1, hammer_right_Y0, hammer_right_Y1 } };
 
 // Flame on top of oilcan
 gfx_image_t *fire[4] =					{ fire0, fire1, fire2, fire3 };
