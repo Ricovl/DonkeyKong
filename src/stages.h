@@ -16,6 +16,15 @@ typedef struct {
 	uint8_t y1;
 } tile_t;
 
+/* Lookup tables */
+extern uint8_t  hammer_locations_y[];
+extern uint24_t hammer_locations_x[];
+extern uint8_t  item_locations_y[];
+extern uint24_t item_locations_x[];
+extern uint8_t	stage_order[];
+extern uint16_t conveyors_palette[3];
+extern uint16_t rivets_palette[3];
+
 /* Data of all the stages */
 extern const uint8_t *stage_data[4];
 

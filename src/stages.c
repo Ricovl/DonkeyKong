@@ -27,81 +27,6 @@
 #include "elevators.h"
 
 
-/* Draws the stage itself to the screen */
-void draw_stage(uint8_t *array_b) {
-	while(*(uint8_t*)array_b != 0xAA) {
-		uint24_t x, x1;
-		tile_t tile;
-		
-		memcpy(&tile, array_b, sizeof(tile_t));
-		x1 = tile.x1 + 48;
-		x = tile.x + 48;
-
-		if (tile.type <= 1) {			// ladder and broken ladder
-			uint8_t i = 0;
-
-			if (game.stage == STAGE_CONVEYORS && tile.type == 1)
-				tile.y -= 8;
-			for (tile.y += 8 - (tile.y & 7); tile.y < tile.y1; tile.y += 8) {
-				gfx_Sprite_NoClip(ladder, x, tile.y);
-				if (tile.type && i == 0) { 
-					tile.y += 8;
-					if (((tile.y1 - tile.y) & 7) == 0) // == 32? don't know if this will works for conveyors
-						tile.y += 8;
-				}
-				i++;
-			}
-			/*if (game.stage == STAGE_CONVEYORS)	smaller, but not sure if it is exactly the same
-				tile.y1 -= 8;
-			for (tile.y1 -= tile.y1 & 7; tile.y1 > tile.y; tile.y1 -= 8) {
-				gfx_Sprite_NoClip(ladder, x, tile.y1);
-				if (tile.type && i == 1) {
-					tile.y1 -= 8;
-					if ((tile.y & 15) != 4)
-						tile.y1 -= 8;
-				}
-				i++;
-			}*/
-		}
-		else if (tile.type == 2) {		// girder
-			for (; x <= x1; x += 8) {
-				gfx_Sprite_NoClip(girder, x, tile.y);
-				if (tile.y != tile.y1 && (x & 15) == 8) {
-					if (tile.y < tile.y1) { tile.y++; }
-					else { tile.y--; }
-				}
-			}
-		}
-		else if (tile.type == 3) {		// conveyor
-			for (; x <= x1; x += 8) {
-				gfx_Sprite_NoClip(conveyor_tile, x, tile.y);
-			}
-		}
-		else if (tile.type == 4) {		// erase girder
-			gfx_FillRectangle_NoClip(x, tile.y, (x1 - x) + 16, 8);
-		}
-		else if (tile.type == 5) {		// circle girder used in rivets
-			for (; x <= x1; x += 8) {
-				gfx_Sprite_NoClip(girder_circle, x, tile.y);
-			}
-		}
-		else if (tile.type == 6) {		// X tile
-			for (; x <= x1; x += 8) {
-				gfx_Sprite_NoClip(x_tile, x, tile.y);
-			}
-		}
-
-		array_b += 5;
-	}
-}
-
-const uint8_t  hammer_locations_y[] = { 82, 174, 123, 162, 82 , 122 };
-const uint24_t hammer_locations_x[] = { 64, 216, 64 , 152, 152, 55  };
-const uint8_t  item_locations_y[] = { 136, 222, 143, 104, 78, 183, 56, 222, 183 };
-const uint24_t item_locations_x[] = { 224, 167, 109, 52, 255, 117, 76, 175, 245 };
-uint16_t conveyors_palette[3] = { gfx_RGBTo1555(254, 104, 0),  gfx_RGBTo1555(254, 184, 84), gfx_RGBTo1555(255, 254, 255) };
-uint16_t rivets_palette[3] = { gfx_RGBTo1555(0, 0, 255),  gfx_RGBTo1555(0, 255, 255), gfx_RGBTo1555(255, 184, 0) };
-
 /* Draw the stage with overlay and initialize the begin variables */
 void initialize_stage(uint8_t stage) {
 	uint8_t i;
@@ -245,13 +170,13 @@ void initialize_stage(uint8_t stage) {
 		memset(firefox, 0, sizeof(firefox_t) * 2);
 		firefox[0].x_old = firefox[0].x = 0x58 + 33;
 		firefox[0].actualY = firefox[0].y_old = firefox[0].y = 0x80 - 9;
-		firefox[0].background_data[0] =
-			firefox[0].background_data[1] = 16;
+		firefox[0].background_data[0] = 16;
+		firefox[0].background_data[1] = 16;
 
 		firefox[1].x_old = firefox[1].x = 0xEB + 33;
 		firefox[1].actualY = firefox[1].y_old = firefox[1].y = 0x60 - 9;
-		firefox[1].background_data[0] =
-			firefox[1].background_data[1] = 16;
+		firefox[1].background_data[0] = 16;
+		firefox[1].background_data[1] = 16;
 		num_firefoxes = 2;
 
 		elevatorTimer = 0x34;
@@ -311,6 +236,7 @@ void initialize_stage(uint8_t stage) {
 	game.bonusDelay = game.initialBonusDelay = (220 - game.initialBonusValue * 2);
 	game.difficultyTimer0 = game.difficultyTimer1 = 0;
 
+	game.timeRanOut = false;
 	frameCounter = rand() & 255;
 
 	draw_overlay_full();
@@ -325,10 +251,64 @@ void initialize_stage(uint8_t stage) {
 	draw_pauline(false);
 }
 
+/* Draws the stage itself to the screen */
+void draw_stage(uint8_t *array_b) {
+	while (*(uint8_t*)array_b != 0xAA) {
+		uint24_t x, x1;
+		tile_t tile;
 
+		memcpy(&tile, array_b, sizeof(tile_t));
+		x1 = tile.x1 + 48;
+		x = tile.x + 48;
 
-const uint8_t stage_order[] = { STAGE_CONVEYORS, STAGE_BARRELS, STAGE_ELEVATORS, STAGE_BARRELS };
+		if (tile.type <= 1) {			// ladder and broken ladder
+			uint8_t i = 0;
 
+			if (game.stage == STAGE_CONVEYORS && tile.type == 1)
+				tile.y -= 8;
+			for (tile.y += 8 - (tile.y & 7); tile.y < tile.y1; tile.y += 8) {
+				gfx_Sprite_NoClip(ladder, x, tile.y);
+				if (tile.type && i == 0) {
+					tile.y += 8;
+					if (((tile.y1 - tile.y) & 7) == 0) // == 32? don't know if this will works for conveyors
+						tile.y += 8;
+				}
+				i++;
+			}
+		}
+		else if (tile.type == 2) {		// girder
+			for (; x <= x1; x += 8) {
+				gfx_Sprite_NoClip(girder, x, tile.y);
+				if (tile.y != tile.y1 && (x & 15) == 8) {
+					if (tile.y < tile.y1) { tile.y++; }
+					else { tile.y--; }
+				}
+			}
+		}
+		else if (tile.type == 3) {		// conveyor
+			for (; x <= x1; x += 8) {
+				gfx_Sprite_NoClip(conveyor_tile, x, tile.y);
+			}
+		}
+		else if (tile.type == 4) {		// erase girder
+			gfx_FillRectangle_NoClip(x, tile.y, (x1 - x) + 16, 8);
+		}
+		else if (tile.type == 5) {		// circle girder used in rivets
+			for (; x <= x1; x += 8) {
+				gfx_Sprite_NoClip(girder_circle, x, tile.y);
+			}
+		}
+		else if (tile.type == 6) {		// X tile
+			for (; x <= x1; x += 8) {
+				gfx_Sprite_NoClip(x_tile, x, tile.y);
+			}
+		}
+
+		array_b += 5;
+	}
+}
+
+/* Define what the next stage should be */
 void next_stage(void) {
 	if (game.stage == STAGE_RIVETS)
 		game.round = 0;
@@ -351,10 +331,19 @@ void next_stage(void) {
 }
 
 
-/* Data of all the stages */
-const uint8_t *stage_data[4] = { (uint8_t*)stage_barrels_data, (uint8_t*)stage_conveyors_data, (uint8_t*)stage_elevators_data, (uint8_t*)stage_rivets_data };
+/* Some lookup tables used above */
+uint8_t  hammer_locations_y[] = { 82, 174, 123, 162, 82 , 122 };
+uint24_t hammer_locations_x[] = { 64, 216, 64 , 152, 152, 55 };
+uint8_t  item_locations_y[]	=	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
+uint24_t item_locations_x[] =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
+uint8_t	 stage_order[] =		{ STAGE_CONVEYORS, STAGE_BARRELS, STAGE_ELEVATORS, STAGE_BARRELS };
+uint16_t conveyors_palette[3] = { gfx_RGBTo1555(254, 104, 0),  gfx_RGBTo1555(254, 184, 84), gfx_RGBTo1555(255, 254, 255) };
+uint16_t rivets_palette[3] =	{ gfx_RGBTo1555(0, 0, 255),  gfx_RGBTo1555(0, 255, 255), gfx_RGBTo1555(255, 184, 0) };
 
-const uint8_t stage_barrels_data[] = {
+/* Data of all the stages */
+uint8_t *stage_data[4] = { (uint8_t*)stage_barrels_data, (uint8_t*)stage_conveyors_data, (uint8_t*)stage_elevators_data, (uint8_t*)stage_rivets_data };
+
+uint8_t stage_barrels_data[] = {
 	0x00, 0xB8, 0x47, 0xB8, 0x5F,  // short ladder at top right
 	0x00, 0xB8, 0x89, 0xB8, 0xA1,  // short ladder at center right
 	0x00, 0xB8, 0xCB, 0xB8, 0xE3,  // short ladder at bottom right
@@ -383,7 +372,7 @@ const uint8_t stage_barrels_data[] = {
 	0xAA,
 };
 
-const uint8_t stage_conveyors_data[] = {
+uint8_t stage_conveyors_data[] = {
 	0x00, 0x50, 0x08, 0x50, 0x48,	// kong's ladder (right)
 	0x00, 0x50, 0x70, 0x50, 0x98,	// center ladder to left of oil can fire
 	0x00, 0x50, 0xC0, 0x50, 0xE8,	// bottom level ladder #2 of 4
@@ -418,7 +407,7 @@ const uint8_t stage_conveyors_data[] = {
 	0xAA,
 };
 
-const uint8_t stage_elevators_data[] = {
+uint8_t stage_elevators_data[] = {
 	0x00, 0x50, 0x08, 0x50, 0x48,	// kong's ladder (right)
 	0x00, 0x50, 0x78, 0x50, 0xC0,	// center ladder right
 	0x00, 0x40, 0x08, 0x40, 0x48,	// long's ladder (left)
@@ -456,7 +445,7 @@ const uint8_t stage_elevators_data[] = {
 	0xAA,
 };
 
-const uint8_t stage_rivets_data[] = {
+uint8_t stage_rivets_data[] = {
 	0x00, 0x68, 0x70, 0x68, 0x98,	// center ladder level 3
 	0x00, 0x68, 0xC0, 0x68, 0xE8,	// bottom center ladder
 	0x00, 0x20, 0x48, 0x20, 0x70,	// top left ladder
@@ -482,8 +471,8 @@ const uint8_t stage_rivets_data[] = {
 };
 
 
-//table data used for game intro
-const uint8_t stage_barrels_intro_data[] = {
+/* Data used for game intro */
+uint8_t stage_barrels_intro_data[] = {
 	0x00, 0x40, 0x08, 0x40, 0x44,   // kong's ladder (left)
 	0x00, 0x50, 0x08, 0x50, 0x44,   // kong's ladder (right)
 	0x00, 0x80, 0x28, 0x80, 0x44,   // ladder to reach girl
@@ -502,13 +491,13 @@ const uint8_t stage_barrels_intro_data[] = {
 	0xAA,
 };
 
-const uint8_t stage_barrels_slanted_top[] = {
+uint8_t stage_barrels_slanted_top[] = {
 	0x04, 0x90, 0x44, 0xCF, 0x44,   // clear right of kongs level girder
 	0x02, 0x90, 0x45, 0xCF, 0x48,	// 1st slanted girder at top right
 	0xAA
 };
 
-const uint8_t stage_barrels_slanted[] = {
+uint8_t stage_barrels_slanted[] = {
 	0x04, 0x10, 0x5D, 0xDF, 0x5D,  // 2nd girder down
 	0x02, 0x10, 0x69, 0xDF, 0x5D,  // 2nd slanted girder
 	0xAA,

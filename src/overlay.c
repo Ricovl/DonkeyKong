@@ -39,7 +39,8 @@ void draw_player_score(void) {
 #endif
 	if (game.score > game.Hscore)
 		game.Hscore = game.score;
-	if (!jumpman.extraLifeAwarded && game.score >= ExtraLifeThreshold) {
+	if (!game.extraLifeAwarded && game.score >= ExtraLifeThreshold) {
+		game.extraLifeAwarded = true;
 		game.lives++;
 		draw_player_lives();
 	}
@@ -78,8 +79,6 @@ void draw_bonus_box(void) {
 
 /* Draw the full overlay, so text and scores */
 void draw_overlay_full(void) {
-	uint8_t i;
-
 	// Draw the strings
 	gfx_SetTextFGColor(COLOR_RED);	// Set the text color to red
 	gfx_PrintStringXY("1UP", 27, 0);			// 1UP
@@ -92,7 +91,6 @@ void draw_overlay_full(void) {
 	gfx_SetTextXY(288, 0);						// L= NUMBER
 	gfx_PrintUInt(game.level, 2);
 
-	
 	// Draw the scores, bonus time and lives
 	draw_player_score();
 	draw_player_lives();

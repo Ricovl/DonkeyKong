@@ -49,9 +49,6 @@ void update_screen(void) {
 	for (i = 0; i < num_firefoxes; i++)		// Firefoxes
 		gfx_GetSprite((gfx_image_t*)firefox[i].background_data, firefox[i].x_old - 7, firefox[i].y_old - 15);
 
-	if (oilcan.onFire)						// Oilcan
-		gfx_FillRectangle_NoClip(oilcan.x, oilcan.y - 16, 17, 16);
-
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
 		gfx_GetSprite((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
 
@@ -159,12 +156,15 @@ void update_screen(void) {
 		this_firefox->x_old = this_firefox->x; this_firefox->y_old = this_firefox->actualY;
 	}
 
-	for (i = 0; i < num_elevators; i++) {	// Elevators
+	for (i = 0; i < num_elevators; i++) {	// Elevator platforms
 		gfx_FillRectangle_NoClip(elevator[i].x, elevator[i].y - 1, 16, 10);
 		gfx_SetColor(COLOR_RED_DARK);
 		gfx_FillRectangle_NoClip(elevator[i].x + 7, elevator[i].y - 1, 2, 10);
 		gfx_SetColor(COLOR_BACKGROUND);
 	}
+
+	if (oilcan.onFire)
+		gfx_FillRectangle_NoClip(oilcan.x, oilcan.y - 16, 16, 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
 		gfx_Sprite_NoClip((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);

@@ -61,7 +61,9 @@ typedef struct {
 	uint8_t timeRanOut, timeRanOutTimer;
 
 	unsigned score, Hscore;
+
 	uint8_t lives;
+	bool extraLifeAwarded;
 } game_t;
 extern game_t game;
 
@@ -93,11 +95,11 @@ typedef struct {
 	uint8_t ladderTop, ladderBottom;	// 1A	ladderTop contains the y-position of the ground above ladder, and ladderBottom the y-position of the ground underneath the ladder
 	
 	bool onElevator;					// 1B
-	bool startFalling;
+	bool startFalling;					// 1C
+	bool traversedRivet;				// 1D
 
-	bool isAlive;						// 1C	1 when alive 0 if death
-	bool extraLifeAwarded;				// 1D
-	uint8_t buffer_data[16 * 16 + 2];	// 2E	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
+	bool isAlive;						// 1E	1 when alive 0 if death
+	uint8_t buffer_data[16 * 16 + 2];	// 1F	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
 } jumpman_t;
 
 extern jumpman_t jumpman;

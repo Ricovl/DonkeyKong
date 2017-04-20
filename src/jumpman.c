@@ -42,37 +42,6 @@ void init_jumpman(uint24_t x, uint8_t y) {
 }
 
 
-bool girder_collision(void) {
-	uint24_t x = jumpman.x;
-
-	if (game.stage == STAGE_BARRELS) {
-		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION || jumpman.y <= jumpman.originalY - 13)
-			return false;
-	}
-	else {
-		x -= 3;
-		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION) {
-			x += 7;
-			if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION)
-				return false;
-		}
-
-		// check if jumping in edge of girder
-		if (gfx_GetPixel(x + (jumpman.x_old - jumpman.x), jumpman.y) == COLOR_BACKGROUND && (jumpman.y & 7) != 0) {
-			if (jumpman.dir == 0xFF)
-				jumpman.x = (jumpman.x | 7) - 4;
-			else
-				jumpman.x = ((jumpman.x - 8) | 7) + 4;
-			jumpman.startFalling = true;
-			return false;
-		}
-	}
-
-	while (gfx_GetPixel(x, jumpman.y) <= COLOR_COLLISION)
-		jumpman.y--; 
-	return true;
-}
-
 void handle_jumping(jumpman_t *jumpman);
 void handle_bouncing(jumpman_t *jumpman);
 
@@ -235,6 +204,37 @@ void move_jumpman(void) {
 	}
 }
 
+/* Handle if jumpmans next position is in a girder */
+bool girder_collision(void) {
+	uint24_t x = jumpman.x;
+
+	if (game.stage == STAGE_BARRELS) {
+		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION || jumpman.y <= jumpman.originalY - 13)
+			return false;
+	}
+	else {
+		x -= 3;
+		if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION) {
+			x += 7;
+			if (gfx_GetPixel(x, jumpman.y) > COLOR_COLLISION)
+				return false;
+		}
+
+		// check if jumping in edge of girder
+		if (gfx_GetPixel(x + (jumpman.x_old - jumpman.x), jumpman.y) == COLOR_BACKGROUND && (jumpman.y & 7) != 0) {
+			if (jumpman.jumpDir == 0xFF)
+				jumpman.x = (jumpman.x | 7) - 4;
+			else
+				jumpman.x = ((jumpman.x - 8) | 7) + 4;
+			jumpman.startFalling = true;
+			return false;
+		}
+	}
+
+	while (gfx_GetPixel(x, jumpman.y) <= COLOR_COLLISION)
+		jumpman.y--;
+	return true;
+}
 
 /* Handles jumpman climbing a ladder */
 void climb_ladder(void) {
@@ -368,16 +368,10 @@ uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t h
 
 void check_jumpman_falling(void) {
 	if (!jumpman.onLadder && !jumpman.isJumping && !jumpman.onElevator) {
-		uint24_t x = jumpman.x + 4;
-
-		if (gfx_GetPixel(x, jumpman.y + 4) == COLOR_BACKGROUND) {
-			if(gfx_GetPixel(x - 7, jumpman.y + 4) == COLOR_BACKGROUND)
+		if (gfx_GetPixel(jumpman.x + 4, jumpman.y + 4) == COLOR_BACKGROUND) {
+			if(gfx_GetPixel(jumpman.x - 3, jumpman.y + 4) == COLOR_BACKGROUND)
 				jumpman.startFalling = true;
 		}
-		/*if (((jumpman.x & 7) == (4 - jumpman.dir)) && gfx_GetPixel(jumpman.x, jumpman.y + 4) == COLOR_BACKGROUND) { 144
-			// jumpman is falling
-			jumpman.startFalling = true;
-		}*/
 	}
 }
 
@@ -426,7 +420,6 @@ void bonus_item_picked_up(void) {
 /* Animate jumpman dead */
 void animate_jumpman_dead(void) {
 	uint8_t i, dir;
-	waitTicks(0x40);
 
 	jumpman.sprite = 15;
 	dir = jumpman.dir;
@@ -461,9 +454,6 @@ void hammer_stuff(void) {
 
 		if (this_hammer->active) {
 			this_hammer->dir = jumpman.dir;
-
-			if (jumpman.sprite < 4)
-				jumpman.sprite = 7 + jumpman.sprite * 2;
 
 			if (hammerTimer == 0) {
 				gfx_SetPalette(firefox_hammer_palette, 6, 6);
@@ -501,19 +491,15 @@ void hammer_stuff(void) {
 					}
 				}
 
-				if (hammerLength == 1 && ((frameCounter >> 3) & 1) == 1) {
+				if (hammerLength == 1 && ((frameCounter >> 3) & 1) == 1)
 					this_hammer->sprite ^= 2;
-				}
 
-				//jumpman.sprite = ((jumpman.sprite - 7) ^ 1) + 7;
-				/*jumpman.sprite -= 7;
-				if ((this_hammer->sprite & 1) == 0)
-					jumpman.sprite |= 1;
-				else
-					jumpman.sprite &= -2;
-				jumpman.sprite += 7;*/
+				if(jumpman.sprite > 3)
+					jumpman.sprite = ((jumpman.sprite - 7) >> 1);
 			}
-						
+				
+			if (jumpman.sprite < 3)
+				jumpman.sprite = 7 + jumpman.sprite * 2 + (this_hammer->sprite & 1);
 		}
 
 		// Move the hammer sprite to an offset from jumpman
@@ -531,3 +517,43 @@ void hammer_stuff(void) {
 
 	}
 }
+
+
+
+#if 0
+void check_collision_jumpman(void) {
+	if (game.stage == STAGE_BARRELS) {
+		for (i = 0; i < num_barrels; i++) {	// check collision barrels
+			barrel_t *this_barrel = &barrel[i];
+
+			if (abs((jumpman.y_old - 3) - this_barrel->y_old) <= 2 + 6) {
+				if (abs(jumpman.x_old - this_barrel->x_old) <= 2 + 4) {
+					jumpman.isAlive = false;
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < num_firefoxes; i++) {	// check collision fireballs
+		firefox_t *this_firefox = &firefox[i];
+
+		if (abs(jumpman.y_old - this_firefox->y_old) <= 2 + 6) {		// 1 + 6 if firefox
+			if (abs(jumpman.x_old - this_firefox->x_old) <= 3 + 4) {	// 4 + 4 if firefox
+				jumpman.isAlive = false;
+			}
+		}
+	}
+
+	if (game.stage == STAGE_CONVEYORS) {
+		for (i = 0; i < num_pies; i++) {		// check collision pies
+			pie_t *this_pie = &pie[i];
+
+			if (abs(jumpman.y_old - (this_pie->y_old + 11)) <= 3 + 6) {
+				if (abs(jumpman.x_old - (this_pie->x_old + 7)) <= 8 + 4) {
+					jumpman.isAlive = false;
+				}
+			}
+		}
+	}
+}
+#endif

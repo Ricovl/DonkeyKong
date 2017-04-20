@@ -3,9 +3,11 @@
 
 #include <stdint.h>
 
+void init_jumpman(uint24_t x, uint8_t y);
+
 void move_jumpman(void);
 
-void init_jumpman(uint24_t x, uint8_t y);
+bool girder_collision(void);
 void climb_ladder(void);
 bool ladder_in_range(void);
 void check_jump_over(void);
@@ -15,8 +17,8 @@ void check_jumpman_falling(void);
 void handle_jumpman_falling(void);
 
 void animate_jumpman_dead(void);
-void hammer_stuff(void);
 void bonus_item_picked_up(void);
+void hammer_stuff(void);
 
 
 extern const uint8_t jumpman_walking_sprite_table[4];

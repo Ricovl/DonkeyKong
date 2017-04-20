@@ -12,8 +12,9 @@ void release_firefox(void);
 #define MAX_FIREFOXES 5
 
 typedef struct {
-	uint8_t y, y_old, actualY;
+	uint8_t y, y_old;
 	uint24_t x, x_old;
+	uint8_t actualY;
 
 	uint8_t sprite, dir;
 

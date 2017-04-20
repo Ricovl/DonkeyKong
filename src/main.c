@@ -49,7 +49,6 @@ uint8_t hammerLength = 0;
 
 uint8_t frameCounter;
 
-
 bool check_end_stage(void);
 void flash_1up(void);
 void increase_difficulty(void);
@@ -57,10 +56,12 @@ void handle_bonus_timer(void);
 void handle_time_ran_out(void);
 void handle_rivets(void);
 
+void check_collision_jumpman(void);
 
 void main(void) {
 	uint8_t i;
 	bool debug = false;
+	barrel_t *test;
 
 	malloc(0);
 	srand(rtc_Time());
@@ -137,7 +138,7 @@ void main(void) {
 
 				update_kong();
 
-				// ..collision check
+				check_collision_jumpman();
 
 				handle_time_ran_out();
 
@@ -168,17 +169,20 @@ void main(void) {
 			} while (!(quit) && jumpman.isAlive && !check_end_stage());
 
 			num_barrels = num_firefoxes = num_bonus_scores = num_hammers = 0;
-			gfx_Blit(gfx_buffer);
-			update_screen();
 
 			if (!jumpman.isAlive) {
+				waitTicks(0x40);
+				gfx_Blit(gfx_buffer);
+				update_screen();
+
 				animate_jumpman_dead();
+				
 				game.lives--;
 				if (game.lives == 0) {
 					gfx_SetDrawScreen();
 					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 					gfx_FillRectangle_NoClip(104, 144, 112, 40);
-					gfx_SetTextFGColor(COLOR_LADDER);
+					gfx_SetTextFGColor(22);
 					gfx_PrintStringXY("GAME%%OVER", 121, 160);
 					gfx_SetDrawBuffer();
 					waitTicks(0xC0);
@@ -186,9 +190,12 @@ void main(void) {
 				}
 			}
 			else if (!quit) {
+				update_screen();
 				end_stage_cinematic();
 				next_stage();
 			}
+
+			gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 
 		} while (!(quit));
 	}
@@ -292,34 +299,36 @@ void increase_difficulty(void) {
 }
 
 void handle_rivets(void) {
-	if (game.stage == STAGE_RIVETS && (jumpman.x == 107 + jumpman.dir || jumpman.x == 211 + jumpman.dir) && jumpman.y < 192) {
-		uint8_t y, rivetNum = 0;
+	if (game.stage == STAGE_RIVETS) {
+		if ((jumpman.x == 107 || jumpman.x == 211) && jumpman.y < 192) {
+			jumpman.traversedRivet = true;
+		}
+		else if (jumpman.traversedRivet) {
+			uint8_t y, rivetNum = 0;
 
-		for (y = 71; y <= 191; y += 40) {
-			if (y - jumpman.y >= 0 && y - jumpman.y < 20) {
-				uint8_t x;
+			jumpman.traversedRivet = false;
+			for (y = 71; y <= 191; y += 40) {
+				if (jumpman.y <= y) {
+					uint24_t x = 104;
 
-				if (jumpman.x < 160) {
-					x = 104;
+					if (jumpman.x > 160) {
+						x = 208;
+						rivetNum += 4;
+					}
+
+					if (rivet_enabled[rivetNum]) {
+						rivet_enabled[rivetNum] = false;
+
+						gfx_FillRectangle_NoClip(x, y, 8, 9);
+						gfx_BlitRectangle(gfx_buffer, x, y, 8, 9);
+
+						spawn_bonus_score(0, jumpman.x - 5, jumpman.y + 9);
+						num_rivets--;
+					}
+					return;
 				}
-				else {
-					x = 208;
-					rivetNum += 4;
-				}
-				
-				if (rivet_enabled[rivetNum]) {
-					rivet_enabled[rivetNum] = false;
-
-					gfx_FillRectangle_NoClip(x, y, 8, 9);
-					gfx_BlitRectangle(gfx_buffer, x, y, 8, 9);
-
-					spawn_bonus_score(0, jumpman.x - 6, jumpman.y + 9);
-					num_rivets--;
-				}
-
-				return;
+				rivetNum++;
 			}
-			rivetNum++;
 		}
 	}
 }
@@ -381,10 +390,14 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 /* ToDo:
  * fix ground checking for all entities
- * Crazy barrels can escape out of the screen(leave artifacts)?
- * Fix offset of bonus_scores from jumpman facing left
  * Check for jumping over firefoxes, pies and flame
  * Fix jumpman edge of girder collision checking
- * add hammer hit animation and yellow sprite
+ * add hammer hit animation
  * start menu and end screen
+ */
+
+
+/* bugs:
+ * problems with hammer sprite removing
+ * Crazy barrels can escape out of the screen(leave artifacts)?
  */

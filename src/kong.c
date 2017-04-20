@@ -192,6 +192,7 @@ void draw_heart(gfx_image_t* sprite, uint8_t x, uint8_t y) {
 void end_stage_cinematic(void) {
 	uint8_t i;
 
+	gfx_Blit(gfx_screen);
 	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
 	kong.y_old = kong.y += 32;
 
@@ -330,7 +331,7 @@ void end_stage_cinematic(void) {
 	waitTicks(i);
 }
 
-
+/* Removes a piece of ladder underneath kong */
 void remove_ladder(uint8_t y) {
 	gfx_TempSprite(background_data, 8, 8);
 	gfx_GetSprite(background_data, 152, y);
@@ -339,6 +340,7 @@ void remove_ladder(uint8_t y) {
 	gfx_BlitRectangle(gfx_buffer, 160, y, 24, 8);
 }
 
+/* Play the intro cinematic */
 void intro_cinematic(void) {
 	uint8_t i, jump;
 	
