@@ -11,24 +11,61 @@
 	.ref _pie
 	.ref _num_pies
 	.ref _jumpman
+	
+	.ref _hammer
+	.ref _hammerActive
+
+	.ref _wasItemHit
+	.ref _hitItemType
+	.ref _hitItemNum
 
 	.def _check_collision_jumpman
+	.def _check_collision_hammer
 	
 	; link to collision code from original DonkeyKong:
 	; https://github.com/furrykef/dkdasm/blob/master/dkong.asm#L8114
 	; something about the hitboxes: http://donkeykongforum.com/index.php?topic=493.0
 
+	; 	type	  width	height
+	; jumpman	:	4	8
+	; barrels	:	2	2
+	; fireballs	:	3	2
+	; firefoxes	:	4	1
+	; bouncers	:	2	2
+	; pies		:	8	3
+	; oilfire	:	2	0		(2, 2 if large fire)
+
+_check_collision_hammer:
+	ld	a,(_hammerActive)
+	cp	0
+	ret	z
+
+	push	iy
+	push	ix
+	ld  iy,_hammer
+	cp	1
+	jr	z,firstHammer
+	ld	iy,_hammer+173
+firstHammer:
+	ld	hl,0605h
+	call	check_collision_entities
+	pop	ix
+	pop	iy
+
+	ret	z
+	ld	a,(_hitItemNum)
+	sub	a,b
+	ld	(_hitItemNum),a
+	ld	a,#01
+	ld	(_wasItemHit),a
+	ret
 
 _check_collision_jumpman:
 	push	iy
 	push	ix
-	push	bc
     ld  iy,_jumpman
-	ld	hl,0
-    ld	bc,0
 	ld  hl,0406h			; width = 4, height = 6(might be 7?)
     call    check_collision_entities
-	pop	bc
 	pop	ix
 	pop	iy
 	ret	z					; return if there was no collision
@@ -48,6 +85,10 @@ check_collision_entities:
 	cp	0
 	jr	z,skip_barrels		; skip if there are no barrels
     ld  b,a					; b = num_barrels
+
+	ld	(_hitItemNum),a
+	ld	a,0
+	ld	(_hitItemType),a
 
     ld	de,(iy+05h)			; de = x item 1
 	ld	a,(iy+01h)
@@ -78,6 +119,10 @@ skip_barrels:
 	cp	0
 	jr	z,skip_firefoxes	; skip if there are no fireballs/firefoxes
     ld  b,a					; b = num_firefoxes
+
+	ld	(_hitItemNum),a
+	ld	a,1
+	ld	(_hitItemType),a
 
     ld	de,(iy+#05)			; de = x item 1
 	ld	a,(iy+#01)			; a  = y item 1
@@ -123,6 +168,10 @@ skip_firefoxes:
 	jr	z,skip_pies			; skip if there are no pies
     ld  b,a					; b = num_pies
 
+	ld	(_hitItemNum),a
+	ld	a,2
+	ld	(_hitItemType),a
+
 	push	hl
     ld	hl,(iy+05h)
 	ld	de,7
@@ -151,6 +200,45 @@ skip_firefoxes:
 	pop	hl
 	pop	iy
 skip_pies:
+
+; check collision bouncers if stage is elevators
+	ld	a,(_game)			; a = game.stage
+	cp	3
+	jr	nz,skip_bouncers
+
+    ld  a,(_num_bouncers)
+	cp	0
+	jr	z,skip_bouncers		; skip if there are no bouncers
+    ld  b,a					; b = num_bouncers
+
+	push	hl
+    ld	hl,(iy+05h)
+	ld	de,7
+	sbc	hl,de				; de = x item 1
+	ex	hl,de
+	pop	hl
+	ld	a,(iy+01h)
+	sub	a,7					; a  = y item 1
+	push	iy
+	ld	iy,data_stuff
+	ld	(iy+01h),de			; x item1
+	ld	(iy+00h),a			; y item1
+
+    ld  de,255				; bouncer struct size
+    ld  ix,_bouncer			; ix = &bouncer
+
+	push	hl
+	ld	a,h
+	add a,3
+	ld	h,a					; h = width += 2 + 1
+	ld	a,l
+	add	a,3
+	ld	l,a					; l = height += 2 + 1
+
+    call check_collision
+	pop	hl
+	pop	iy
+skip_bouncers:
 
 	xor	a,a					; A := 0 - code for no collision
 	ret
@@ -214,7 +302,6 @@ end_loop:
 
     pop ix              ; restore IX
     ret                 ; return
-
 
 
 data_stuff:

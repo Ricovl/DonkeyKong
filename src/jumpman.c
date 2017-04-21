@@ -24,6 +24,7 @@
 #include "stages.h"
 #include "elevators.h"
 #include "drawsprites.h"
+#include "hammers.h"
 
 
 /* Initialize all the variables for the jumpman */
@@ -117,7 +118,7 @@ void move_jumpman(void) {
 
 			if (hammerActive) {
 				hammer[hammerActive - 1].active = true;
-				hammer[hammerActive - 1].background_data[0] = 17;
+				hammer[hammerActive - 1].background_data[0] = 16;
 			}
 		}
 
@@ -438,84 +439,6 @@ void animate_jumpman_dead(void) {
 		}
 	}
 	waitTicks(0x68);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// Hammer Stuff
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-const uint16_t firefox_hammer_palette[] = { gfx_RGBTo1555(255, 0, 0), gfx_RGBTo1555(0, 255, 255), gfx_RGBTo1555(155, 155, 255) };
-
-// if hammer active width = 17 height = 10
-void hammer_stuff(void) {
-	if (game.stage != STAGE_ELEVATORS && hammerActive) {
-		hammer_t *this_hammer = &hammer[hammerActive - 1];
-
-		if (this_hammer->active) {
-			this_hammer->dir = jumpman.dir;
-
-			if (hammerTimer == 0) {
-				gfx_SetPalette(firefox_hammer_palette, 6, 6);
-			}
-
-			hammerTimer++;
-			if (!(hammerTimer & 7)) {
-				//this_hammer->inFront ^= 1;
-				this_hammer->sprite ^= 1;
-
-				if (hammerTimer == 0) {
-					hammerLength++;
-					if (hammerLength == 2) {
-						hammerLength = 0;
-						hammerTimer = 0;
-						this_hammer->active = false;
-
-						// Remove hammer sprite from screen
-						gfx_SetDrawScreen();
-						gfx_Sprite_NoClip((gfx_image_t*)this_hammer->background_data, this_hammer->x_old, this_hammer->y_old);
-						gfx_SetDrawBuffer();
-						
-						// Delete the hammer's struct
-						if (hammerActive == 1) {
-							hammer[0] = hammer[1];
-						}
-						hammerActive = false;
-						num_hammers--;
-
-						// Restore the firefoxes' palette
-						gfx_SetPalette(sprites_gfx_pal + 6, 6, 6);
-						// Restore jumpmans sprite(Could maybe just set the sprite to 0)
-						jumpman.sprite = 0;
-						return;
-					}
-				}
-
-				if (hammerLength == 1 && ((frameCounter >> 3) & 1) == 1)
-					this_hammer->sprite ^= 2;
-
-				if(jumpman.sprite > 3)
-					jumpman.sprite = ((jumpman.sprite - 7) >> 1);
-			}
-				
-			if (jumpman.sprite < 3)
-				jumpman.sprite = 7 + jumpman.sprite * 2 + (this_hammer->sprite & 1);
-		}
-
-		// Move the hammer sprite to an offset from jumpman
-		if ((this_hammer->sprite & 1) == 0) {	// Above jumpman
-			this_hammer->x = jumpman.x - 3;
-			this_hammer->y = jumpman.y - 25;
-		}
-		else {									// Next to jumpman
-			if (jumpman.dir == FACE_LEFT)
-				this_hammer->x = jumpman.x - 23;
-			else
-				this_hammer->x = jumpman.x + 8;
-			this_hammer->y = jumpman.y - 9;
-		}
-
-	}
 }
 
 

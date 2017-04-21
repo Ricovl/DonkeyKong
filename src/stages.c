@@ -23,6 +23,7 @@
 #include "barrels.h"
 #include "firefoxes.h"
 #include "conveyors.h"
+#include "hammers.h"
 #include "images.h"
 #include "elevators.h"
 
@@ -116,12 +117,13 @@ void initialize_stage(uint8_t stage) {
 			uint8_t location = (game.stage >> 1) + i;
 			hammer[i].x_old = hammer[i].x = hammer_locations_x[location];
 			hammer[i].y_old = hammer[i].y = hammer_locations_y[location];
-			hammer[i].background_data[0] = 9;
+			hammer[i].background_data[0] = 13;
 			hammer[i].background_data[1] = 10;
 		}
 		num_hammers = 2;
 	}
 	hammerActive = 0;
+	wasItemHit = false;
 
 	// Bonus items
 	if (game.stage != STAGE_BARRELS) {
@@ -332,8 +334,8 @@ void next_stage(void) {
 
 
 /* Some lookup tables used above */
-uint8_t  hammer_locations_y[] = { 82, 174, 123, 162, 82 , 122 };
-uint24_t hammer_locations_x[] = { 64, 216, 64 , 152, 152, 55 };
+uint8_t  hammer_locations_y[] = { 91, 183, 132, 171, 91 , 131 };
+uint24_t hammer_locations_x[] = { 71, 223, 71 , 159, 159, 62  };
 uint8_t  item_locations_y[]	=	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
 uint24_t item_locations_x[] =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
 uint8_t	 stage_order[] =		{ STAGE_CONVEYORS, STAGE_BARRELS, STAGE_ELEVATORS, STAGE_BARRELS };

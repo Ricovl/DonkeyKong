@@ -19,6 +19,7 @@
 #include "barrels.h"
 #include "firefoxes.h"
 #include "conveyors.h"
+#include "hammers.h"
 #include "bonus_scores.h"
 #include "drawsprites.h"
 #include "images.h"
@@ -35,7 +36,7 @@ void update_screen(void) {
 	gfx_GetSprite((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
-		gfx_GetSprite((gfx_image_t*)hammer[i].background_data, hammer[i].x_old, hammer[i].y_old);
+		gfx_GetSprite((gfx_image_t*)hammer[i].background_data, hammer[i].x_old - 7, hammer[i].y_old - 9);
 
 	for (i = 0; i < num_barrels; i++)		// Barrels
 		gfx_GetSprite((gfx_image_t*)barrel[i].background_data, barrel[i].x_old - 7, barrel[i].y_old - 9);
@@ -60,7 +61,7 @@ void update_screen(void) {
 	gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
-		gfx_TransparentSprite_NoClip(hammer_sprite[hammer[i].dir][hammer[i].sprite], hammer[i].x, hammer[i].y);
+		gfx_TransparentSprite_NoClip(hammer_sprite[hammer[i].dir][hammer[i].sprite], hammer[i].x - 7, hammer[i].y - 9);
 
 	for (i = 0; i < num_barrels; i++) {		// Barrels
 		barrel_t *this_barrel = &barrel[i];
@@ -124,7 +125,7 @@ void update_screen(void) {
 	for (i = 0; i < num_hammers; i++) {		// Hammers
 		hammer_t *this_hammer = &hammer[i];
 
-		gfx_Sprite_NoClip((gfx_image_t*)this_hammer->background_data, this_hammer->x_old, this_hammer->y_old);
+		gfx_Sprite_NoClip((gfx_image_t*)this_hammer->background_data, this_hammer->x_old - 7, this_hammer->y_old - 9);
 		this_hammer->x_old = this_hammer->x; this_hammer->y_old = this_hammer->y;
 	}
 

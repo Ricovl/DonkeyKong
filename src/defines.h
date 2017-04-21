@@ -104,26 +104,6 @@ typedef struct {
 
 extern jumpman_t jumpman;
 
-// Hammers
-extern uint8_t num_hammers;
-
-typedef struct {
-	uint8_t y, y_old;
-	uint24_t x, x_old;
-
-	bool active;
-	bool dir;		// No idea why removing this is 38 bytes more!
-	bool inFront;	// or this one!
-	uint8_t sprite;
-
-	uint8_t background_data[17 * 10 + 2];
-} hammer_t;
-extern hammer_t hammer[2];
-
-extern uint8_t hammerActive;
-extern uint8_t hammerTimer;
-extern uint8_t hammerLength;
-
 // Pauline's items
 extern uint8_t num_bonus_items;
 

@@ -168,17 +168,8 @@ void move_bouncers(void) {
 		for (i = 0; i < num_bouncers; i++) {
 			bouncer_t *this_bouncer = &bouncer[i];
 			
-			if ((frameCounter & 15) == 0) {
-				// change sprite here
+			if ((frameCounter & 15) == 0)
 				this_bouncer->sprite ^= 1;
-
-				if (this_bouncer->sprite == 1) {
-					this_bouncer->y += 4;
-				}
-				else {
-					this_bouncer->y -= 4;
-				}
-			}
 
 			if (!this_bouncer->movingDown) {
 				this_bouncer->x += 2;

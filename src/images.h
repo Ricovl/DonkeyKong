@@ -31,6 +31,7 @@ extern gfx_image_t *bonus_score_sprite[5];
 
 // Hammer sprites
 extern gfx_image_t *hammer_sprite[2][4];
+extern gfx_image_t *hammer_hit[4];
 
 // Flame on top of oilcan
 extern gfx_image_t *fire[4];

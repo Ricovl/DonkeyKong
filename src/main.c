@@ -29,6 +29,7 @@
 #include "elevators.h"
 #include "images.h"
 #include "font.h"
+#include "hammers.h"
 
 
 #define DEBUG_MODE 1
@@ -41,12 +42,6 @@ uint8_t num_bonus_items;
 bool rivet_enabled[8];
 uint8_t num_rivets;
 
-hammer_t hammer[2];
-uint8_t num_hammers;
-uint8_t hammerActive = false;
-uint8_t hammerTimer = 0;
-uint8_t hammerLength = 0;
-
 uint8_t frameCounter;
 
 bool check_end_stage(void);
@@ -57,6 +52,7 @@ void handle_time_ran_out(void);
 void handle_rivets(void);
 
 void check_collision_jumpman(void);
+void check_collision_hammer(void);
 
 void main(void) {
 	uint8_t i;
@@ -80,9 +76,9 @@ void main(void) {
 	
 	memset(&game, 0, sizeof(game_t));
 	game.lives = 3;
-	game.level = 1;
-	game.round = 1;
-	game.stage = STAGE_BARRELS;
+	game.level = 2;
+	game.round = 2;
+	game.stage = STAGE_ELEVATORS;
 
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
@@ -106,6 +102,8 @@ void main(void) {
 
 				update_bonus_scores();
 
+				animate_hammer_hit();
+
 				move_jumpman();
 
 				move_barrels();
@@ -120,7 +118,7 @@ void main(void) {
 
 				release_firefox();
 
-				hammer_stuff();	// wrong place?
+				animate_hammer();	// wrong place?
 
 				move_retractable_ladders();
 
@@ -139,6 +137,8 @@ void main(void) {
 				update_kong();
 
 				check_collision_jumpman();
+
+				check_collision_hammer();
 
 				handle_time_ran_out();
 
@@ -361,7 +361,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 ; arrive here from #0701 when playing
 
  *197A  CALL    #1DBD         ; check for bonus items and jumping scores, rivets																			update_bonus_scores()
-197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		
+197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		animate_hammer_hit()
  *1980  CALL    #1AC3         ; mario movement																												update_jumpman()
  *1983  CALL    #1F72         ; roll barrels																												move_barrels()
  *1986  CALL    #2C8F         ; deploy barrels ?																											deploy_barrel()
@@ -370,7 +370,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  *198F  CALL    #2E04         ; update bouncers if on elevators																								move_bouncers()
  *1992  CALL    #24EA         ; do stuff for pie factory																									move_pies()
  *1995  CALL    #2DDB         ; deploy fireball/firefoxes for conveyors and rivets																			release_firefox()
- *1998  CALL    #2ED4         ; do stuff for hammer																											hammer_stuff()		not done
+ *1998  CALL    #2ED4         ; do stuff for hammer																											animate_hammer()		not done
  *199B  CALL    #2207         ; do stuff for conveyors(ladders)																								move_retractable_ladders()
  *199E  CALL    #1A33         ; check for and handle running over rivets																					handle_rivets()
  *19A1  CALL    #2A85         ; check for mario falling																										check_jumpman_falling()
@@ -393,6 +393,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  * Check for jumping over firefoxes, pies and flame
  * Fix jumpman edge of girder collision checking
  * add hammer hit animation
+ * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
  * start menu and end screen
  */
 

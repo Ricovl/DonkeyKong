@@ -43,6 +43,8 @@ gfx_image_t *bonus_score_sprite[5] =	{ num100, num200, num300, num500, num800 };
 gfx_image_t *hammer_sprite[2][4] =    { { hammer_left_N0 , hammer_left_N1 , hammer_left_Y0 , hammer_left_Y1  },
 										{ hammer_right_N0, hammer_right_N1, hammer_right_Y0, hammer_right_Y1 } };
 
+gfx_image_t *hammer_hit[4] =			{ circle0, circle1, circle2, burst };
+
 // Flame on top of oilcan
 gfx_image_t *fire[4] =					{ fire0, fire1, fire2, fire3 };
 
