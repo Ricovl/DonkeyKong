@@ -15,6 +15,7 @@
 
 // donkeykong stuff
 #include "defines.h"
+#include "jumpman.h"
 #include "firefoxes.h"
 #include "conveyors.h"
 #include "stages.h"

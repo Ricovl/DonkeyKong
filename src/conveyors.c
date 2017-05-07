@@ -15,6 +15,7 @@
 
 // donkeykong stuff
 #include "defines.h"
+#include "jumpman.h"
 #include "conveyors.h"
 #include "images.h"
 

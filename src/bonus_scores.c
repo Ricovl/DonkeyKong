@@ -35,7 +35,7 @@ void spawn_bonus_score(uint8_t score, uint24_t x, uint8_t y) {
 	this_bonus_score->background_data[0] = 15;
 	this_bonus_score->background_data[1] = 7;
 
-	game.score += bonus_score_value[score] * 100;
+	game_data.score += bonus_score_value[score] * 100;
 	draw_player_score();
 
 	num_bonus_scores++;

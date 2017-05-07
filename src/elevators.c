@@ -15,6 +15,7 @@
 
 // donkeykong stuff
 #include "defines.h"
+#include "jumpman.h"
 #include "elevators.h"
 #include "bonus_scores.h"
 #include "overlay.h"

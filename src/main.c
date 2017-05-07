@@ -13,6 +13,7 @@
 // shared libraries
 #include <graphx.h>
 #include <keypadc.h>
+#include <fileioc.h>
 
 // donkeykong stuff
 #include "defines.h"
@@ -35,7 +36,7 @@
 #define DEBUG_MODE 1
 
 game_t game;
-jumpman_t jumpman;
+game_data_t game_data;
 
 bonus_item_t bonus_item[3];
 uint8_t num_bonus_items;
@@ -54,10 +55,9 @@ void handle_rivets(void);
 void check_collision_jumpman(void);
 void check_collision_hammer(void);
 
+
 void main(void) {
-	uint8_t i;
 	bool debug = false;
-	barrel_t *test;
 
 	malloc(0);
 	srand(rtc_Time());
@@ -73,27 +73,22 @@ void main(void) {
 
 	decompress_images();
 	gfx_SetDrawBuffer();
-	
-	memset(&game, 0, sizeof(game_t));
-	game.lives = 3;
-	game.level = 2;
-	game.round = 2;
-	game.stage = STAGE_ELEVATORS;
+
+	load_progress();
 
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
 	for (;;) {
 		bool quit = false;
-
 		timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
 
 		main_screen();
 
 		do {
-			// how high can you get?
-			pre_round_screen();
-
+			game.stage = stage_order[game_data.round];
+			
+			pre_round_screen();	// how high can you get?
 			initialize_stage(game.stage);
 
 			do {
@@ -136,7 +131,7 @@ void main(void) {
 
 				update_kong();
 
-				check_collision_jumpman();
+				//check_collision_jumpman();
 
 				check_collision_hammer();
 
@@ -177,8 +172,11 @@ void main(void) {
 
 				animate_jumpman_dead();
 				
-				game.lives--;
-				if (game.lives == 0) {
+				game_data.lives--;
+				if (game_data.lives == 0) {
+					uint8_t i;
+
+					// Draw Game Over window
 					gfx_SetDrawScreen();
 					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 					gfx_FillRectangle_NoClip(104, 144, 112, 40);
@@ -187,16 +185,26 @@ void main(void) {
 					gfx_SetDrawBuffer();
 					waitTicks(0xC0);
 					quit = true;
+
+					// Check if high score and place score in list and ask for name if high score
+					for (i = 0; i < 5; i++) {
+						if (game_data.score >= game_data.Hscore[i]) {
+							memcpy(&game_data.Hscore[i + 1], &game_data.Hscore[i], (4 - i) * sizeof(unsigned)); 
+							memcpy(&game_data.name[i + 1], &game_data.name[i], 6 - i);
+							game_data.Hscore[i] = game_data.score;
+							// Register name
+							name_registration(i);
+							break;
+						}
+					}
 				}
 			}
 			else if (!quit) {
 				update_screen();
 				end_stage_cinematic();
-				next_stage();
 			}
 
 			gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
-
 		} while (!(quit));
 	}
 }
@@ -228,6 +236,7 @@ bool check_end_stage(void) {
 	return true;
 }
 
+/* Handles bonus timer when reached 0 */
 void handle_time_ran_out(void) {
 	if (game.timeRanOut) {
 		if (game.timeRanOut == 1) {
@@ -289,7 +298,7 @@ void flash_1up(void) {
 void increase_difficulty(void) {
 	if (game.difficultyTimer0 == 0) {
 		if (((game.difficultyTimer1) & 7) == 0) {
-			game.difficulty = game.level + (game.difficultyTimer1 >> 3);
+			game.difficulty = game_data.level + (game.difficultyTimer1 >> 3);
 			if (game.difficulty > 5)
 				game.difficulty = 5;
 		}
@@ -298,6 +307,7 @@ void increase_difficulty(void) {
 	game.difficultyTimer0++;
 }
 
+/* Checks for and handles jumpman walking/jumping over rivet */
 void handle_rivets(void) {
 	if (game.stage == STAGE_RIVETS) {
 		if ((jumpman.x == 107 || jumpman.x == 211) && jumpman.y < 192) {

@@ -21,6 +21,7 @@
 
 	.def _check_collision_jumpman
 	.def _check_collision_hammer
+	.def _check_jump_over_item
 	
 	; link to collision code from original DonkeyKong:
 	; https://github.com/furrykef/dkdasm/blob/master/dkong.asm#L8114
@@ -35,6 +36,7 @@
 	; pies		:	8	3
 	; oilfire	:	2	0		(2, 2 if large fire)
 
+
 _check_collision_hammer:
 	ld	a,(_hammerActive)
 	cp	0
@@ -47,6 +49,8 @@ _check_collision_hammer:
 	jr	z,firstHammer
 	ld	iy,_hammer+173
 firstHammer:
+	ld	a,(iy+#01)			; a = jumpman.y_old
+	ld	c,a					; c = jumpman.y_old
 	ld	hl,0605h
 	call	check_collision_entities
 	pop	ix
@@ -60,11 +64,14 @@ firstHammer:
 	ld	(_wasItemHit),a
 	ret
 
+
 _check_collision_jumpman:
 	push	iy
 	push	ix
     ld  iy,_jumpman
-	ld  hl,0406h			; width = 4, height = 6(might be 7?)
+	ld	a,(iy+#01)			; a = jumpman.y_old
+	ld	c,a					; c = jumpman.y_old
+	ld  hl,0407h			; width = 4, height = 7
     call    check_collision_entities
 	pop	ix
 	pop	iy
@@ -73,6 +80,25 @@ _check_collision_jumpman:
 	ld	(_jumpman+31),a		; else jumpman is dead
 	ret
 
+
+_check_jump_over_item:
+	push	iy
+	push	ix
+	ld	iy,_jumpman
+	ld	a,(iy+#01)			; a = jumpman.y_old
+	add	a,09h				; 0C-7?
+	ld	c,a					; c = jumpman.y_old + 5
+	ld	a,(iy+0Eh)			; a = jumpDirIndicator
+	or	a,a
+	ld	hl,0508h			; hitbox when jumping straight up
+	jr	z,jumpingUp
+	ld	hl,1208h			; hitbox when jumping right/left
+jumpingUp:
+	call 	check_collision_entities
+	pop	ix
+	pop	iy
+	or	a,a
+	ret
 
 
 check_collision_entities:
@@ -98,16 +124,12 @@ check_collision_entities:
 	ld	(iy+01h),de			; x item1
 	ld	(iy+00h),a			; y item1
 
+	push	hl
+	ld	de,0303h
+	add	hl,de				; width += 2 + 1, height += 2 + 1
+
     ld  de,187				; barrel struct size
     ld  ix,_barrel			; ix = &barrel
-
-	push	hl
-	ld	a,h
-	add a,3
-	ld	h,a					; h = width += 2 + 1
-	ld	a,l
-	add	a,3
-	ld	l,a					; l = height += 2 + 1
 
     call check_collision
 	pop	hl
@@ -125,33 +147,22 @@ skip_barrels:
 	ld	(_hitItemType),a
 
     ld	de,(iy+#05)			; de = x item 1
-	ld	a,(iy+#01)			; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
-	ld	(iy+00h),a			; y item1
-    ld  de,279				; firefox struct size
-    ld  ix,_firefox			; ix = &firefox
-
+	ld	(iy+00h),c			; y item1
+	
 	push	hl
 	ld	a,(_game)			; a = game.stage
 	cp	4
-	jr	nz,isFireball		; if (stage != rivets) fireball else firefox
-	ld	a,h
-	add a,5
-	ld	h,a					; h = width += 4 + 1
-	ld	a,l
-	add	a,2
-	ld	l,a					; l = height += 1 + 1
-	jr	skipFireball
-isFireball:
-	ld	a,h
-	add a,3
-	ld	h,a					; h = width += 3 + 1
-	ld	a,l
-	add	a,3
-	ld	l,a					; l = height += 2 + 1
-skipFireball:
+	ld 	de,0403h			; width += 3 + 1, height += 2 + 1
+	jr	nz,skipFirefox		; if (stage != rivets) fireball else firefox
+	ld	de,0502h			; width += 4 + 1, height += 1 + 1
+skipFirefox:
+	add	hl,de
+
+    ld  de,279				; firefox struct size
+    ld  ix,_firefox			; ix = &firefox
 
     call check_collision
 	pop	hl
@@ -178,23 +189,19 @@ skip_firefoxes:
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
 	pop	hl
-	ld	a,(iy+01h)
+	ld	a,c
 	sub	a,11				; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+01h),hl			; x item1
 	ld	(iy+00h),a			; y item1
 
+	push	hl
+	ld	de,0409h
+	add	hl,de				; width += 3 + 1, height += 8 + 1
+
     ld  de,138				; pie struct size
     ld  ix,_pie				; ix = &pie
-
-	push	hl
-	ld	a,h
-	add a,4
-	ld	h,a					; h = width += 3 + 1
-	ld	a,l
-	add	a,9
-	ld	l,a					; l = height += 8 + 1
 
     call check_collision
 	pop	hl
@@ -217,23 +224,19 @@ skip_pies:
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
 	pop	hl
-	ld	a,(iy+01h)
+	ld	a,c
 	sub	a,7					; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+01h),de			; x item1
 	ld	(iy+00h),a			; y item1
 
+	push	hl
+	ld	de,0303h
+	add	hl,de				; width += 2 + 1; height += 2 + 1
+
     ld  de,255				; bouncer struct size
     ld  ix,_bouncer			; ix = &bouncer
-
-	push	hl
-	ld	a,h
-	add a,3
-	ld	h,a					; h = width += 2 + 1
-	ld	a,l
-	add	a,3
-	ld	l,a					; l = height += 2 + 1
 
     call check_collision
 	pop	hl

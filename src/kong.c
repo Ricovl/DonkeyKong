@@ -15,6 +15,7 @@
 
 // kong stuff
 #include "defines.h"
+#include "jumpman.h"
 #include "kong.h"
 #include "conveyors.h"
 #include "barrels.h"
@@ -141,7 +142,6 @@ void draw_pauline(bool help) {
 
 	gfx_BlitRectangle(gfx_buffer, x, pauline.y - 2, 24, 8);
 }
-
 
 
 /* Draws kong for use in cinematics */
@@ -271,6 +271,7 @@ void end_stage_cinematic(void) {
 			waitTicks(8);
 		}
 
+		game_data.level++;
 		i = 0xE0;
 	}
 	else {										// Stage Barrels, Elevators or Conveyors
@@ -325,8 +326,12 @@ void end_stage_cinematic(void) {
 		i = 0x60;
 	}
 
+	game_data.round++;
+	if (game_data.round > 19)
+		game_data.round = 14;
+
 	// Add bonusTimer value to score
-	game.score += game.bonusTimer * 100;
+	game_data.score += game.bonusTimer * 100;
 	draw_player_score();
 	waitTicks(i);
 }
@@ -345,9 +350,9 @@ void intro_cinematic(void) {
 	uint8_t i, jump;
 	
 	gfx_FillScreen(COLOR_BACKGROUND);
+	draw_stage(&stage_barrels_intro_data);
 	draw_overlay_full();
 
-	draw_stage(&stage_barrels_intro_data);
 	gfx_Blit(gfx_buffer);
 	waitTicks(0x48);
 

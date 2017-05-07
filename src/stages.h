@@ -6,7 +6,6 @@
 
 void initialize_stage(uint8_t stage);
 void draw_stage(uint8_t *array_b);
-void next_stage(void);
 
 typedef struct {
 	uint8_t type;
@@ -24,6 +23,7 @@ extern uint24_t item_locations_x[];
 extern uint8_t	stage_order[];
 extern uint16_t conveyors_palette[3];
 extern uint16_t rivets_palette[3];
+extern uint8_t stage_order[20];
 
 /* Data of all the stages */
 extern const uint8_t *stage_data[4];

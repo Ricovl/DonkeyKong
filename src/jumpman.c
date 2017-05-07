@@ -43,8 +43,10 @@ void init_jumpman(uint24_t x, uint8_t y) {
 }
 
 
+jumpman_t jumpman;
 void handle_jumping(jumpman_t *jumpman);
 void handle_bouncing(jumpman_t *jumpman);
+uint8_t check_jump_over_item(void);
 
 void move_jumpman(void) {
 	kb_key_t key;
@@ -96,7 +98,7 @@ void move_jumpman(void) {
 				jumpman.comingDown = true;
 
 				check_jump_over();
-				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 4, 6, sizeof(hammer_t));
+				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 6, sizeof(hammer_t));
 			}
 			jumpman.sprite = 13;
 		}
@@ -119,6 +121,8 @@ void move_jumpman(void) {
 			if (hammerActive) {
 				hammer[hammerActive - 1].active = true;
 				hammer[hammerActive - 1].background_data[0] = 16;
+				hammerTimer = 0;
+				hammerLength = 0;
 			}
 		}
 
@@ -296,10 +300,10 @@ void climb_ladder(void) {
 bool ladder_in_range(void) {
 	if (kb_Data[kb_group_7] & kb_Up || kb_Data[kb_group_7] & kb_Down) {
 		uint8_t *array = stage_data[game.stage - 1];
-		
+
 		while (*array < 2) {
 			if (jumpman.x > *(array + 1) + 47 && jumpman.x < (*(array + 1) + 56)) {
-				if ((kb_Data[kb_group_7] & kb_Up   && jumpman.y + 1 == *(array + 4)) || 
+				if ((kb_Data[kb_group_7] & kb_Up   && jumpman.y + 1 == *(array + 4)) ||
 					(kb_Data[kb_group_7] & kb_Down && jumpman.y + 1 == *(array + 2) && !(*array))) {
 					// There is a ladder nearby; initialize all variables for ladder movement
 					jumpman.sprite = 6;
@@ -333,10 +337,6 @@ void check_jump_over(void) {
 	}
 
 	if (numObstaclesJumped) {
-		// 0000		0010	 0100
-		// 0 = 100, 2 = 300, 4 = 800
-		// 0000		0001	 0010
-		// 0001		0010	 0011
 		numObstaclesJumped = (numObstaclesJumped - 1) << 1;
 		spawn_bonus_score(numObstaclesJumped, jumpman.x - 6, jumpman.y + 9);
 	}
@@ -346,7 +346,7 @@ const uint8_t jumpman_walking_sprite_table[] = { 0, 2, 0, 1 };
 
 
 /* checks for collision(temporary) */
-uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t height, uint8_t offsetx, uint8_t offsety, uint8_t size) {
+uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t height, uint8_t offsety, uint8_t size) {
 	int8_t distance;
 	uint8_t i;
 
@@ -356,7 +356,7 @@ uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t h
 			goto check_next;
 
 		// Check if x position is in range
-		if (abs(jumpman.x - (*(uint24_t*)(structp + 2) + offsetx)) <= width)
+		if (abs(jumpman.x - (*(uint24_t*)(structp + 2))) <= width)
 			return i + 1;
 
 	check_next:
@@ -366,7 +366,7 @@ uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t h
 	return false;
 }
 
-
+/* Make jumpman fall when there is nothing under him */
 void check_jumpman_falling(void) {
 	if (!jumpman.onLadder && !jumpman.isJumping && !jumpman.onElevator) {
 		if (gfx_GetPixel(jumpman.x + 4, jumpman.y + 4) == COLOR_BACKGROUND) {
@@ -390,8 +390,8 @@ void handle_jumpman_falling(void) {
 }
 
 
-const uint8_t bonus_item_width[] = {7, 4, 6};
-const uint8_t bonus_item_height[] = { 15, 9, 8 };
+uint8_t bonus_item_width[] = {7, 4, 6};
+uint8_t bonus_item_height[] = { 15, 9, 8 };
 
 void bonus_item_picked_up(void) {
 	uint8_t i;
@@ -405,7 +405,7 @@ void bonus_item_picked_up(void) {
 				gfx_Sprite_NoClip((gfx_image_t*)this_bonus_item->background_data, this_bonus_item->x, this_bonus_item->y);
 				gfx_BlitRectangle(gfx_buffer, this_bonus_item->x, this_bonus_item->y, 16, bonus_item_height[this_bonus_item->type]);
 
-				score = game.level + 1;
+				score = game_data.level + 1;
 				if (score > 4)
 					score = 4;
 

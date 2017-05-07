@@ -33,8 +33,6 @@ void initialize_stage(uint8_t stage) {
 	uint8_t i;
 
 	gfx_FillScreen(COLOR_BACKGROUND);
-	// Change the palette to the standard palette
-	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	draw_stage(stage_data[game.stage - 1]);
 
 	init_jumpman(95, 231);
@@ -231,7 +229,7 @@ void initialize_stage(uint8_t stage) {
 	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
 
 	// Bonus timer stuff
-	game.initialBonusValue = game.level * 10 + 40;
+	game.initialBonusValue = game_data.level * 10 + 40;
 	if (game.initialBonusValue > 80)
 		game.initialBonusValue = 80;
 	game.blueBarrelCounter = game.bonusTimer = game.initialBonusValue;
@@ -310,37 +308,21 @@ void draw_stage(uint8_t *array_b) {
 	}
 }
 
-/* Define what the next stage should be */
-void next_stage(void) {
-	if (game.stage == STAGE_RIVETS)
-		game.round = 0;
-
-	if (game.round == 0) {
-		game.stage = STAGE_BARRELS;
-		game.level++;
-	}
-	else if (game.round == game.level || (game.level > 5 && game.round == 5)) {
-		game.stage = STAGE_RIVETS;
-	}
-	else if (game.level <= 3) {
-		game.stage = game.round + (3 - game.level);
-	}
-	else {
-		game.stage = stage_order[game.round - 1];
-	}
-
-	game.round++;
-}
-
-
 /* Some lookup tables used above */
 uint8_t  hammer_locations_y[] = { 91, 183, 132, 171, 91 , 131 };
 uint24_t hammer_locations_x[] = { 71, 223, 71 , 159, 159, 62  };
 uint8_t  item_locations_y[]	=	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
 uint24_t item_locations_x[] =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
-uint8_t	 stage_order[] =		{ STAGE_CONVEYORS, STAGE_BARRELS, STAGE_ELEVATORS, STAGE_BARRELS };
 uint16_t conveyors_palette[3] = { gfx_RGBTo1555(254, 104, 0),  gfx_RGBTo1555(254, 184, 84), gfx_RGBTo1555(255, 254, 255) };
 uint16_t rivets_palette[3] =	{ gfx_RGBTo1555(0, 0, 255),  gfx_RGBTo1555(0, 255, 255), gfx_RGBTo1555(255, 184, 0) };
+uint8_t stage_order[20] = {
+	1, 4,
+	1, 3, 4,
+	1, 2, 3, 4,
+	1, 2, 1, 3, 4,
+	1, 2, 1, 3, 1, 4,
+};
+
 
 /* Data of all the stages */
 uint8_t *stage_data[4] = { (uint8_t*)stage_barrels_data, (uint8_t*)stage_conveyors_data, (uint8_t*)stage_elevators_data, (uint8_t*)stage_rivets_data };

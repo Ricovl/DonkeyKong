@@ -23,29 +23,33 @@
 void draw_player_lives(void) {
 	uint8_t i;
 
-	for (i = 1; i < game.lives; i++)
+	for (i = 1; i < game_data.lives; i++)
 		gfx_Sprite_NoClip(life, 3 + i * 8, 24);
 	gfx_BlitRectangle(gfx_buffer, 11, 24, 47, 8);
 }
 
 /* Draw the 1UP, HIGH SCORE and 2UP */
 void draw_player_score(void) {
+	unsigned score;
+	score = game_data.Hscore[0];
+
 	gfx_SetTextFGColor(COLOR_WHITE); //Set the text color to white
 	gfx_SetTextXY(11, 8);	//1UP
-	gfx_PrintUInt(game.score, 6);
+	gfx_PrintUInt(game_data.score, 6);
 #if 0
 	gfx_SetTextXY(263, 8);	//2UP
 	gfx_PrintUInt(0, 6);
 #endif
-	if (game.score > game.Hscore)
-		game.Hscore = game.score;
-	if (!game.extraLifeAwarded && game.score >= ExtraLifeThreshold) {
-		game.extraLifeAwarded = true;
-		game.lives++;
+	if (game_data.score >= score)
+		score = game_data.score;
+	if (!game_data.extraLifeAwarded && game_data.score >= ExtraLifeThreshold) {
+		game_data.extraLifeAwarded = true;
+		game_data.lives++;
 		draw_player_lives();
 	}
 	gfx_SetTextXY(200, 8);	//HIGH  SCORE
-	gfx_PrintUInt(game.Hscore, 6);
+
+	gfx_PrintUInt(score, 6);
 	gfx_BlitLines(gfx_buffer, 8, 7);	//1UP, HIGH  SCORE and 2UP
 }
 
@@ -89,7 +93,7 @@ void draw_overlay_full(void) {
 	gfx_PrintStringXY("L=", 272, 0);			// L=
 
 	gfx_SetTextXY(288, 0);						// L= NUMBER
-	gfx_PrintUInt(game.level, 2);
+	gfx_PrintUInt(game_data.level, 2);
 
 	// Draw the scores, bonus time and lives
 	draw_player_score();

@@ -15,6 +15,7 @@
 
 // donkeykong stuff
 #include "defines.h"
+#include "jumpman.h"
 #include "elevators.h"
 #include "barrels.h"
 #include "firefoxes.h"
@@ -26,6 +27,7 @@
 
 
 /* Draws all the moving sprites on the screen(I should write this in asm for more speed) */
+#pragma optspeed
 void update_screen(void) {
 	uint8_t i;
 

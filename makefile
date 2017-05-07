@@ -19,7 +19,7 @@ DESCRIPTION ?= "Donkey Kong v0.7"
 
 #Add shared library names to the L varible, for instance:
 # L := graphx fileioc keypadc
-L := graphx keypadc
+L := graphx keypadc fileioc
 
 #These directories specify where source and output should go
 
