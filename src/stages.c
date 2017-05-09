@@ -23,6 +23,7 @@
 #include "barrels.h"
 #include "firefoxes.h"
 #include "conveyors.h"
+#include "rivets.h"
 #include "hammers.h"
 #include "images.h"
 #include "elevators.h"

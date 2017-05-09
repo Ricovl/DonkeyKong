@@ -89,8 +89,4 @@ typedef struct {
 
 extern bonus_item_t bonus_item[3];
 
-// Rivets
-extern uint8_t num_rivets;
-extern bool rivet_enabled[8];
-
 #endif

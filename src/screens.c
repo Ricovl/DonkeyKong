@@ -38,6 +38,7 @@ void load_progress(void) {
 	for (i = 0; i < 5; i++)
 		strcpy(game_data.name[i], "RICO");
 	memcpy(game_data.Hscore, high_score_table, 5 * sizeof(unsigned));
+
 	ti_CloseAll();
 	if ((variable = ti_Open(save_name, "r"))) {
 		ti_Read(&game_data, sizeof(game_data_t), 1, variable);
@@ -94,7 +95,7 @@ void main_screen(void) {
 
 		key = os_GetCSC();
 
-		if (key == sk_Down && option < 2) {
+		if (key == sk_Down && option < 1) {
 			option++;
 		}
 		if (key == sk_Up && option > 0) {

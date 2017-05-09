@@ -37,6 +37,23 @@
 	; oilfire	:	2	0		(2, 2 if large fire)
 
 
+; Check for collision between jumpman and a hostile
+_check_collision_jumpman:
+	push	iy
+	push	ix
+    ld  iy,_jumpman
+	ld	a,(iy+#01)			; a = jumpman.y_old
+	ld	c,a					; c = jumpman.y_old
+	ld  hl,0407h			; width = 4, height = 7
+    call    check_collision_entities
+	pop	ix
+	pop	iy
+	ret	z					; return if there was no collision
+	xor	a,a
+	ld	(_jumpman+31),a		; else jumpman is dead
+	ret
+
+; Check for collision between hammer and a hostile
 _check_collision_hammer:
 	ld	a,(_hammerActive)
 	cp	0
@@ -56,7 +73,7 @@ firstHammer:
 	pop	ix
 	pop	iy
 
-	ret	z
+	ret	z				; return if there was no collision
 	ld	a,(_hitItemNum)
 	sub	a,b
 	ld	(_hitItemNum),a
@@ -64,29 +81,13 @@ firstHammer:
 	ld	(_wasItemHit),a
 	ret
 
-
-_check_collision_jumpman:
-	push	iy
-	push	ix
-    ld  iy,_jumpman
-	ld	a,(iy+#01)			; a = jumpman.y_old
-	ld	c,a					; c = jumpman.y_old
-	ld  hl,0407h			; width = 4, height = 7
-    call    check_collision_entities
-	pop	ix
-	pop	iy
-	ret	z					; return if there was no collision
-	xor	a,a
-	ld	(_jumpman+31),a		; else jumpman is dead
-	ret
-
-
+; Check if jumpman jumped over a hostile
 _check_jump_over_item:
 	push	iy
 	push	ix
 	ld	iy,_jumpman
 	ld	a,(iy+#01)			; a = jumpman.y_old
-	add	a,09h				; 0C-7?
+	add	a,0Ch				; 0C-7?
 	ld	c,a					; c = jumpman.y_old + 5
 	ld	a,(iy+0Eh)			; a = jumpDirIndicator
 	or	a,a
@@ -94,7 +95,7 @@ _check_jump_over_item:
 	jr	z,jumpingUp
 	ld	hl,1208h			; hitbox when jumping right/left
 jumpingUp:
-	call 	check_collision_entities
+	call 	check_jump_barrels
 	pop	ix
 	pop	iy
 	or	a,a
@@ -136,8 +137,12 @@ check_collision_entities:
 	pop	iy
 skip_barrels:
 
-; check collision fireballs/firefoxes
-    ld  a,(_num_firefoxes)
+; check collision fireballs/firefoxes if stage != conveyors
+    ld	a,(_game)			; a = game.stage
+	cp	2
+	jr	z,skip_firefoxes
+	
+	ld  a,(_num_firefoxes)
 	cp	0
 	jr	z,skip_firefoxes	; skip if there are no fireballs/firefoxes
     ld  b,a					; b = num_firefoxes
@@ -167,13 +172,10 @@ skipFirefox:
     call check_collision
 	pop	hl
 	pop	iy
+	jr	skip_pies
 skip_firefoxes:
 
 ; check collision pies if stage is conveyors
-	ld	a,(_game)			; a = game.stage
-	cp	2
-	jr	nz,skip_pies
-
     ld  a,(_num_pies)
 	cp	0
 	jr	z,skip_pies			; skip if there are no pies
@@ -258,7 +260,7 @@ check_collision:
 ;  b	= ammount of times to loop
 ; Returns:
 ;  none
-    push    ix          ; push IX to stack
+    push    ix          ; push IX to stack (don't need this right?)<<<<<<<<<<<<<<<
 ; start of loop
 loop:
 ; check for y in range
@@ -307,5 +309,127 @@ end_loop:
     ret                 ; return
 
 
+
+
+check_jump_barrels:
+	xor	a,a
+	ld	(NumObstaclesJumped),a
+
+    ld  a,(_num_barrels)
+	cp	0
+	jr	z,skip_barrels_		; skip if there are no barrels
+    ld  b,a					; b = num_barrels
+
+    ld	de,(iy+05h)			; de = x item 1
+	ld	a,(iy+01h)
+	sub	a,3					; a  = y item 1
+	push	iy
+	ld	iy,data_stuff
+	ld	(iy+01h),de			; x item1
+	ld	(iy+00h),a			; y item1
+
+	push	hl
+	ld	de,0303h
+	add	hl,de				; width += 2 + 1, height += 2 + 1
+
+    ld  de,187				; barrel struct size
+    ld  ix,_barrel			; ix = &barrel
+
+    call count_items_collided
+	pop	hl
+	pop	iy
+skip_barrels_:
+
+; check collision fireballs/firefoxes
+    ld  a,(_num_firefoxes)
+	cp	0
+	jr	z,skip_firefoxes_	; skip if there are no fireballs/firefoxes
+    ld  b,a					; b = num_firefoxes
+
+    ld	de,(iy+#05)			; de = x item 1
+	push	iy
+	ld	iy,data_stuff
+	ld	(iy+#01),de			; x item1
+	ld	(iy+00h),c			; y item1
+	
+	push	hl
+	ld	a,(_game)			; a = game.stage
+	cp	4
+	ld 	de,0403h			; width += 3 + 1, height += 2 + 1
+	jr	nz,skipFirefox_		; if (stage != rivets) fireball else firefox
+	ld	de,0502h			; width += 4 + 1, height += 1 + 1
+skipFirefox_:
+	add	hl,de
+
+    ld  de,279				; firefox struct size
+    ld  ix,_firefox			; ix = &firefox
+
+    call count_items_collided
+	pop	hl
+	pop	iy
+skip_firefoxes_:
+
+	ld	a,(NumObstaclesJumped)
+	and	a,a
+	ret	z					; Return if no obstacles jumped
+
+	ret
+
+count_items_collided:
+; Checks for a collision between two objects
+; Arguments:
+;  iy	= struct location  item 1
+;  ix	= struct location  item 2
+;  de	= struct size      item 2
+;  hl	= width and height item 1 and item 2 combined
+;  b	= ammount of times to loop
+; Returns:
+;  none
+
+; start of loop
+loop_:
+; check for y in range
+    ld  a,(iy+00h)		; no, load A with C = y of item 1
+    sub a,(ix+01h)		; subtract the Y value of item 2
+    jr  nc,+skip_neg_0_	; if no carry, skip next step
+
+    neg					; a = 0 - a
+skip_neg_0_:
+    sub a,l				; subtract l = width
+    jr  nc,end_loop_	; if no carry, loop again
+
+; check for x in range
+	push	hl
+	push	de
+	ld	hl,(iy+01h)		; hl = item 1 x
+	ld	de,(ix+05h)		; de = item 2 x
+	or	a,a				; reset flags(Don't know if I need this here?)
+	sbc	hl,de			; substract item 1 x from item 2 x
+	ld	a,l				; put in a
+	jr	nc,+skip_neg_1_	; if no carry, skip next step
+
+	neg					; a = 0 - a
+skip_neg_1_:
+	pop	de
+	pop	hl
+	sub	h				; substract h = height
+	jr	nc,end_loop_	; if no carry, loop again else handle collision
+
+; else a collision
+    ld	a,(NumObstaclesJumped)
+	inc	a
+	ld	(NumObstaclesJumped),a
+
+end_loop_:
+; no collision
+    add ix,de           ; add offset for next sprite
+    djnz	loop_		; next item
+
+    ret                 ; return
+
+
 data_stuff:
 	DL 0, 0, 0, 0
+
+NumObstaclesJumped:
+	DL 0

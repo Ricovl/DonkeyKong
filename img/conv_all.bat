@@ -8,6 +8,6 @@ del *.png
 del convpng.log
 
 for /r %%a in (*.c *.h) do (
-	MOVE "%%a" "../../src/gfx"
+	MOVE "%%a" "../src/gfx"
 )
 pause

@@ -97,6 +97,7 @@ void move_jumpman(void) {
 			if (jumpman.jumpCounter == 0x14) {
 				jumpman.comingDown = true;
 
+				dbg_sprintf(dbgout, "jumped over: %d\n", check_jump_over_item());
 				check_jump_over();
 				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 6, sizeof(hammer_t));
 			}
@@ -421,6 +422,10 @@ void bonus_item_picked_up(void) {
 /* Animate jumpman dead */
 void animate_jumpman_dead(void) {
 	uint8_t i, dir;
+
+	waitTicks(0x40);
+	gfx_Blit(gfx_buffer);
+	update_screen();
 
 	jumpman.sprite = 15;
 	dir = jumpman.dir;

@@ -25,6 +25,7 @@
 #include "kong.h"
 #include "overlay.h"
 #include "conveyors.h"
+#include "rivets.h"
 #include "screens.h"
 #include "stages.h"
 #include "elevators.h"
@@ -40,17 +41,14 @@ game_data_t game_data;
 
 bonus_item_t bonus_item[3];
 uint8_t num_bonus_items;
-bool rivet_enabled[8];
-uint8_t num_rivets;
 
 uint8_t frameCounter;
 
-bool check_end_stage(void);
 void flash_1up(void);
 void increase_difficulty(void);
+bool check_end_stage(void);
 void handle_bonus_timer(void);
 void handle_time_ran_out(void);
-void handle_rivets(void);
 
 void check_collision_jumpman(void);
 void check_collision_hammer(void);
@@ -166,10 +164,6 @@ void main(void) {
 			num_barrels = num_firefoxes = num_bonus_scores = num_hammers = 0;
 
 			if (!jumpman.isAlive) {
-				waitTicks(0x40);
-				gfx_Blit(gfx_buffer);
-				update_screen();
-
 				animate_jumpman_dead();
 				
 				game_data.lives--;
@@ -305,42 +299,6 @@ void increase_difficulty(void) {
 		game.difficultyTimer1++;
 	}
 	game.difficultyTimer0++;
-}
-
-/* Checks for and handles jumpman walking/jumping over rivet */
-void handle_rivets(void) {
-	if (game.stage == STAGE_RIVETS) {
-		if ((jumpman.x == 107 || jumpman.x == 211) && jumpman.y < 192) {
-			jumpman.traversedRivet = true;
-		}
-		else if (jumpman.traversedRivet) {
-			uint8_t y, rivetNum = 0;
-
-			jumpman.traversedRivet = false;
-			for (y = 71; y <= 191; y += 40) {
-				if (jumpman.y <= y) {
-					uint24_t x = 104;
-
-					if (jumpman.x > 160) {
-						x = 208;
-						rivetNum += 4;
-					}
-
-					if (rivet_enabled[rivetNum]) {
-						rivet_enabled[rivetNum] = false;
-
-						gfx_FillRectangle_NoClip(x, y, 8, 9);
-						gfx_BlitRectangle(gfx_buffer, x, y, 8, 9);
-
-						spawn_bonus_score(0, jumpman.x - 5, jumpman.y + 9);
-						num_rivets--;
-					}
-					return;
-				}
-				rivetNum++;
-			}
-		}
-	}
 }
 
 void waitTicks(uint8_t ticks) {
