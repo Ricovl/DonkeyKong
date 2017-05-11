@@ -24,7 +24,6 @@
 	.def _check_jump_over_item
 	
 	; link to collision code from original DonkeyKong:
-	; https://github.com/furrykef/dkdasm/blob/master/dkong.asm#L8114
 	; something about the hitboxes: http://donkeykongforum.com/index.php?topic=493.0
 
 	; 	type	  width	height
@@ -87,7 +86,7 @@ _check_jump_over_item:
 	push	ix
 	ld	iy,_jumpman
 	ld	a,(iy+#01)			; a = jumpman.y_old
-	add	a,0Ch				; 0C-7?
+	add	a,09h				; 0C-7?
 	ld	c,a					; c = jumpman.y_old + 5
 	ld	a,(iy+0Eh)			; a = jumpDirIndicator
 	or	a,a
@@ -95,10 +94,16 @@ _check_jump_over_item:
 	jr	z,jumpingUp
 	ld	hl,1208h			; hitbox when jumping right/left
 jumpingUp:
+	ld	a,(_game)
+	cp	1
+	jr	nz,skip_barrels_check
 	call 	check_jump_barrels
+	jr	end_check_over
+skip_barrels_check:
+	call	skip_barrels
+end_check_over:
 	pop	ix
 	pop	iy
-	or	a,a
 	ret
 
 
@@ -118,7 +123,7 @@ check_collision_entities:
 	ld	(_hitItemType),a
 
     ld	de,(iy+05h)			; de = x item 1
-	ld	a,(iy+01h)
+	ld	a,c
 	sub	a,3					; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
@@ -321,7 +326,7 @@ check_jump_barrels:
     ld  b,a					; b = num_barrels
 
     ld	de,(iy+05h)			; de = x item 1
-	ld	a,(iy+01h)
+	ld	a,c
 	sub	a,3					; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
@@ -371,9 +376,18 @@ skip_firefoxes_:
 
 	ld	a,(NumObstaclesJumped)
 	and	a,a
-	ret	z					; Return if no obstacles jumped
 
+	ret	z					; return if no items jumped
+	cp	#01					; 1 item jumped?
+	ret	z					; yes, 1; 100 pt
+
+	cp	#03					; less than 3 items jumped?
+	ld	a,#03				; 2; 300
+	ret	c					; yes, return
+
+	LD      A,#07           ; else 3+ items jumped, 7; 800 pt
 	ret
+
 
 count_items_collided:
 ; Checks for a collision between two objects

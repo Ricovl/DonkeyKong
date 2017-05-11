@@ -95,10 +95,15 @@ void move_jumpman(void) {
 		else if (!jumpman.comingDown) {
 			// Check if jumpman is at apex of jump
 			if (jumpman.jumpCounter == 0x14) {
-				jumpman.comingDown = true;
+				uint8_t NumObstaclesJumped;
 
-				dbg_sprintf(dbgout, "jumped over: %d\n", check_jump_over_item());
-				check_jump_over();
+				jumpman.comingDown = true;
+				NumObstaclesJumped = check_jump_over_item();
+
+				if (NumObstaclesJumped) {
+					spawn_bonus_score(NumObstaclesJumped - 1, jumpman.x - 6, jumpman.y + 9);
+				}
+				
 				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 6, sizeof(hammer_t));
 			}
 			jumpman.sprite = 13;
@@ -323,25 +328,6 @@ bool ladder_in_range(void) {
 	return false;
 }
 
-/* Checks for jumps over items on girders */
-void check_jump_over(void) {
-	uint8_t i, numObstaclesJumped = 0;
-
-	for (i = 0; i < num_barrels; i++) {
-		barrel_t *this_barrel = &barrel[i];
-
-		// Check if barrel is in between 17 pixels under jumpman
-		if (this_barrel->y > jumpman.y && jumpman.y + 17 > this_barrel->y) {
-			if (abs(jumpman.x - this_barrel->x) < 13)	// 13 is the width of a barrel
-				numObstaclesJumped++;
-		}
-	}
-
-	if (numObstaclesJumped) {
-		numObstaclesJumped = (numObstaclesJumped - 1) << 1;
-		spawn_bonus_score(numObstaclesJumped, jumpman.x - 6, jumpman.y + 9);
-	}
-}
 
 const uint8_t jumpman_walking_sprite_table[] = { 0, 2, 0, 1 };
 
@@ -448,7 +434,29 @@ void animate_jumpman_dead(void) {
 
 
 
-#if 0
+#if 0	Old jump over object detection that is not used anymore
+/* Checks for jumps over items on girders */
+void check_jump_over(void) {
+	uint8_t i, numObstaclesJumped = 0;
+
+	for (i = 0; i < num_barrels; i++) {
+		barrel_t *this_barrel = &barrel[i];
+
+		// Check if barrel is in between 17 pixels under jumpman
+		if (this_barrel->y > jumpman.y && jumpman.y + 17 > this_barrel->y) {
+			if (abs(jumpman.x - this_barrel->x) < 13)	// 13 is the width of a barrel
+				numObstaclesJumped++;
+		}
+	}
+
+	if (numObstaclesJumped) {
+		numObstaclesJumped = (numObstaclesJumped - 1) << 1;
+		spawn_bonus_score(numObstaclesJumped, jumpman.x - 6, jumpman.y + 9);
+	}
+}
+#endif
+
+#if 0	
 void check_collision_jumpman(void) {
 	if (game.stage == STAGE_BARRELS) {
 		for (i = 0; i < num_barrels; i++) {	// check collision barrels

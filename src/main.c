@@ -198,6 +198,8 @@ void main(void) {
 				end_stage_cinematic();
 			}
 
+			//gfx_FillScreen(COLOR_BACKGROUND);
+			//gfx_SwapDraw();
 			gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 		} while (!(quit));
 	}
@@ -347,8 +349,8 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  *19AA  CALL    #25F2         ; handle conveyor dirs, adjust Mario's speed based on conveyor dirs															handle_conveyor_dirs()
  *19AD  CALL    #19DA         ; check for mario picking up bonus item																						bonus_item_picked_up()
  *19B0  CALL    #03FB         ; check for kong beating chest and animate girl and her screams																update_kong()
-19B3  CALL    #2808         ; check for collisions with hostile sprites [set to NOPS to make mario invincible to enemy sprites]
-19B6  CALL    #281D         ; do stuff for hammers																					hammer collision		
+ *19B3  CALL    #2808         ; check for collisions with hostile sprites [set to NOPS to make mario invincible to enemy sprites]
+ *19B6  CALL    #281D         ; do stuff for hammers																					hammer collision		
  *19B9  CALL    #1E57         ; check for end of level																										check_end_stage()
  *19BC  CALL    #1A07         ; handle when the bonus timer has run out																						handle_time_ran_out()
  *19BF  CALL    #2FCB         ; for non-girder levels, checks for bonus timer changes. if the bonus counts down, sets a possible new fire to be released,	handle_bonus_timer()
@@ -358,15 +360,19 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 /* ToDo:
  * fix ground checking for all entities
- * Check for jumping over firefoxes, pies and flame
  * Fix jumpman edge of girder collision checking
- * add hammer hit animation
  * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
- * start menu and end screen
+ * Change some things in spawn_bonus_score()
+ * Fix that you see a quick change in color when you quit a stage(Don't know if it's visible on calc)
+ */
+
+/* In progress
+ * Check for jumping over firefoxes, pies and flame
+ * start menu and end screen and splash screen with credits
  */
 
 
 /* bugs:
- * problems with hammer sprite removing
+ * problems with hammer sprite removing(might be fixed now)
  * Crazy barrels can escape out of the screen(leave artifacts)?
  */
