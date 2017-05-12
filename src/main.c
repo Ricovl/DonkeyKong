@@ -359,15 +359,15 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
- * fix ground checking for all entities
- * Fix jumpman edge of girder collision checking
- * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
+ * Add collision detection for oilcan fire and kong in rivets
  * Change some things in spawn_bonus_score()
- * Fix that you see a quick change in color when you quit a stage(Don't know if it's visible on calc)
+ * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible
+ * check ground checking for all entities
+ * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
+ * Fix that there is a quick change in color when you quit a stage(Don't know if it's visible on calc)
  */
 
 /* In progress
- * Check for jumping over firefoxes, pies and flame
  * start menu and end screen and splash screen with credits
  */
 
@@ -375,4 +375,6 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 /* bugs:
  * problems with hammer sprite removing(might be fixed now)
  * Crazy barrels can escape out of the screen(leave artifacts)?
+ * Fix jumpman in rivets cinematic
+ * You can get unlimited points by quiting and then continueing
  */

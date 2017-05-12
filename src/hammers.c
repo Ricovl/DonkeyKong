@@ -139,7 +139,6 @@ void animate_hammer_hit(void) {
 		uint24_t x;
 
 		wasItemHit = false;
-		dbg_sprintf(dbgout, "item was hit\n");
 
 		if (hitItemType == 0) {			// barrel
 			points = barrel[hitItemNum].isBlue;
@@ -168,7 +167,7 @@ void animate_hammer_hit(void) {
 		gfx_SetDrawScreen();
 
 		if (points == 0) {
-			points = 2;	// 300 pt
+			points = 2;			// 300 pt
 		}
 		else {
 			points = rand() & 255;
@@ -177,7 +176,7 @@ void animate_hammer_hit(void) {
 			else if ((points & 2) == 2)
 				points = 4;		// 25% chance of 800 points
 			else
-				points = 2;			// else 300 points
+				points = 2;		// else 300 points
 		}
 
 		for (i = 0; i < 8; i++) {

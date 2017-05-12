@@ -11,7 +11,6 @@ bool girder_collision(void);
 void climb_ladder(void);
 bool ladder_in_range(void);
 void check_jump_over(void);
-uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t height, uint8_t offsety, uint8_t size);
 
 void check_jumpman_falling(void);
 void handle_jumpman_falling(void);

@@ -311,12 +311,12 @@ void draw_stage(uint8_t *array_b) {
 
 /* Some lookup tables used above */
 uint8_t  hammer_locations_y[] = { 91, 183, 132, 171, 91 , 131 };
-uint24_t hammer_locations_x[] = { 71, 223, 71 , 159, 159, 62  };
-uint8_t  item_locations_y[]	=	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
-uint24_t item_locations_x[] =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
+uint24_t hammer_locations_x[] = { 68, 220, 66 , 156, 157, 60  };
+uint8_t  item_locations_y[]	  =	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
+uint24_t item_locations_x[]   =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
 uint16_t conveyors_palette[3] = { gfx_RGBTo1555(254, 104, 0),  gfx_RGBTo1555(254, 184, 84), gfx_RGBTo1555(255, 254, 255) };
-uint16_t rivets_palette[3] =	{ gfx_RGBTo1555(0, 0, 255),  gfx_RGBTo1555(0, 255, 255), gfx_RGBTo1555(255, 184, 0) };
-uint8_t stage_order[20] = {
+uint16_t rivets_palette[3]	  =	{ gfx_RGBTo1555(0, 0, 255),	   gfx_RGBTo1555(0, 255, 255),	gfx_RGBTo1555(255, 184, 0)	 };
+uint8_t	 stage_order[20] = {
 	1, 4,
 	1, 3, 4,
 	1, 2, 3, 4,

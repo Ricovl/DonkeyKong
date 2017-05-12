@@ -17,6 +17,7 @@
 #include "defines.h"
 #include "jumpman.h"
 #include "rivets.h"
+#include "bonus_scores.h"
 
 
 bool rivet_enabled[8];

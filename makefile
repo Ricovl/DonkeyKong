@@ -11,10 +11,10 @@
 TARGET ?= DKONG
 DEBUGMODE ?= DEBUG
 ARCHIVED ?= NO
-COMPRESSED ?= NO
+COMPRESSED ?= YES
 #----------------------------
 ICONPNG ?= iconc.png
-DESCRIPTION ?= "Donkey Kong v0.7"
+DESCRIPTION ?= "Donkey Kong v0.9"
 #----------------------------
 
 #Add shared library names to the L varible, for instance:

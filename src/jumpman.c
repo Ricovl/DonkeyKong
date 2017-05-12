@@ -95,8 +95,8 @@ void move_jumpman(void) {
 		else if (!jumpman.comingDown) {
 			// Check if jumpman is at apex of jump
 			if (jumpman.jumpCounter == 0x14) {
-				uint8_t NumObstaclesJumped;
-
+				uint8_t NumObstaclesJumped, loop;
+				
 				jumpman.comingDown = true;
 				NumObstaclesJumped = check_jump_over_item();
 
@@ -104,7 +104,17 @@ void move_jumpman(void) {
 					spawn_bonus_score(NumObstaclesJumped - 1, jumpman.x - 6, jumpman.y + 9);
 				}
 				
-				hammerActive = check_collision(num_hammers, &hammer[0].y, 4, 6, 6, sizeof(hammer_t));
+				loop = num_hammers;
+				while (loop--) {
+					hammer_t *this_hammer = &hammer[loop];
+
+					// Check if y position is in range
+					if (abs((jumpman.y_old - 7) - this_hammer->y) <= 9) {
+						// Check if x position is in range
+						if (abs(jumpman.x_old - this_hammer->x) <= 3)
+							hammerActive = loop + 1;
+					}
+				}
 			}
 			jumpman.sprite = 13;
 		}
@@ -332,27 +342,6 @@ bool ladder_in_range(void) {
 const uint8_t jumpman_walking_sprite_table[] = { 0, 2, 0, 1 };
 
 
-/* checks for collision(temporary) */
-uint8_t check_collision(uint8_t loop, uint8_t *structp, uint8_t width, uint8_t height, uint8_t offsety, uint8_t size) {
-	int8_t distance;
-	uint8_t i;
-
-	for (i = 0; i < loop; i++) {
-		// Check if y position is in range
-		if (abs((jumpman.y - 5) - (*structp + offsety)) > height)
-			goto check_next;
-
-		// Check if x position is in range
-		if (abs(jumpman.x - (*(uint24_t*)(structp + 2))) <= width)
-			return i + 1;
-
-	check_next:
-		structp += size;
-	}
-
-	return false;
-}
-
 /* Make jumpman fall when there is nothing under him */
 void check_jumpman_falling(void) {
 	if (!jumpman.onLadder && !jumpman.isJumping && !jumpman.onElevator) {
@@ -434,7 +423,7 @@ void animate_jumpman_dead(void) {
 
 
 
-#if 0	Old jump over object detection that is not used anymore
+#if 0	//Old jump over object detection that is not used anymore
 /* Checks for jumps over items on girders */
 void check_jump_over(void) {
 	uint8_t i, numObstaclesJumped = 0;

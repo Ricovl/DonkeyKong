@@ -10,6 +10,7 @@
 
 #define ExtraLifeThreshold 7000 // 7000(standard), 10000, 15000 or 20000
 
+#define dbg_sprinf dbg_sprintf
 void waitTicks(uint8_t ticks);
 
 enum COLOR {
