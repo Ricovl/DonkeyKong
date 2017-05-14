@@ -54,6 +54,27 @@ void handle_time_ran_out(void);
 void check_collision_jumpman(void);
 void check_collision_hammer(void);
 
+//static const void(*const game_state_test[])(void) = { main_screen, intro_cinematic, pre_round_screen, initialize_stage, game_loop, end_stage_cinematic , animate_jumpman_dead, name_registration_screen };
+//uint8_t game_state_value;
+const void(*game_state)(void);
+
+void maintest(void) {
+	for (;;) {
+		kb_Scan();
+
+		flash_1up();
+		increase_difficulty();
+
+		(*game_state)();
+
+		update_screen();
+
+		frameCounter--;
+		if (kb_Data[kb_group_6] & kb_Clear && !game.quit) {
+			game.quit = true;
+		}
+	}
+}
 
 void main(void) {
 	bool debug = false;
