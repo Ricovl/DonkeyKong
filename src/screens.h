@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void main_screen(void);
-void name_registration(uint8_t ranking);
+void name_registration_screen(uint8_t ranking);
 void pre_round_screen(void);
 void draw_rankings(void);
 

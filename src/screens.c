@@ -118,7 +118,7 @@ void main_screen(void) {
 }
 
 /* Name registration screen */
-void name_registration(uint8_t ranking) {
+void name_registration_screen(uint8_t ranking) {
 	char name[6];
 	sk_key_t key = 1;
 	uint8_t x, y, num = 0;

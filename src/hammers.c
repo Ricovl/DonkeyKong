@@ -142,24 +142,26 @@ void animate_hammer_hit(void) {
 
 		if (hitItemType == 0) {			// barrel
 			points = barrel[hitItemNum].isBlue;
-			gfx_SetDrawScreen();
-			gfx_BlitRectangle(gfx_buffer, barrel[hitItemNum].x - 7, barrel[hitItemNum].y - 9, 16, 10);
-			gfx_SetDrawBuffer();
+			gfx_BlitRectangle(gfx_screen, barrel[hitItemNum].x - 7, barrel[hitItemNum].y - 9, 16, 10);
 			x = barrel[hitItemNum].x - 7;
 			y = barrel[hitItemNum].y - 11;
 			del_barrel(hitItemNum);
 		}
 		else if (hitItemType == 1) {	// fireball/firefox
 			points = firefox[hitItemNum].moveCounter;
-			gfx_SetDrawScreen();
-			gfx_BlitRectangle(gfx_buffer, firefox[hitItemNum].x - 7, firefox[hitItemNum].y - 15, 16, 16);
-			gfx_SetDrawBuffer();
+			gfx_BlitRectangle(gfx_screen, firefox[hitItemNum].x - 7, firefox[hitItemNum].y - 15, 16, 16);
 			x = firefox[hitItemNum].x - 7;
 			y = firefox[hitItemNum].y - 14;
 			firefox[hitItemNum] = firefox[--num_firefoxes];
 		}
 		else {							// pie
-			// points = pie[+1].
+			points = pie[hitItemNum + 1].y;
+			if (hitItemNum >= num_firefoxes)
+				points = 0;
+			gfx_BlitRectangle(gfx_screen, pie[hitItemNum].x, pie[hitItemNum].y, 16, 8);
+			x = pie[hitItemNum].x;
+			y = pie[hitItemNum].y - 3;
+			del_pie(hitItemNum);
 		}
 
 		background_data = gfx_MallocSprite(16, 14);
@@ -182,6 +184,7 @@ void animate_hammer_hit(void) {
 		for (i = 0; i < 8; i++) {
 			uint8_t spriteNum = i & 1;
 			uint8_t offset;
+
 			if (i > 5)
 				spriteNum = 2;
 			offset = (spriteNum << 1) | 1;

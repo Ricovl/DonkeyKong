@@ -29,7 +29,7 @@ int8_t conveyorVector_bottom;
 /* handle conveyor dirs and adjust Mario's speed based on conveyor dirs */
 void handle_conveyor_dirs(void) {
 	if (game.stage == STAGE_CONVEYORS) {
-		//////////////////// handle top conveyor and pulleys ////////////////////
+		//----------------- handle top conveyor and pulleys -----------------//
 		if ((frameCounter & 1) == 0) {
 			conveyor[Top].reverseCounter--;
 			if (conveyor[Top].reverseCounter == 0) {
@@ -44,7 +44,7 @@ void handle_conveyor_dirs(void) {
 			animate_pulley(&conveyor[Top]);
 		}
 
-		//////////////////// handle middle conveyor and pulleys ////////////////////
+		//---------------- handle middle conveyor and pulleys ---------------//
 		if (jumpman.y >= 183) {
 			if ((frameCounter & 1) == 0) {
 				conveyor[Middle].reverseCounter--;
@@ -70,7 +70,7 @@ void handle_conveyor_dirs(void) {
 				conveyor[Middle].direction = 0xFF;
 		}
 
-		//////////////////// handle lower conveyor and pulleys ////////////////////
+		//---------------- handle lower conveyor and pulleys ----------------//
 		if ((frameCounter & 1) == 0) {
 			conveyor[Bottom].reverseCounter--;
 			if (conveyor[Bottom].reverseCounter == 0) {
@@ -85,7 +85,7 @@ void handle_conveyor_dirs(void) {
 			animate_pulley(&conveyor[Bottom]);
 		}
 
-		//////////// handle mario's different speeds when on a conveyor ///////////
+		//-------- handle mario's different speeds when on a conveyor -------//
 		if (jumpman.y == 71) {			// jumpman on top conveyor
 			jumpman.x += conveyorVector_top;	// This doesn't have to be here because the level ends on the top conveyor
 		}

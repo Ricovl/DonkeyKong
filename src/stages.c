@@ -214,12 +214,8 @@ void initialize_stage(uint8_t stage) {
 
 		// Change palette colors
 		gfx_SetPalette(rivets_palette, 6, 3);
-	}
-
-	if (game.stage == STAGE_RIVETS)
 		gfx_palette[9] = gfx_palette[COLOR_COLLISION - 1];
-	else
-		gfx_palette[9] = gfx_palette[COLOR_LADDER];
+	}	
 
 	// Kong
 	kong.sprite = 0;

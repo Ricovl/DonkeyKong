@@ -337,8 +337,8 @@ check_jump_stage_barrels:
 	sub	a,3					; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
-	ld	(iy+#01),de			; x item1	--------------
-	ld	(iy+#00),a			; y item1	--------------
+	ld	(iy+#01),de			; x item1
+	ld	(iy+#00),a			; y item1
 
 	push	hl
 	ld	de,0303h
@@ -360,8 +360,8 @@ skip_barrels_:
     ld	de,(iy+#05)			; de = x item 1
 	push	iy
 	ld	iy,data_stuff
-	ld	(iy+#01),de			; x item1	--------------
-	ld	(iy+#00),c			; y item1	--------------
+	ld	(iy+#01),de			; x item1
+	ld	(iy+#00),c			; y item1
 	
 	push	hl
 	ld	a,(_game)			; a = game.stage

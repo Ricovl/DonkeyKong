@@ -34,7 +34,7 @@
 #include "hammers.h"
 
 
-#define DEBUG_MODE 1
+#define DEBUG_MODE	true
 
 game_t game;
 game_data_t game_data;
@@ -44,6 +44,7 @@ uint8_t num_bonus_items;
 
 uint8_t frameCounter;
 
+void game_loop(void);
 void flash_1up(void);
 void increase_difficulty(void);
 bool check_end_stage(void);
@@ -56,6 +57,7 @@ void check_collision_hammer(void);
 
 void main(void) {
 	bool debug = false;
+	uint8_t i;
 
 	malloc(0);
 	srand(rtc_Time());
@@ -93,49 +95,7 @@ void main(void) {
 				flash_1up();	// make this interrupt?
 				increase_difficulty();
 
-				update_bonus_scores();
-
-				animate_hammer_hit();
-
-				move_jumpman();
-
-				move_barrels();
-				deploy_barrel();
-				spawn_barrel();
-
-				update_firefoxes();
-
-				move_bouncers();
-
-				move_pies();
-
-				release_firefox();
-
-				animate_hammer();	// wrong place?
-
-				move_retractable_ladders();
-
-				handle_rivets();
-
-				check_jumpman_falling();
-
-				handle_jumpman_falling();
-
-				move_elevators();
-
-				handle_conveyor_dirs();
-
-				bonus_item_picked_up();
-
-				update_kong();
-
-				//check_collision_jumpman();
-
-				check_collision_hammer();
-
-				handle_time_ran_out();
-
-				handle_bonus_timer();
+				game_loop();
 
 				update_screen();
 
@@ -187,7 +147,7 @@ void main(void) {
 							memcpy(&game_data.name[i + 1], &game_data.name[i], 6 - i);
 							game_data.Hscore[i] = game_data.score;
 							// Register name
-							name_registration(i);
+							name_registration_screen(i);
 							break;
 						}
 					}
@@ -206,6 +166,54 @@ void main(void) {
 }
 
 
+void game_loop(void) {
+	update_bonus_scores();
+
+	animate_hammer_hit();
+
+	move_jumpman();
+
+	move_barrels();
+	deploy_barrel();
+	spawn_barrel();
+
+	update_firefoxes();
+
+	move_bouncers();
+
+	move_pies();
+
+	release_firefox();
+
+	animate_hammer();
+
+	move_retractable_ladders();
+
+	handle_rivets();
+
+	check_jumpman_falling();
+
+	handle_jumpman_falling();
+
+	move_elevators();
+
+	handle_conveyor_dirs();
+
+	bonus_item_picked_up();
+
+	update_kong();
+
+#if !DEBUG_MODE
+	check_collision_jumpman();
+#endif
+
+	check_collision_hammer();
+
+	handle_time_ran_out();
+
+	handle_bonus_timer();
+}
+
 /* Checks if jumpman is standing on the place where the stage ends */
 bool check_end_stage(void) {
 
@@ -216,6 +224,7 @@ bool check_end_stage(void) {
 	else if (game.stage == STAGE_RIVETS) {
 		if (num_rivets)
 			return false;
+		return true;
 	}
 	else {	// stage conveyors
 		if (jumpman.y > 71)
@@ -361,20 +370,18 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 /* ToDo:
  * Add collision detection for oilcan fire and kong in rivets
  * Change some things in spawn_bonus_score()
- * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible
  * check ground checking for all entities
  * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
  * Fix that there is a quick change in color when you quit a stage(Don't know if it's visible on calc)
  */
 
 /* In progress
- * start menu and end screen and splash screen with credits
+ * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible
+ * start menu and splash screen with credits
  */
 
 
 /* bugs:
- * problems with hammer sprite removing(might be fixed now)
  * Crazy barrels can escape out of the screen(leave artifacts)?
- * Fix jumpman in rivets cinematic
  * You can get unlimited points by quiting and then continueing
  */
