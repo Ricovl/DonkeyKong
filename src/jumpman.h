@@ -49,6 +49,7 @@ typedef struct {
 	bool startFalling;					// 1C
 	bool traversedRivet;				// 1D
 
+	bool enabled;
 	bool isAlive;						// 1E	1 when alive 0 if death
 	uint8_t buffer_data[16 * 16 + 2];	// 1F	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
 } jumpman_t;

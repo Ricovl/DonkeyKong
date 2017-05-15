@@ -15,6 +15,7 @@ void waitTicks(uint8_t ticks);
 void game_loop(void);
 extern const void(*game_state)(void);
 void handle_waitTimer(void);
+void handle_waitTimer1(void);
 extern uint8_t waitTimer;
 
 enum COLOR {

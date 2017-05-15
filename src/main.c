@@ -116,7 +116,7 @@ void main(void) {
 	}
 }
 
-
+/* Handle waitTimer in more complex functions */
 void handle_waitTimer(void) {
 	waitTimer--;
 
@@ -127,6 +127,20 @@ void handle_waitTimer(void) {
 
 	asm("ld	sp,ix");
 	asm("pop ix");
+}
+
+/* Handle waitTimer in simple functions */
+void handle_waitTimer1(void) {
+	waitTimer--;
+
+	if (waitTimer == 0) {
+		waitTimer = 1;
+		return;
+	}
+
+	asm("inc sp");
+	asm("inc sp");
+	asm("inc sp");
 }
 
 

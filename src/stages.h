@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "stdlib.h"
 
+void pre_stage(void);
 void initialize_stage(void);
 void draw_stage(uint8_t *array_b);
 

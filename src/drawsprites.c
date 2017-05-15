@@ -35,6 +35,7 @@ void update_screen(void) {
 	for (i = 0; i < num_retractable_ladders; i++)
 		gfx_GetSprite((gfx_image_t*)retractableLadder[i].background_data, retractableLadder[i].x, retractableLadder[i].y_old);
 
+	if (jumpman.enabled)
 		gfx_GetSprite((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
@@ -60,6 +61,7 @@ void update_screen(void) {
 	for (i = 0; i < num_retractable_ladders; i++)
 		gfx_TransparentSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
 
+	if (jumpman.enabled)
 		gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
@@ -121,8 +123,10 @@ void update_screen(void) {
 		retractableLadder[i].y_old = retractableLadder[i].y;
 	}
 	
-	gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
-	jumpman.x_old = jumpman.x; jumpman.y_old = jumpman.y;
+	if (jumpman.enabled) {
+		gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+		jumpman.x_old = jumpman.x; jumpman.y_old = jumpman.y;
+	}
 
 	for (i = 0; i < num_hammers; i++) {		// Hammers
 		hammer_t *this_hammer = &hammer[i];

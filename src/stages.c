@@ -20,6 +20,7 @@
 #include "overlay.h"
 #include "kong.h"
 #include "bonus_scores.h"
+#include "drawsprites.h"
 #include "barrels.h"
 #include "firefoxes.h"
 #include "conveyors.h"
@@ -183,7 +184,6 @@ void initialize_stage(void) {
 		firefox[1].actualY = firefox[1].y_old = firefox[1].y = 0x60 - 9;
 		firefox[1].background_data[0] = 16;
 		firefox[1].background_data[1] = 16;
-		num_firefoxes = 2;
 
 		elevatorTimer = 0x34;
 		num_elevators = 6;
@@ -247,8 +247,23 @@ void initialize_stage(void) {
 
 	draw_kong();
 	draw_pauline(false);
+	update_screen();
+
+	waitTimer = 0x40;
+	game_state = pre_stage;
+}
+
+/* Enables all moving objects after a delay */
+void pre_stage(void) {
+	handle_waitTimer1();
+
+	if (game.stage == STAGE_ELEVATORS)
+		num_firefoxes = 2;
+
+	jumpman.enabled = true;
 
 	game_state = return_main;
+	//game_state = game_loop;
 }
 
 /* Draws the stage itself to the screen */

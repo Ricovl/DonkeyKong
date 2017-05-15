@@ -275,7 +275,7 @@ void pre_round_screen(void) {
 
 	gfx_SwapDraw();
 	
-	waitTimer = 160;
+	waitTimer = 0xA0;
 	game_state = initialize_stage;
 }
 
