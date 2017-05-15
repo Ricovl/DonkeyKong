@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+void return_main(void);
 void main_screen(void);
 void name_registration_screen(uint8_t ranking);
 void pre_round_screen(void);

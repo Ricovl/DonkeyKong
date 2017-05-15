@@ -47,7 +47,7 @@ uint8_t frameCounter;
 void game_loop(void);
 void flash_1up(void);
 void increase_difficulty(void);
-bool check_end_stage(void);
+void check_end_stage(void);
 void handle_bonus_timer(void);
 void handle_time_ran_out(void);
 
@@ -56,35 +56,16 @@ void check_collision_hammer(void);
 
 //static const void(*const game_state_test[])(void) = { main_screen, intro_cinematic, pre_round_screen, initialize_stage, game_loop, end_stage_cinematic , animate_jumpman_dead, name_registration_screen };
 //uint8_t game_state_value;
-const void(*game_state)(void);
-
-void maintest(void) {
-	for (;;) {
-		kb_Scan();
-
-		flash_1up();
-		increase_difficulty();
-
-		(*game_state)();
-
-		update_screen();
-
-		frameCounter--;
-		if (kb_Data[kb_group_6] & kb_Clear && !game.quit) {
-			game.quit = true;
-		}
-	}
-}
+const void(*game_state)(void) = return_main;
+uint8_t waitTimer;
 
 void main(void) {
-	bool debug = false;
-	uint8_t i;
+	uint8_t debug = false;
 
 	malloc(0);
 	srand(rtc_Time());
 	gfx_Begin(gfx_8bpp);
 
-	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	gfx_SetClipRegion(48, 16, 272, 239);
 	gfx_SetTransparentColor(0x15);
 
@@ -93,97 +74,59 @@ void main(void) {
 	gfx_SetMonospaceFont(8);
 
 	decompress_images();
+	load_progress();
 	gfx_SetDrawBuffer();
 
-	load_progress();
+	game.quit = false;	
 
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
+	// Game loop
 	for (;;) {
-		bool quit = false;
-		timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
+		kb_Scan();
 
-		main_screen();
+		flash_1up();
+		increase_difficulty();
 
-		do {
-			game.stage = stage_order[game_data.round];
-			
-			pre_round_screen();	// how high can you get?
-			initialize_stage(game.stage);
+		(*game_state)();
 
-			do {
-				flash_1up();	// make this interrupt?
-				increase_difficulty();
-
-				game_loop();
-
-				update_screen();
-
-				while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
-				timer_IntStatus = TIMER1_RELOADED;	// Acknowledge the reload
+		//update_screen();
 
 #if DEBUG_MODE
-				if (debug) {
-					while (!(kb_ScanGroup(kb_group_6) & kb_Add) && !(kb_Data[kb_group_6] & kb_Sub));
-					if (kb_Data[kb_group_6] & kb_Sub)
-						debug = false;
-					while ((kb_ScanGroup(kb_group_6) & kb_Add) || (kb_Data[kb_group_6] & kb_Sub));
-				}
-				else if (kb_Data[kb_group_6] & kb_Sub) {
-					debug = true;
-					while ((kb_ScanGroup(kb_group_6) & kb_Sub));
-				}
+		if (debug) {
+			while (!(kb_ScanGroup(kb_group_6) & kb_Add) && !(kb_Data[kb_group_6] & kb_Sub));
+			if (kb_Data[kb_group_6] & kb_Sub)
+				debug = false;
+			while ((kb_ScanGroup(kb_group_6) & kb_Add) || (kb_Data[kb_group_6] & kb_Sub));
+		}
+		else if (kb_Data[kb_group_6] & kb_Sub) {
+			debug = true;
+			while ((kb_ScanGroup(kb_group_6) & kb_Sub));
+		}
 #endif
 
-				frameCounter--;
+		frameCounter--;
+		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
+		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
 
-				if (kb_Data[kb_group_6] & kb_Clear)
-					quit = true;
-			} while (!(quit) && jumpman.isAlive && !check_end_stage());
-
-			num_barrels = num_firefoxes = num_bonus_scores = num_hammers = 0;
-
-			if (!jumpman.isAlive) {
-				animate_jumpman_dead();
-				
-				game_data.lives--;
-				if (game_data.lives == 0) {
-					uint8_t i;
-
-					// Draw Game Over window
-					gfx_SetDrawScreen();
-					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
-					gfx_FillRectangle_NoClip(104, 144, 112, 40);
-					gfx_SetTextFGColor(22);
-					gfx_PrintStringXY("GAME%%OVER", 121, 160);
-					gfx_SetDrawBuffer();
-					waitTicks(0xC0);
-					quit = true;
-
-					// Check if high score and place score in list and ask for name if high score
-					for (i = 0; i < 5; i++) {
-						if (game_data.score >= game_data.Hscore[i]) {
-							memcpy(&game_data.Hscore[i + 1], &game_data.Hscore[i], (4 - i) * sizeof(unsigned)); 
-							memcpy(&game_data.name[i + 1], &game_data.name[i], 6 - i);
-							game_data.Hscore[i] = game_data.score;
-							// Register name
-							name_registration_screen(i);
-							break;
-						}
-					}
-				}
-			}
-			else if (!quit) {
-				update_screen();
-				end_stage_cinematic();
-			}
-
-			//gfx_FillScreen(COLOR_BACKGROUND);
-			//gfx_SwapDraw();
-			gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
-		} while (!(quit));
+		if (kb_Data[kb_group_6] & kb_Clear && !game.quit) {
+			game.quit = true;
+		}
 	}
+}
+
+
+void handle_waitTimer(void) {
+	waitTimer--;
+
+	if (waitTimer == 0) {
+		waitTimer = 1;
+		return;
+	}
+
+	asm("ld	sp,ix");
+	asm("pop ix");
 }
 
 
@@ -233,23 +176,28 @@ void game_loop(void) {
 	handle_time_ran_out();
 
 	handle_bonus_timer();
+
+	check_end_stage();
+
+
+	update_screen();
 }
 
 /* Checks if jumpman is standing on the place where the stage ends */
-bool check_end_stage(void) {
+void check_end_stage(void) {
 
 	if ((game.stage & 1) == 1) {
 		if (jumpman.y > 39)
-			return false;
+			return;
 	}
 	else if (game.stage == STAGE_RIVETS) {
 		if (num_rivets)
-			return false;
-		return true;
+			return;
+		goto end_of_stage;
 	}
 	else {	// stage conveyors
 		if (jumpman.y > 71)
-			return false;
+			return;
 	}
 
 	// Set sprite based on wich half of the screen jumpman is
@@ -259,7 +207,8 @@ bool check_end_stage(void) {
 		jumpman.dir = FACE_RIGHT;
 	jumpman.sprite = 0;
 
-	return true;
+end_of_stage:
+	game_state = end_stage_cinematic;
 }
 
 /* Handles bonus timer when reached 0 */

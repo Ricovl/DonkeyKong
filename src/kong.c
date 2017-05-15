@@ -23,6 +23,8 @@
 #include "stages.h"
 #include "overlay.h"
 
+#include "screens.h"
+
 
 /* Updates kong and pauline */
 void update_kong(void) {
@@ -345,84 +347,128 @@ void remove_ladder(uint8_t y) {
 	gfx_BlitRectangle(gfx_buffer, 160, y, 24, 8);
 }
 
+/* Handles kong climbing ladder */
+void climb_ladder(void) {
+	kong.climbCounter++;
+	if ((kong.climbCounter & 7) == 0) {
+		kong.y -= 4;
+		kong.sprite ^= 1;
+		render_kong();
+	}
+}
+
+static uint8_t cinematicProgress = 0;
+
 /* Play the intro cinematic */
 void intro_cinematic(void) {
-	uint8_t i, jump;
-	
-	gfx_FillScreen(COLOR_BACKGROUND);
-	draw_stage(&stage_barrels_intro_data);
-	draw_overlay_full();
+	switch (cinematicProgress) {
+	case 0:												// Initialize some variales
+		draw_overlay_full();
+		draw_stage(&stage_barrels_intro_data);
+		gfx_Blit(gfx_buffer);
 
-	gfx_Blit(gfx_buffer);
-	waitTicks(0x48);
+		kong.climbCounter = 0;
+		kong.jumpCounter = 0;
 
-	kong.sprite = 8;
-	kong.x_old = kong.x = 152;
-	kong.y_old = kong.y = 221;
-	kong.background_data[0] = 40;
-	kong.background_data[1] = 32;
-	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
-	render_kong();
-
-	// Kong climbing ladder with pauline
-	while (kong.y > 97) {
-		waitTicks(8);
-
-		if ((kong.sprite & 1) == 1 && kong.y < 216) {
+		waitTimer = 0x40;
+		cinematicProgress++;
+		break;
+	case 1:												// Spawn kong
+		handle_waitTimer();
+		kong.sprite = 8;
+		kong.x_old = kong.x = 152;
+		kong.y_old = kong.y = 221;
+		kong.background_data[0] = 40;
+		kong.background_data[1] = 32;
+		gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
+		render_kong();
+		cinematicProgress++;
+		break;
+	case 2:												// Kong climbing ladder with pauline
+		climb_ladder();
+		if ((kong.climbCounter & 15) == 0) {
 			remove_ladder(kong.y + 15);
 		}
 
-		waitTicks(1);
-		kong.sprite ^= 1;
-		kong.y -= 4;
-		render_kong();
-	}
-	waitTicks(0x22);
-
-	// kong jumping up
-	for (i = 0; i < sizeof(kong_jumpup_table); i++) {
-		kong.y += kong_jumpup_table[i];
-		render_kong();
-		waitTicks(2);
-	}
-
-	kong.y += 5;
-	kong.sprite = 0;
-	render_kong();
-
-	// Kong landed on girder; draw pauline, remove ladder and angle top girder
-	pauline.x = 136;
-	pauline.y = 18;
-	pauline.dir = FACE_RIGHT;
-	pauline.sprite = 0;
-	draw_pauline(false);
-	for (i = 76; i < 120; i += 8)
-		remove_ladder(i);
-	draw_stage(&stage_barrels_slanted_top);
-	gfx_BlitLines(gfx_buffer, 68, 12);
-
-	waitTicks(0x20);
-
-	// Kong jumping to the left
-	for (jump = 0; jump < 5; jump++) {
-		for (i = 0; i < sizeof(kong_jumpleft_table); i++) {
-			kong.y += kong_jumpleft_table[i];
-			kong.x--;
-			render_kong();
-			waitTicks(2);
+		if (kong.y <= 97) {
+			waitTimer = 0x20;
+			cinematicProgress++;
 		}
-		draw_stage(&stage_barrels_slanted[jump * 11]);
-		gfx_BlitLines(gfx_buffer, 93 + jump * 33, 20 - 5 * (jump == 4));	// This works, but there might be a better way
+		break;
+	case 4:												// Kong jumping up to girder
+		if ((frameCounter & 1) == 0) {
+			uint8_t i;
+
+			// Kong is jumping up
+			if (kong.jumpCounter < sizeof(kong_jumpup_table)) {
+				kong.y += kong_jumpup_table[kong.jumpCounter];
+				render_kong();
+				kong.jumpCounter++;
+				break;
+			}
+
+			kong.y += 5;
+			kong.sprite = 0;
+			render_kong();
+
+			// Kong landed on girder; draw pauline, remove ladder and angle top girder
+			pauline.x = 136;
+			pauline.y = 18;
+			pauline.dir = FACE_RIGHT;
+			pauline.sprite = 0;
+			draw_pauline(false);
+			kong.jumpCounter = 0;
+			kong.bounceCounter = 0;
+			for (i = 76; i < 120; i += 8)
+				remove_ladder(i);
+			draw_stage(&stage_barrels_slanted_top);
+			gfx_BlitLines(gfx_buffer, 68, 12);
+
+			waitTimer = 0x20;
+			cinematicProgress++;
+		}
+		break;
+	case 6:												// Kong bouncing to left
+		if ((frameCounter & 1) == 0) {
+			if (kong.jumpCounter < sizeof(kong_jumpleft_table)) {
+				kong.y += kong_jumpleft_table[kong.jumpCounter];
+				kong.x--;
+				render_kong();
+				kong.jumpCounter++;
+				break;
+			}
+
+			draw_stage(&stage_barrels_slanted[kong.bounceCounter * 11]);
+			gfx_BlitLines(gfx_buffer, 93 + kong.bounceCounter * 33, 20 - 5 * (kong.bounceCounter == 4));	// This works, but there might be a better way
+
+			kong.jumpCounter = 0;
+			kong.bounceCounter++;
+			if (kong.bounceCounter < 5)
+				break;
+
+			waitTimer = 0xB0;
+			cinematicProgress++;
+		}
+		break;
+	case 7:												// Kong standing and showing teeth
+		if (waitTimer == 0x90) {		// Kong showing teeth
+			kong.sprite = 12;
+			render_kong();
+		}
+		else if (waitTimer == 0x18) {	// Kong's normal face
+			kong.sprite = 0;
+			render_kong();
+		}
+
+		handle_waitTimer();
+		cinematicProgress = 0;
+		game_state = pre_round_screen;
+		break;
+	default:
+		handle_waitTimer();
+		cinematicProgress++;
+		break;
 	}
-	waitTicks(0x18);
-
-	kong.sprite = 12;
-	render_kong();
-	waitTicks(0x78);
-
-	kong.sprite = 0;
-	render_kong();
-	waitTicks(0x26);
 }
 
 

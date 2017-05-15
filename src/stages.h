@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "stdlib.h"
 
-void initialize_stage(uint8_t stage);
+void initialize_stage(void);
 void draw_stage(uint8_t *array_b);
 
 typedef struct {

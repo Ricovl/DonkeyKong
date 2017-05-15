@@ -19,6 +19,10 @@ typedef struct {
 	bool timerOn;
 	uint8_t timer;
 
+	uint8_t climbCounter;
+	uint8_t jumpCounter;
+	uint8_t bounceCounter;
+
 	uint8_t background_data[46 * 36 + 2];
 } kong_t;
 

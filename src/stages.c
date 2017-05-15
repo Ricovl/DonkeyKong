@@ -28,12 +28,17 @@
 #include "images.h"
 #include "elevators.h"
 
+#include "screens.h"
 
 /* Draw the stage with overlay and initialize the begin variables */
-void initialize_stage(uint8_t stage) {
+void initialize_stage(void) {
 	uint8_t i;
+	handle_waitTimer();
 
-	gfx_FillScreen(COLOR_BACKGROUND);
+	game.stage = stage_order[game_data.round];
+
+	draw_overlay_full();
+	draw_bonus_box();
 	draw_stage(stage_data[game.stage - 1]);
 
 	init_jumpman(95, 231);
@@ -83,7 +88,7 @@ void initialize_stage(uint8_t stage) {
 
 	// Pies
 	pieTimer = 0;
-	
+
 	// Barrels
 	barrelDeploymentTimer = 1;
 	deployingBarrel = deployBarrel = false;
@@ -138,7 +143,7 @@ void initialize_stage(uint8_t stage) {
 		num_bonus_items = 3;
 	}
 
-	if (stage == STAGE_BARRELS) {				// Stage barrels stuff
+	if (game.stage == STAGE_BARRELS) {				// Stage barrels stuff
 		// Initialize some varialbes
 		oilcan.x = 64;
 		oilcan.y = 216;
@@ -151,7 +156,7 @@ void initialize_stage(uint8_t stage) {
 		gfx_Sprite_NoClip(barrel_standing, 48, 35);
 		gfx_Sprite_NoClip(barrel_standing, 58, 35);
 	}
-	else if (stage == STAGE_CONVEYORS) {		// Stage conveyors stuff
+	else if (game.stage == STAGE_CONVEYORS) {		// Stage conveyors stuff
 		// Initialize some varialbes
 		oilcan.x = 152;
 		oilcan.y = 112;
@@ -163,7 +168,7 @@ void initialize_stage(uint8_t stage) {
 		// Change palette colors
 		gfx_SetPalette(conveyors_palette, 6, 3);
 	}
-	else if (stage == STAGE_ELEVATORS) {		// Stage elevators stuff
+	else if (game.stage == STAGE_ELEVATORS) {		// Stage elevators stuff
 		// Initalize some variables
 		init_jumpman(54, 215);
 
@@ -193,7 +198,7 @@ void initialize_stage(uint8_t stage) {
 		gfx_Rectangle_NoClip(87, 88, 2, 136);
 		gfx_Rectangle_NoClip(151, 88, 2, 136);
 	}
-	else if (stage == STAGE_RIVETS) {			// Stage rivets stuff
+	else {											// Stage rivets stuff
 		// Initialize some variables
 		kong.x = 140;
 
@@ -206,7 +211,7 @@ void initialize_stage(uint8_t stage) {
 			gfx_Sprite_NoClip(rivet, 104, i);
 			gfx_Sprite_NoClip(rivet, 208, i);
 		}
-		
+
 		// Draw the pillars
 		gfx_SetColor(22);
 		gfx_Rectangle_NoClip(119, 40, 2, 32);
@@ -215,7 +220,7 @@ void initialize_stage(uint8_t stage) {
 		// Change palette colors
 		gfx_SetPalette(rivets_palette, 6, 3);
 		gfx_palette[9] = gfx_palette[COLOR_COLLISION - 1];
-	}	
+	}
 
 	// Kong
 	kong.sprite = 0;
@@ -234,18 +239,16 @@ void initialize_stage(uint8_t stage) {
 	game.difficultyTimer0 = game.difficultyTimer1 = 0;
 
 	game.timeRanOut = false;
-	frameCounter = rand() & 255;
-
-	draw_overlay_full();
-	draw_bonus_box();
 
 	/* Copy the buffer to the screen, so they are the same */
 	gfx_Blit(gfx_buffer);
 
 	gfx_SetColor(COLOR_BACKGROUND);
-	
+
 	draw_kong();
 	draw_pauline(false);
+
+	game_state = return_main;
 }
 
 /* Draws the stage itself to the screen */

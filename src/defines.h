@@ -12,6 +12,10 @@
 
 #define dbg_sprinf dbg_sprintf
 void waitTicks(uint8_t ticks);
+void game_loop(void);
+extern const void(*game_state)(void);
+void handle_waitTimer(void);
+extern uint8_t waitTimer;
 
 enum COLOR {
 	COLOR_BACKGROUND	= 0x1A,	//  0,  0,  0

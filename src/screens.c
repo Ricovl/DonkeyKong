@@ -17,6 +17,7 @@
 #include "screens.h"
 #include "overlay.h"
 #include "images.h"
+#include "stages.h"
 #include "kong.h"
 #include "font.h"
 
@@ -59,61 +60,61 @@ void save_progress(void) {
 	prgm_CleanUp();
 }
 
-/* Main screen from where you can select to continue or play a new game */
-void main_screen(void) {
-	sk_key_t key, option = 0;
+static uint8_t option = 0;
 
-	gfx_FillScreen(COLOR_BACKGROUND);
+/* Clears the screen and returns to the main screen */
+void return_main(void) {
+	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
+	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
+
 	draw_overlay_full();
 	draw_rankings();
-
 	gfx_PrintStringXY("RANK", 57, 128);
 	gfx_PrintStringXY("SCORE", 105, 128);
 	gfx_PrintStringXY("NAME", 161, 128);
-	gfx_SetTextFGColor(COLOR_LADDER);
 	gfx_Blit(gfx_buffer);
 
-	os_GetCSC();
-	while (os_GetCSC() != 0);
-	key = 1;
+	game_state = main_screen;
+}
 
-	while (key != sk_Enter && key != sk_2nd) {
-		if (key) {
-			gfx_SetColor(COLOR_BACKGROUND);
-			gfx_FillRectangle_NoClip(125, 48, 69, 48);
+/* Main screen from where you can select to continue or play a new game */
+void main_screen(void) {
+	// Clear the menu text
+	gfx_FillRectangle_NoClip(125, 48, 69, 48);
+	gfx_SetTextFGColor(COLOR_LADDER);
 
-			gfx_PrintStringXY("CONTINUE", 128, 51);
-			gfx_PrintStringXY("NEW%GAME", 128, 68);
-			gfx_PrintStringXY("SETTINGS", 128, 85);
+	// Draw a line underneath and above the selected option
+	gfx_SetColor(COLOR_LADDER);
+	gfx_HorizLine_NoClip(127, 59 + 17 * option, 65);
+	gfx_HorizLine_NoClip(127, 49 + 17 * option, 65);
 
-			gfx_SetColor(COLOR_LADDER);
-			gfx_HorizLine_NoClip(127, 59 + 17 * option, 65);
-			gfx_HorizLine_NoClip(127, 49 + 17 * option, 65);			
+	// Draw the options
+	gfx_SetColor(COLOR_BACKGROUND);
+	gfx_PrintStringXY("CONTINUE", 128, 51);
+	gfx_PrintStringXY("NEW%GAME", 128, 68);
+	gfx_PrintStringXY("SETTINGS", 128, 85);		
+	gfx_SwapDraw();
 
-			gfx_SwapDraw();
-		}
-
-		key = os_GetCSC();
-
-		if (key == sk_Down && option < 1) {
-			option++;
-		}
-		if (key == sk_Up && option > 0) {
-			option--;
-		}
-		if (key == sk_Clear) {
-			/* Usual cleanup */
-			save_progress();
-			exit(0);
+	// Handle keypresses
+	if (kb_Data[kb_group_7] == kb_Down && option < 1) {
+		option++;
+	}
+	if (kb_Data[kb_group_7] == kb_Up && option > 0) {
+		option--;
+	}
+	if (kb_Data[kb_group_1] == kb_2nd && option <= 1) {		// Continue or New Game
+		game_state = pre_round_screen;
+		
+		if (option == 1 || game_data.lives == 0) {
+			reset_game_data();
+			game_state = intro_cinematic;
 		}
 	}
 
-	gfx_SetColor(COLOR_BACKGROUND);
-	if (option <= 1) {		// Continue or New Game
-		if (option == 1 || game_data.lives == 0) {
-			reset_game_data();
-			intro_cinematic();
-		}
+	if (game.quit) {
+		/* Usual cleanup */
+		save_progress();
+		exit(0);
 	}
 }
 
@@ -255,7 +256,6 @@ void pre_round_screen(void) {
 	uint8_t kongs = game_data.round + 2;
 	char str[6];
 
-	gfx_FillScreen(COLOR_BACKGROUND);
 	draw_overlay_full();
 
 	gfx_SetTextFGColor(COLOR_WHITE);
@@ -274,7 +274,9 @@ void pre_round_screen(void) {
 	gfx_SetFontData((&font_data) - 37 * 8);
 
 	gfx_SwapDraw();
-	waitTicks(160);
+	
+	waitTimer = 160;
+	game_state = initialize_stage;
 }
 
 /* Draws the rankings to the buffer */
