@@ -26,6 +26,19 @@
 #include "images.h"
 
 
+void disable_sprites(void) {
+	num_retractable_ladders =
+		num_bonus_scores =
+		num_bonus_items =
+		num_firefoxes =
+//		num_elevators =
+		num_bouncers =
+		num_barrels =
+		num_hammers =
+		num_pies = 0;
+	oilcan.onFire = false;
+}
+
 /* Draws all the moving sprites on the screen(I should write this in asm for more speed) */
 #pragma optspeed
 void update_screen(void) {

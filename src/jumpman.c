@@ -25,6 +25,7 @@
 #include "elevators.h"
 #include "drawsprites.h"
 #include "hammers.h"
+#include "screens.h"
 
 
 /* Initialize all the variables for the jumpman */
@@ -396,32 +397,67 @@ void bonus_item_picked_up(void) {
 
 /* Animate jumpman dead */
 void animate_jumpman_dead(void) {
-	uint8_t i, dir;
+	switch (jumpman.dyingProgress) {
+	case 0:
+		handle_waitTimer1();
+		
+		// Initialize variables for rotating jumpman
+		jumpman.dyingDir = jumpman.dir;
+		jumpman.dir = 1;
+		jumpman.sprite = 15;
+		jumpman.dyingCounter = 13;
+		jumpman.dyingProgress++;
+		waitTimer = 8;
 
-	waitTicks(0x40);
-	gfx_Blit(gfx_buffer);
-	update_screen();
-
-	jumpman.sprite = 15;
-	dir = jumpman.dir;
-	jumpman.dir = 1;
-
-	for (i = 13 + 2; i > 0; i--) {
+		// Clear all moving objects except jumpman and elevators
+		disable_sprites();
+		gfx_Blit(gfx_buffer);
 		update_screen();
-		waitTicks(8);
+		break;
+	case 1:
+		handle_waitTimer1();
+		waitTimer = 8;
+		jumpman.dyingCounter--;
 
-		jumpman.sprite ^= 31;
-		if ((i & 1) != dir)
-			jumpman.dir ^= 1;
-		if (i <= 3) {			// laying on ground
-			jumpman.sprite = 17;
-			jumpman.dir = dir;
+		if (jumpman.dyingCounter > 0) {
+			jumpman.sprite ^= 31;
+			if ((jumpman.dyingCounter & 1) != jumpman.dyingDir)
+				jumpman.dir ^= 1;
+			return;
 		}
+
+		jumpman.sprite = 17;
+		jumpman.dir = jumpman.dyingDir;
+		jumpman.dyingProgress++;
+		waitTimer = 0x80;
+		break;
+	case 2:
+		handle_waitTimer1();
+		jumpman.enabled = false;
+		game.stage = 0xFF;
+		game_state = handle_dead;
+		num_elevators = 0;
+		break;
 	}
-	waitTicks(0x68);
 }
 
+void handle_dead(void) {
+	game_data.lives--;
 
+	if (game_data.lives == 0) {	// Game Over
+		gfx_FillRectangle_NoClip(104, 144, 112, 40);
+		gfx_SetTextFGColor(22);
+		gfx_PrintStringXY("GAME%%OVER", 121, 160);
+		gfx_BlitRectangle(gfx_buffer, 104, 144, 112, 40);
+
+		waitTimer = 0xC0;
+		game_state = return_main;
+		// game_state = name_registration_screen;
+	}
+	else {						// Has live(s) left
+		game_state = pre_round_screen;
+	}
+}
 
 #if 0	//Old jump over object detection that is not used anymore
 /* Checks for jumps over items on girders */

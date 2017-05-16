@@ -39,7 +39,6 @@ void initialize_stage(void) {
 	game.stage = stage_order[game_data.round];
 
 	draw_overlay_full();
-	draw_bonus_box();
 	draw_stage(stage_data[game.stage - 1]);
 
 	init_jumpman(95, 231);
@@ -95,7 +94,6 @@ void initialize_stage(void) {
 	deployingBarrel = deployBarrel = false;
 
 	// Oilcan
-	oilcan.onFire = false;
 	oilcan.fireRelease = 0;
 	oilcan.updateTimer = 4;
 	oilcan.releaseTimer = 0x10;
@@ -105,15 +103,8 @@ void initialize_stage(void) {
 		releasePie = false;
 
 	// Reset all entity nums
-	num_retractable_ladders =
-		num_bonus_scores =
-		num_bonus_items =
-		num_firefoxes =
-		num_elevators =
-		num_bouncers =
-		num_barrels =
-		num_hammers =
-		num_pies = 0;
+	disable_sprites();
+	num_elevators = 0;
 
 	// Hammers
 	memset(&hammer, 0, sizeof(hammer_t) * 2);
@@ -240,6 +231,7 @@ void initialize_stage(void) {
 
 	game.timeRanOut = false;
 
+	draw_bonus_box();
 	/* Copy the buffer to the screen, so they are the same */
 	gfx_Blit(gfx_buffer);
 
@@ -247,7 +239,6 @@ void initialize_stage(void) {
 
 	draw_kong();
 	draw_pauline(false);
-	update_screen();
 
 	waitTimer = 0x40;
 	game_state = pre_stage;
@@ -262,8 +253,7 @@ void pre_stage(void) {
 
 	jumpman.enabled = true;
 
-	game_state = return_main;
-	//game_state = game_loop;
+	game_state = game_loop;
 }
 
 /* Draws the stage itself to the screen */

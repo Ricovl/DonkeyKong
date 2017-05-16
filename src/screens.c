@@ -67,6 +67,8 @@ void return_main(void) {
 	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
 
+	game.stage = 0xFF;
+
 	draw_overlay_full();
 	draw_rankings();
 	gfx_PrintStringXY("RANK", 57, 128);
@@ -93,7 +95,6 @@ void main_screen(void) {
 	gfx_PrintStringXY("CONTINUE", 128, 51);
 	gfx_PrintStringXY("NEW%GAME", 128, 68);
 	gfx_PrintStringXY("SETTINGS", 128, 85);		
-	gfx_SwapDraw();
 
 	// Handle keypresses
 	if (kb_Data[kb_group_7] == kb_Down && option < 1) {
@@ -273,7 +274,7 @@ void pre_round_screen(void) {
 	}
 	gfx_SetFontData((&font_data) - 37 * 8);
 
-	gfx_SwapDraw();
+	gfx_Blit(gfx_buffer);
 	
 	waitTimer = 0xA0;
 	game_state = initialize_stage;

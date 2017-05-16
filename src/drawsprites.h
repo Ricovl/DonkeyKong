@@ -4,5 +4,6 @@
 #include <stdint.h>
 
 void update_screen(void);
+void disable_sprites(void);
 
 #endif

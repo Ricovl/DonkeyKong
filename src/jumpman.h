@@ -18,6 +18,8 @@ void handle_jumpman_falling(void);
 void animate_jumpman_dead(void);
 void bonus_item_picked_up(void);
 
+void handle_dead(void);
+
 // Jumpman
 typedef struct {
 	uint8_t y, y_old;					// 00, 01
@@ -51,6 +53,9 @@ typedef struct {
 
 	bool enabled;
 	bool isAlive;						// 1E	1 when alive 0 if death
+	uint8_t dyingProgress;
+	uint8_t dyingCounter;
+	bool dyingDir;
 	uint8_t buffer_data[16 * 16 + 2];	// 1F	contains the data of the background behind jumpman, this is drawn over jumpman to erase him.
 } jumpman_t;
 

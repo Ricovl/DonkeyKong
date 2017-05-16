@@ -91,7 +91,7 @@ void main(void) {
 
 		(*game_state)();
 
-		//update_screen();
+		update_screen();
 
 #if DEBUG_MODE
 		if (debug) {
@@ -109,6 +109,8 @@ void main(void) {
 		frameCounter--;
 		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
 		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
+
+		// update_screen() // maybe here?
 
 		if (kb_Data[kb_group_6] & kb_Clear && !game.quit) {
 			game.quit = true;
@@ -143,7 +145,7 @@ void handle_waitTimer1(void) {
 	asm("inc sp");
 }
 
-
+/* Main routine when playing a game */
 void game_loop(void) {
 	update_bonus_scores();
 
@@ -193,8 +195,10 @@ void game_loop(void) {
 
 	check_end_stage();
 
-
-	update_screen();
+	if (jumpman.isAlive == false) {
+		waitTimer = 0x40;
+		game_state = animate_jumpman_dead;
+	}
 }
 
 /* Checks if jumpman is standing on the place where the stage ends */
