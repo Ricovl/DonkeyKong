@@ -6,8 +6,12 @@
 void update_kong(void);
 void draw_kong(void);
 void draw_pauline(bool help);
+
+void render_kong(void);
 void end_stage_cinematic(void);
 void intro_cinematic(void);
+
+extern uint8_t cinematicProgress;
 
 // Kong
 typedef struct {
@@ -22,6 +26,7 @@ typedef struct {
 	uint8_t climbCounter;
 	uint8_t jumpCounter;
 	uint8_t bounceCounter;
+	uint8_t counter;
 
 	uint8_t background_data[46 * 36 + 2];
 } kong_t;

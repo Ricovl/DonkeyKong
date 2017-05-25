@@ -40,6 +40,7 @@ void initialize_stage(void) {
 
 	draw_overlay_full();
 	draw_stage(stage_data[game.stage - 1]);
+	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 
 	init_jumpman(95, 231);
 

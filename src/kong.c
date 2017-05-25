@@ -163,10 +163,10 @@ void render_kong(void) {
 	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 	gfx_TransparentSprite(kong_sprite[kong.sprite], x, y - 32);
 	if (kong.sprite == 11) {
-		if ((frameCounter % 3) != 0) {
-			gfx_Sprite_NoClip(kong_crazy_eye[(frameCounter % 3) - 1], 155, 193);
+		if ((kong.climbCounter % 3) != 0) {
+			gfx_Sprite_NoClip(kong_crazy_eye[(kong.climbCounter % 3) - 1], 155, 193);
 		}
-		gfx_TransparentSprite_NoClip(kong_knockedout_sprite[frameCounter & 1], 152, 195);
+		gfx_TransparentSprite_NoClip(kong_knockedout_sprite[(kong.climbCounter / 8) & 1], 152, 195);
 	}
 
 	gfx_SwapDraw();
@@ -178,164 +178,226 @@ void render_kong(void) {
 	kong.y_old = y;
 }
 
-void kong_climb_ladder(void) {
-	kong.y -= 4;
-	render_kong();
-	kong.sprite ^= 1;
-	waitTicks(8);
-}
-
 void draw_heart(gfx_image_t* sprite, uint8_t x, uint8_t y) {
 	gfx_Sprite_NoClip(sprite, x, y);
 	gfx_BlitRectangle(gfx_buffer, x, y, 16, 13);	// Maybe use bool isbroken instead?
 }
 
+/* Handles kong climbing ladder */
+static void climb_ladder(void) {
+	kong.climbCounter++;
+	if ((kong.climbCounter & 7) == 0) {
+		kong.y -= 4;
+		kong.sprite ^= 1;
+		render_kong();
+	}
+}
+
+
+uint8_t cinematicProgress = 0;
+
 /* play end cinematic for all four stages */
 void end_stage_cinematic(void) {
-	uint8_t i;
-
-	gfx_Blit(gfx_screen);
-	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
-	kong.y_old = kong.y += 32;
-
-	if (game.stage == STAGE_RIVETS) {			// Stage Rivets
-		uint8_t x, y;
-		pauline.sprite = 1;
-		draw_pauline(false);
-		kong.sprite = 0;
-		render_kong();
-
-		waitTicks(0x20);
-
-		// Clear space
-		gfx_FillRectangle_NoClip(112, 72, 96, 160);
-		for (y = 200; y <= 224; y += 8)
-			for (x = 112; x <= 200; x += 8)
-				gfx_Sprite_NoClip(girder_circle, x, y);
-		gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
-		gfx_BlitRectangle(gfx_buffer, 112, 72, 96, 160);
-
-		// Kong beating chest
-		kong.sprite = 4;
-		for (i = 0; i < 15; i++) {
-			waitTicks(8);
-			kong.sprite ^= 1;
+	if ((game.stage == STAGE_BARRELS || game.stage == STAGE_ELEVATORS) && cinematicProgress <= 2) {
+		switch (cinematicProgress) {
+		case 0:
+			draw_pauline(false);
+			draw_heart(heart, 154, 10);
+			kong.sprite = 0;
 			render_kong();
+			waitTimer = 0x20;
+			cinematicProgress++;
+			break;
+		case 1:
+			handle_waitTimer();
+			kong.sprite = 3;
+			render_kong();
+			waitTimer = 0x20;
+			cinematicProgress++;
+			break;
+		case 2:
+			handle_waitTimer();
+			kong.sprite = 6;
+			kong.x = 104;
+			kong.climbCounter = 0;
+			cinematicProgress++;
+			break;
 		}
-		waitTicks(8);
-
-		kong.sprite = 0;
-		render_kong();
-		waitTicks(32);
-
-		// Kong is falling
-		kong.sprite = 10;
-		kong.y += 32; // = might be smaller
-
-		while (kong.y < 200) {
+	}
+	else if (game.stage == STAGE_CONVEYORS && cinematicProgress <= 2) {
+		switch (cinematicProgress) {
+		case 0:
+			draw_pauline(false);
+			draw_heart(heart, 154, 10);
+			kong.sprite = 0;
 			render_kong();
 			
-			// If kong is one pixel above the ground, move girder underneath pauline down
-			if (kong.y == 199) {	// maybe 198?
+			conveyor[Top].reverseCounter = 0;
+			if (kong.x > 104 && conveyor[Top].direction < 127 || kong.x < 104 && conveyor[Top].direction < 127)
+				conveyor[Top].reverseCounter = 1;
+
+			cinematicProgress++;
+			break;
+		case 1:
+			if (kong.x != 104) {
+				handle_conveyor_dirs();
+				kong.x += conveyorVector_top;
+				render_kong();
+				break;
+			}
+
+			kong.sprite = 6;
+			kong.climbCounter = 0;
+			cinematicProgress += 2;
+			break;
+		}
+	}
+	else if (game.stage != STAGE_RIVETS) {
+		switch (cinematicProgress) {
+		case 3:
+			climb_ladder();
+
+			if (kong.y <= 48) {
+				kong.sprite = 8;
+				draw_heart(heart_broken, 153, 10);
+				gfx_FillRectangle_NoClip(pauline.x, pauline.y, 16, 22);
+				gfx_BlitRectangle(gfx_buffer, pauline.x, pauline.y, 16, 22);
+				cinematicProgress++;
+			}
+			break;
+		case 4:
+			climb_ladder();
+
+			if (kong.y < 16) {
+				waitTimer = 0x40;
+				cinematicProgress++;
+			}
+			break;
+		case 5:
+			handle_waitTimer();
+
+			// Add bonusTimer value to score
+			game_data.score += game.bonusTimer * 100;
+			draw_player_score();
+			
+			cinematicProgress = 0;
+			waitTimer = 0x30;
+			game_state = pre_round_screen;
+			break;
+		}
+	}
+	else {
+		switch (cinematicProgress) {
+			uint8_t x, y;
+		case 0:
+			pauline.sprite = 1;
+			draw_pauline(false);
+			kong.sprite = 0;
+			render_kong();
+
+			// Clear space
+			for (y = 72; y <= 192; y += 40) {
+				gfx_FillRectangle_NoClip(112, y, 96, 8);
+				gfx_BlitRectangle(gfx_buffer, 112, y, 96, 8);
+			}
+			for (y = 200; y <= 224; y += 8)
+				for (x = 112; x <= 200; x += 8)
+					gfx_Sprite_NoClip(girder_circle, x, y);
+			gfx_BlitRectangle(gfx_buffer, 112, 200, 96, 32);
+
+			kong.counter = 0x80;
+			waitTimer = 0x20;
+			cinematicProgress++;
+		case 1:
+			handle_waitTimer();
+			cinematicProgress++;
+			break;
+		case 2:
+			kong.counter--;
+
+			if (kong.counter == 0) {
+				waitTimer = 0x20;
+				cinematicProgress++;
+			}
+
+			if ((kong.counter & 7) == 0) {
+				kong.sprite ^= 1;
+				render_kong();
+			}
+			break;
+		case 3:
+			handle_waitTimer();
+
+			// Kong is falling
+			kong.sprite = 10;
+			kong.y += 32;
+			render_kong();
+			cinematicProgress++;
+			break;
+		case 4:
+			kong.y++;
+			render_kong();
+
+			if (kong.y >= 200) {
+				// Move girder under pauline down
 				gfx_FillRectangle_NoClip(104, 32, 112, 8);
 				gfx_FillRectangle_NoClip(119, 40, 82, 32);
 				for (x = 104; x <= 208; x += 8)
 					gfx_Sprite_NoClip(girder_circle, x, 72);
 				gfx_BlitRectangle(gfx_buffer, 104, 32, 112, 48);
-			}
 
-			kong.y++;
-			waitTicks(1);
-		}
+				// Move pauline down
+				gfx_FillRectangle_NoClip(pauline.x, pauline.y, 16, 22);
+				gfx_BlitRectangle(gfx_buffer, pauline.x, pauline.y, 16, 22);
+				pauline.y = 50;
+				pauline.dir = 0;
+				draw_pauline(false);
 
-		// move pauline down
-		gfx_FillRectangle_NoClip(pauline.x, pauline.y, 16, 22);
-		gfx_BlitRectangle(gfx_buffer, pauline.x, pauline.y, 16, 22);
-		pauline.y = 50;
-		pauline.dir = 0;
-		draw_pauline(false);
-
-		// Roll kongs eyes
-		kong.sprite = 11;
-		for (frameCounter = 0; frameCounter < 32; frameCounter++) {
-			render_kong();
-			
-			if (frameCounter == 4) {
-				gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
-				gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 15, 16);
-				gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
-				gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
-			}
-			if (frameCounter == 8) {
-				draw_heart(heart, 136, 42);
-			}
-
-			waitTicks(8);
-		}
-
-		game_data.level++;
-		i = 0xE0;
-	}
-	else {										// Stage Barrels, Elevators or Conveyors
-		// Step 1 of 6: update kong and draw heart(1 of 5 for conveyors)
-		draw_pauline(false);
-		draw_heart(heart, 154, 10);
-		kong.sprite = 0;
-		render_kong();
-
-		if (game.stage == STAGE_CONVEYORS) {	// Stage Conveyors
-			// Step 2 of 5: reverse conveyor if needed and move kong to ladder
-			conveyor[Top].reverseCounter = 0;
-			if (kong.x > 104 && conveyor[Top].direction < 127 || kong.x < 104 && conveyor[Top].direction < 127)
-				conveyor[Top].reverseCounter = 1;
-
-			while (kong.x != 104) {
+				kong.climbCounter = 0;
+				kong.sprite = 11;
 				render_kong();
-				handle_conveyor_dirs();
-				kong.x += conveyorVector_top;
-				frameCounter--;
+				cinematicProgress++;
 			}
-		}
-		else {									// Stage Barrels or Elevators
-			waitTicks(0x20);
-			// Step 2 of 6: update kong to facing right
-			kong.sprite = 3;
-			render_kong();
-			waitTicks(0x20);
-			
-			// Step 3 of 6: prepare kong for climbing
-			kong.x = 104;
-		}
+			break;
+		case 5:
+			kong.climbCounter--;
 
-		kong.sprite = 6;
-		
-		// Step 4 of 6: climb ladder without pauline(same as step 3 from conveyors)
-		while (kong.y > 48) {
-			kong_climb_ladder();
+			if (kong.climbCounter == 0) {
+				game_data.level++;
+				cinematicProgress = 0;
+				waitTimer = 0xE0;
+				game_state = pre_round_screen;
+			}
+
+			if ((kong.climbCounter & 7) == 0) {
+				render_kong();
+
+				if (kong.climbCounter == 0xE0) {
+					// move jumpman
+					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+					gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 15, 16);
+					gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
+					gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
+				}
+
+				if (kong.climbCounter == 0xC0) {
+					// change heart to broken heart
+					draw_heart(heart, 136, 42);
+				}
+			}
+
+			break;
 		}
-
-		// step 5 of 6: climb ladder with pauline(same as step 4 from conveyors)
-		kong.sprite = 8;
-		draw_heart(heart_broken, 153, 10);
-		gfx_FillRectangle_NoClip(pauline.x, pauline.y, 16, 22);
-		gfx_BlitRectangle(gfx_buffer, pauline.x, pauline.y, 16, 22);
-
-		while (kong.y >= 16) {
-			kong_climb_ladder();
-		}
-
-		// step 6 of 6: determine next level and add bonus to score(same as step 5 from conveyors)
-		i = 0x60;
 	}
 
-	game_data.round++;
-	if (game_data.round > 19)
-		game_data.round = 14;
+	if (cinematicProgress == 0) {
+		game_data.round++;
+		if (game_data.round > 19)
+			game_data.round = 14;
 
-	// Add bonusTimer value to score
-	game_data.score += game.bonusTimer * 100;
-	draw_player_score();
-	waitTicks(i);
+		game.stage = 0xFF;
+		jumpman.enabled = false;
+	}
 }
 
 /* Removes a piece of ladder underneath kong */
@@ -346,18 +408,6 @@ void remove_ladder(uint8_t y) {
 	gfx_Sprite_NoClip(background_data, 176, y);
 	gfx_BlitRectangle(gfx_buffer, 160, y, 24, 8);
 }
-
-/* Handles kong climbing ladder */
-void climb_ladder(void) {
-	kong.climbCounter++;
-	if ((kong.climbCounter & 7) == 0) {
-		kong.y -= 4;
-		kong.sprite ^= 1;
-		render_kong();
-	}
-}
-
-static uint8_t cinematicProgress = 0;
 
 /* Play the intro cinematic */
 void intro_cinematic(void) {

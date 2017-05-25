@@ -1,10 +1,13 @@
+// standard headers
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <tice.h>
+#include <intce.h>
 #include <debug.h>
 
 // shared libraries
@@ -22,9 +25,36 @@
 #include "font.h"
 
 
+static uint8_t keyDelay = 0;
+static kb_key_t prevKey = 0;
+
+// KeyNum = log(kb_key) / log(2) + group * 8
+sk_key_t get_key_fast(void) {
+	uint8_t i;
+	sk_key_t key = 0;
+
+	for (i = 1; i <= 7; i++) {
+		if (kb_Data[i] != 0) {
+			key = log(kb_Data[i]) / log(2);
+			key += i * 8;
+		}
+	}
+
+	if (keyDelay == 0 || prevKey != key) {
+		keyDelay = 15;
+		prevKey = key;
+	}
+	else {
+		keyDelay--;
+		key = 0;
+	}
+
+	return key;
+}
+
 void reset_game_data(void) {
 	memset(&game, 0, sizeof(game_t));
-	memset(&game_data, 0, 7);
+	game.stage = 0xFF;
 	game_data.lives = 3;
 	game_data.level = 1;
 }
@@ -36,6 +66,7 @@ void load_progress(void) {
 	uint8_t i;
 
 	reset_game_data();
+	memset(&game_data, 0, 7);
 	for (i = 0; i < 5; i++)
 		strcpy(game_data.name[i], "RICO");
 	memcpy(game_data.Hscore, high_score_table, 5 * sizeof(unsigned));
@@ -64,6 +95,8 @@ static uint8_t option = 0;
 
 /* Clears the screen and returns to the main screen */
 void return_main(void) {
+	handle_waitTimer();
+
 	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
 	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
 
@@ -81,6 +114,8 @@ void return_main(void) {
 
 /* Main screen from where you can select to continue or play a new game */
 void main_screen(void) {
+	sk_key_t key;
+
 	// Clear the menu text
 	gfx_FillRectangle_NoClip(125, 48, 69, 48);
 	gfx_SetTextFGColor(COLOR_LADDER);
@@ -97,13 +132,15 @@ void main_screen(void) {
 	gfx_PrintStringXY("SETTINGS", 128, 85);		
 
 	// Handle keypresses
-	if (kb_Data[kb_group_7] == kb_Down && option < 1) {
+	key = get_key_fast();
+
+	if (key == 56 && option < 2) {
 		option++;
 	}
-	if (kb_Data[kb_group_7] == kb_Up && option > 0) {
+	if (key == 59 && option > 0) {
 		option--;
 	}
-	if (kb_Data[kb_group_1] == kb_2nd && option <= 1) {		// Continue or New Game
+	if ((key == 13 || key == 48) && option <= 1) {		// Continue or New Game
 		game_state = pre_round_screen;
 		
 		if (option == 1 || game_data.lives == 0) {
@@ -119,136 +156,173 @@ void main_screen(void) {
 	}
 }
 
+typedef struct {
+	uint8_t cursorX;
+	uint8_t cursorY;
+	uint8_t rankNum;
+	uint8_t charNum;
+	uint8_t timer;
+} HighScore_t;
+HighScore_t HighScore;
+
+void pre_name_registration(void) {
+	uint8_t i;
+
+	handle_waitTimer();
+
+	game_state = return_main;
+
+	// Check if high score and place score in list and ask for name if high score
+	for (i = 0; i < 5; i++) {
+		if (game_data.score >= game_data.Hscore[i]) {
+			memcpy(&game_data.Hscore[i + 1], &game_data.Hscore[i], (4 - i) * sizeof(unsigned));
+			memcpy(&game_data.name[i + 1], &game_data.name[i], 6 - i);
+			game_data.Hscore[i] = game_data.score;
+
+			waitTimer = 0;
+			HighScore.rankNum = i;
+			game_state = name_registration_screen;
+			break;
+		}
+	}
+}
+
 /* Name registration screen */
-void name_registration_screen(uint8_t ranking) {
-	char name[6];
-	sk_key_t key = 1;
-	uint8_t x, y, num = 0;
-	uint8_t timer = 31 * 4;
+void name_registration_screen(void) {
+	uint8_t i, yc = 72, xc = 89;
+	sk_key_t key;
 
-	memset(&name, '%', 5);
-	name[5] = '\0';
+	// First time this is run; initialize variables
+	if (waitTimer == 0) {
+		uint8_t x;
 
-	timer_1_ReloadValue = QUARTER_SECOND;
-	timer_1_Counter = 0;
+		memset(&game_data.name[HighScore.rankNum], '%', 5);
+		HighScore.timer = 31;
+		HighScore.charNum = 0;
+		HighScore.cursorX = 84;
+		HighScore.cursorY = 68;
 
-	// Draw everything
-	gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
-	gfx_FillScreen(COLOR_BACKGROUND);
-	draw_overlay_full();
-	draw_rankings();
+		// Draw stuff
+		gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
+		draw_overlay_full();
+		draw_rankings();
 
-	// Draw text
-	gfx_PrintStringXY("NAME:", 121, 48);
-	gfx_PrintStringXY("REGI%TIME%%<%%>", 97, 128);
-	gfx_SetTextFGColor(COLOR_RED);
-	gfx_PrintStringXY("NAME%REGISTRATION", 89, 32);
+		// Draw text
+		gfx_PrintStringXY("NAME:", 121, 48);
+		gfx_PrintStringXY("REGI%TIME%%<%%>", 97, 128);
+		gfx_SetTextFGColor(COLOR_RED);
+		gfx_PrintStringXY("NAME%REGISTRATION", 89, 32);
 
-	// Draw lines next to name:
+		// Draw lines next to name:
+		gfx_SetColor(COLOR_LADDER);
+		for (x = 161; x < 161 + 5 * 8; x += 8)
+			gfx_HorizLine_NoClip(x, 57, 6);
+		gfx_Blit(gfx_buffer);
+
+		waitTimer = 1;
+	}
+
+	// Draw the screen
+	gfx_SetColor(COLOR_BACKGROUND);
+	gfx_FillRectangle_NoClip(84, 68, 162, 48);
+
+	gfx_SetTextFGColor(COLOR_GREEN);
+	for (i = 0; i < 28; i++) {
+		gfx_SetTextXY(xc, yc);
+		gfx_PrintChar(i + 65);
+		xc += 16;
+		if (xc > 89 + 16 * 9) {
+			xc = 89;
+			yc += 16;
+		}
+	}
+	gfx_Sprite_NoClip(text_rub_end, 213, 106);
+
+	gfx_SetTextFGColor(COLOR_LADDER);
+	gfx_PrintStringXY(game_data.name[HighScore.rankNum], 160, 48);
+
+	gfx_SetColor(COLOR_WHITE);
+	gfx_Rectangle_NoClip(HighScore.cursorX, HighScore.cursorY, 16, 16);
 	gfx_SetColor(COLOR_LADDER);
-	for (x = 161; x < 161 + 5 * 8; x += 8)
-		gfx_HorizLine_NoClip(x, 57, 6);
-	gfx_Blit(gfx_buffer);
+	gfx_Rectangle_NoClip(HighScore.cursorX + 1, HighScore.cursorY + 1, 14, 14);
 
-	x = 84, y = 68;
-	do {
-		if (key) {
-			uint8_t i, yc = 72, xc = 89;
+	// Handle the Timer
+	waitTimer++;
+	if (waitTimer == 62) {
 
-			gfx_SetColor(COLOR_BACKGROUND);
-			gfx_FillRectangle_NoClip(84, 68, 162, 48);
-
-			gfx_SetTextFGColor(COLOR_GREEN);
-			for (i = 0; i < 28; i++) {
-				gfx_SetTextXY(xc, yc);
-				gfx_PrintChar(i + 65);
-				xc += 16;
-				if (xc > 89 + 16 * 9) {
-					xc = 89;
-					yc += 16;
-				}
-			}
-			gfx_Sprite_NoClip(text_rub_end, 213, 106);
-
-			gfx_SetTextFGColor(COLOR_LADDER);
-			gfx_PrintStringXY(name, 160, 48);
-
-			gfx_SetColor(COLOR_WHITE);
-			gfx_Rectangle_NoClip(x, y, 16, 16);
-			gfx_SetColor(COLOR_LADDER);
-			gfx_Rectangle_NoClip(x + 1, y + 1, 14, 14);
-			gfx_SwapDraw();
+		if (HighScore.timer == 0) {
+			waitTimer = 0x80;
+			game_state = return_main;
+			return;
 		}
 
-		key = os_GetCSC();
+		gfx_SetTextFGColor(COLOR_LADDER);
+		gfx_SetTextXY(192, 128);
+		gfx_PrintUInt(--HighScore.timer, 2);
+		gfx_BlitRectangle(gfx_buffer, 192, 128, 16, 8);
 
-		if (timer_IntStatus & TIMER1_RELOADED) {
-			uint8_t yt = 144 + 16 * ranking;
+		waitTimer = 1;
+	}
 
-			if (timer == 0)
-				break;
-			gfx_SetTextFGColor(COLOR_LADDER);
-			gfx_SetTextXY(192, 128);
-			gfx_PrintUInt(--timer / 4, 2);
-			gfx_BlitRectangle(gfx_buffer, 192, 128, 16, 8);
+	// Make the score flicker
+	if ((frameCounter & 15) == 0) {
+		uint8_t yt = 144 + 16 * HighScore.rankNum;
 
-			// Flash the high score
-			if ((timer & 1) == 1) {
-				// Set the text color to black to remove text
-				gfx_SetTextFGColor(COLOR_BACKGROUND);
-			}
-			else {
-				// Set the text color to red to draw text
-				gfx_SetTextFGColor((ranking < 3) ? COLOR_RED : COLOR_YELLOW);
-			}
-			gfx_SetTextXY(97, yt);
-			gfx_PrintUInt(game_data.score, 6);
-			gfx_BlitRectangle(gfx_buffer, 97, yt, 48, 7);
+		if (((frameCounter >> 4) & 1) == 1)
+			gfx_SetTextFGColor(COLOR_BACKGROUND);
+		else
+			gfx_SetTextFGColor(COLOR_RED);
 
-			/* Acknowledge the reload */
-			timer_IntAcknowledge = TIMER1_RELOADED;
+		gfx_SetTextXY(97, yt);
+		gfx_PrintUInt(game_data.score, 6);
+		gfx_BlitRectangle(gfx_buffer, 97, yt, 48, 7);
+	}
+
+	// Handle key presses
+	key = get_key_fast();
+
+	if (key == 13 || key == 48) {
+		uint8_t character = ((HighScore.cursorX - 84) / 15) + 10 * ((HighScore.cursorY - 68) / 15);
+		if (character == 28) {
+			game_data.name[HighScore.rankNum][HighScore.charNum] = '%';
+			if (HighScore.charNum > 0)
+				HighScore.charNum--;
 		}
+		else if (character != 29) {
+			game_data.name[HighScore.rankNum][HighScore.charNum] = character + 65;
+			if (HighScore.charNum < 4)
+				HighScore.charNum++;
+		}
+		else {
+			draw_rankings();
+			gfx_PrintStringXY("YOUR%NAME%WAS%REGISTERED", 89, 32);
+			gfx_Blit(gfx_buffer);
+			waitTimer = 0x80;
+			game_state = return_main;
+			return;
+		}
+	}
 
-		if (key == sk_Enter || key == sk_2nd) {
-			uint8_t character = ((x - 84) / 15) + 10 * ((y - 68) / 15);
-			if (character == 28) {
-				name[num] = '%';
-				if (num > 0)
-					num--;
-			}
-			else if (character == 29) {
-				break;
-			}
-			else {
-				name[num] = character + 65;
-				if (num < 4)
-					num++;
-			}
-		}
-
-		if (key == sk_Right) {
-			if (x < 228)
-				x += 16;
-			else
-				x = 84;
-		}
-		if (key == sk_Left) {
-			if (x > 84)
-				x -= 16;
-			else
-				x = 228;
-		}
-		if (key == sk_Up) {
-			if (y > 68)
-				y -= 16;
-		}
-		if (key == sk_Down) {
-			if (y < 100)
-				y += 16;
-		}
-	} while (key != sk_Clear);
-
-	strcpy(game_data.name[ranking], name);
+	if (key == 58) {
+		if (HighScore.cursorX < 228)
+			HighScore.cursorX += 16;
+		else
+			HighScore.cursorX = 84;
+	}
+	if (key == 57) {
+		if (HighScore.cursorX > 84)
+			HighScore.cursorX -= 16;
+		else
+			HighScore.cursorX = 228;
+	}
+	if (key == 59) {
+		if (HighScore.cursorY > 68)
+			HighScore.cursorY -= 16;
+	}
+	if (key == 56) {
+		if (HighScore.cursorY < 100)
+			HighScore.cursorY += 16;
+	}
 }
 
 /* How high can you get? screen */

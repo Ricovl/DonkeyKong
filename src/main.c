@@ -44,6 +44,7 @@ uint8_t num_bonus_items;
 
 uint8_t frameCounter;
 
+
 void game_loop(void);
 void flash_1up(void);
 void increase_difficulty(void);
@@ -54,10 +55,9 @@ void handle_time_ran_out(void);
 void check_collision_jumpman(void);
 void check_collision_hammer(void);
 
-//static const void(*const game_state_test[])(void) = { main_screen, intro_cinematic, pre_round_screen, initialize_stage, game_loop, end_stage_cinematic , animate_jumpman_dead, name_registration_screen };
-//uint8_t game_state_value;
+
 const void(*game_state)(void) = return_main;
-uint8_t waitTimer;
+uint8_t waitTimer = 1;
 
 void main(void) {
 	uint8_t debug = false;
@@ -91,7 +91,8 @@ void main(void) {
 
 		(*game_state)();
 
-		update_screen();
+		if (cinematicProgress == 0)
+			update_screen();
 
 #if DEBUG_MODE
 		if (debug) {
@@ -112,8 +113,11 @@ void main(void) {
 
 		// update_screen() // maybe here?
 
-		if (kb_Data[kb_group_6] & kb_Clear && !game.quit) {
-			game.quit = true;
+		if (kb_Data[kb_group_6] & kb_Clear) {
+			if (game.quit == false) {
+				//get_key_fast();
+				game.quit = true;
+			}
 		}
 	}
 }
@@ -226,6 +230,11 @@ void check_end_stage(void) {
 	jumpman.sprite = 0;
 
 end_of_stage:
+	disable_sprites();
+	gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
+	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
+	gfx_Blit(gfx_buffer);
+	kong.y_old = kong.y += 32;
 	game_state = end_stage_cinematic;
 }
 
@@ -356,6 +365,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
+ * use y-old and x-old in hammer collision
  * Add collision detection for oilcan fire and kong in rivets
  * Change some things in spawn_bonus_score()
  * check ground checking for all entities

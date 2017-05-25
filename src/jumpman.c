@@ -448,11 +448,10 @@ void handle_dead(void) {
 		gfx_FillRectangle_NoClip(104, 144, 112, 40);
 		gfx_SetTextFGColor(22);
 		gfx_PrintStringXY("GAME%%OVER", 121, 160);
-		gfx_BlitRectangle(gfx_buffer, 104, 144, 112, 40);
+		gfx_Blit(gfx_buffer);
 
 		waitTimer = 0xC0;
-		game_state = return_main;
-		// game_state = name_registration_screen;
+		game_state = pre_name_registration;
 	}
 	else {						// Has live(s) left
 		game_state = pre_round_screen;

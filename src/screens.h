@@ -5,7 +5,8 @@
 
 void return_main(void);
 void main_screen(void);
-void name_registration_screen(uint8_t ranking);
+void pre_name_registration(void);
+void name_registration_screen(void);
 void pre_round_screen(void);
 void draw_rankings(void);
 
