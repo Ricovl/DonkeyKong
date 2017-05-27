@@ -14,12 +14,12 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
 #include "barrels.h"
-#include "overlay.h"
+#include "defines.h"
 #include "firefoxes.h"
+#include "jumpman.h"
 #include "kong.h"
+#include "overlay.h"
 
 
 void handle_jumping(barrel_t *barrel);
@@ -263,9 +263,25 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 			this_barrel->jumpDir = 1;
 	}
 	else {											// Difficulty is 5
-		/*if (jumpman.x < this_barrel->x) {
+		asm("ld c,FFh");		// c = 0xFF;
 
-		}*/
+		asm("ld	bc,(iy+2)");	// bc = barrel.x
+		asm("ld	hl,(_jumpman+2)");
+		asm("or	a,a");			// reset flags
+		asm("sbc hl,bc");		// hl = jumpman.x - barrel.x;
+		asm("ld a,l");			// a = l;
+		asm("jp c,left");		
+
+		asm("inc c");			// c = 0;
+		asm("left:");
+
+		asm("rlca");
+		asm("rl c");
+		asm("rlca");
+		asm("rl c");
+
+		asm("ld	(iy+13),c");	// jumpDir = c;
+		asm("ld (iy+14),a");	// jumpDirIndicator = a;
 		/*
 		231A  3A0362    LD      A,(#6203)		; load A with mario's X position
 		231D  DD9603    SUB     (IX+#03)        ; subtract the barrel's X position
@@ -274,9 +290,9 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 
 		2325  0C        INC     C               ; else increase C to 0
 
-		2326  07        RLCA                    ; rotate left A (doubles A) jumpman.x >> 1
+		2326  07        RLCA                    ; rotate left A (doubles A) jumpman.x << 1
 		2327  CB11      RL      C               ; rotate left C				C * 2
-		2329  07        RLCA                    ; rotate left A (doubles A) jumpman.x >> 1
+		2329  07        RLCA                    ; rotate left A (doubles A) jumpman.x << 1
 		232A  CB11      RL      C               ; rotate left C				C * 2
 		232C  DD7110    LD      (IX+#10),C      ; store C into +10			this_barrel->jumpDir
 		232F  DD7711    LD      (IX+#11),A      ; store A into +11			this_barrel->jumpDirIndicator
@@ -285,7 +301,7 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 }
 
 /* Cycles the barrels sprite variable through the rolling barrel sprites in the right direction
- * In the real donkeykong the barrel seems to turn the wrong way? */
+ * In the real donkeykong the barrel seems to turn in only one direction? */
 void update_sprite_rolling(barrel_t *this_barrel) {
 	if (--this_barrel->moveCounter == 0) {
 		this_barrel->sprite = (this_barrel->sprite + ((this_barrel->dir - 1) | 1)) & 3;

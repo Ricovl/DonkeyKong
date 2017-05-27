@@ -14,18 +14,19 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
 #include "jumpman.h"
 #include "barrels.h"
-#include "firefoxes.h"
 #include "bonus_scores.h"
-#include "overlay.h"
-#include "images.h"
-#include "stages.h"
-#include "elevators.h"
+#include "defines.h"
 #include "drawsprites.h"
+#include "elevators.h"
+#include "firefoxes.h"
 #include "hammers.h"
+#include "images.h"
+#include "kong.h"
+#include "overlay.h"
 #include "screens.h"
+#include "stages.h"
 
 
 /* Initialize all the variables for the jumpman */
@@ -446,7 +447,7 @@ void handle_dead(void) {
 
 	if (game_data.lives == 0) {	// Game Over
 		gfx_FillRectangle_NoClip(104, 144, 112, 40);
-		gfx_SetTextFGColor(22);
+		gfx_SetTextFGColor(COLOR_LIGHT_BLUE);
 		gfx_PrintStringXY("GAME%%OVER", 121, 160);
 		gfx_Blit(gfx_buffer);
 

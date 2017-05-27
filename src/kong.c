@@ -14,16 +14,15 @@
 #include <keypadc.h>
 
 // kong stuff
-#include "defines.h"
-#include "jumpman.h"
 #include "kong.h"
-#include "conveyors.h"
 #include "barrels.h"
+#include "conveyors.h"
+#include "defines.h"
 #include "images.h"
-#include "stages.h"
+#include "jumpman.h"
 #include "overlay.h"
-
 #include "screens.h"
+#include "stages.h"
 
 
 /* Updates kong and pauline */
@@ -123,6 +122,9 @@ void draw_kong(void) {
 	kong.y_old = kong.y;
 }
 
+bonus_item_t bonus_item[3];
+uint8_t num_bonus_items;
+
 pauline_t pauline;
 
 /* Draw pauline to the screen and buffer with help or without */
@@ -192,7 +194,6 @@ static void climb_ladder(void) {
 		render_kong();
 	}
 }
-
 
 uint8_t cinematicProgress = 0;
 

@@ -16,51 +16,36 @@
 #include <fileioc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
+#include "main.h"
 #include "barrels.h"
 #include "bonus_scores.h"
+#include "conveyors.h"
+#include "defines.h"
 #include "drawsprites.h"
+#include "elevators.h"
 #include "firefoxes.h"
+#include "font.h"
+#include "hammers.h"
+#include "images.h"
+#include "jumpman.h"
 #include "kong.h"
 #include "overlay.h"
-#include "conveyors.h"
 #include "rivets.h"
 #include "screens.h"
 #include "stages.h"
-#include "elevators.h"
-#include "images.h"
-#include "font.h"
-#include "hammers.h"
 
-
-#define DEBUG_MODE	true
 
 game_t game;
 game_data_t game_data;
 
-bonus_item_t bonus_item[3];
-uint8_t num_bonus_items;
-
+uint8_t waitTimer = 1;
 uint8_t frameCounter;
 
-
-void game_loop(void);
-void flash_1up(void);
-void increase_difficulty(void);
-void check_end_stage(void);
-void handle_bonus_timer(void);
-void handle_time_ran_out(void);
-
-void check_collision_jumpman(void);
-void check_collision_hammer(void);
-
-
 const void(*game_state)(void) = return_main;
-uint8_t waitTimer = 1;
 
 void main(void) {
-	uint8_t debug = false;
+	bool debug = false;
+	uint8_t quitDelay = 0;
 
 	malloc(0);
 	srand(rtc_Time());
@@ -77,7 +62,7 @@ void main(void) {
 	load_progress();
 	gfx_SetDrawBuffer();
 
-	game.quit = false;	
+	game.quit = false;
 
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
@@ -111,12 +96,41 @@ void main(void) {
 		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
 		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
 
-		// update_screen() // maybe here?
-
+		// Handle [clear] key pressed
 		if (kb_Data[kb_group_6] & kb_Clear) {
 			if (game.quit == false) {
-				//get_key_fast();
-				game.quit = true;
+				if (quitDelay == 0) {
+
+					if (game_state == game_loop) {
+						disable_sprites();
+						num_elevators = 0;
+						jumpman.enabled = false;
+						game_state = return_main;
+					}
+					if (game_state == intro_cinematic) {
+						cinematicProgress = 0;
+						game_data.lives = 0;
+						game_state = return_main;
+					}
+					if (game_state == pre_round_screen) {
+						/* Idea: 
+						 * When you quit the game while in game_loop, pre_round_screen or end_stage_cinematic save the state in game_data.game_state
+						 * Then when you continue test if game_data is one of the above.
+						 * If it is then set game_state to game_data.game_state
+						 */
+						cinematicProgress = 0;
+						game_state = return_main;
+					}
+
+					quitDelay = 10;
+					game.quit = true;
+				}
+				else {
+					quitDelay--;
+				}
+			}
+			else {
+				game.quit = false;
 			}
 		}
 	}
@@ -148,6 +162,36 @@ void handle_waitTimer1(void) {
 	asm("inc sp");
 	asm("inc sp");
 }
+
+static uint8_t keyDelay = 0;
+static kb_key_t prevKey = 0;
+
+// KeyNum = log(kb_key) / log(2) + group * 8
+sk_key_t get_key_fast(void) {
+	uint8_t i;
+	sk_key_t key = 0;
+
+	for (i = 1; i <= 7; i++) {
+		if (kb_Data[i] != 0) {
+			key = log(kb_Data[i]) / log(2);
+			key += i * 8;
+		}
+	}
+
+	if (keyDelay == 0 || prevKey != key) {
+		keyDelay = 15;
+		prevKey = key;
+	}
+	else {
+		keyDelay--;
+		key = 0;
+	}
+
+	return key;
+}
+
+void check_collision_jumpman(void);
+void check_collision_hammer(void);
 
 /* Main routine when playing a game */
 void game_loop(void) {
@@ -317,6 +361,8 @@ void waitTicks(uint8_t ticks) {
 	}
 }
 
+
+
 /*timer_Control = TIMER1_DISABLE;
 timer_1_Counter = 0;
 timer_Control = TIMER1_ENABLE | TIMER1_CPU | TIMER1_NOINT | TIMER1_UP;
@@ -324,20 +370,11 @@ timer_Control = TIMER1_ENABLE | TIMER1_CPU | TIMER1_NOINT | TIMER1_UP;
 timer_Control = TIMER1_DISABLE;
 dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
-/* Stage order:
-*		   0001		 0010		 0001	   0011		   0001		 0100
-* lvl 1 : barrels											   - rivets
-* lvl 2 : barrels						 - elevators		   - rivets
-* lvl 3 : barrels - conveyors			 - elevators		   - rivets
-* lvl 4 : barrels - conveyors - barrels - elevators		   - rivets
-* lvl 5+: barrels - conveyors - barrels - elevators - barrels - rivets
-*/
-
 /*
 ; arrive here from #0701 when playing
 
  *197A  CALL    #1DBD         ; check for bonus items and jumping scores, rivets																			update_bonus_scores()
-197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		animate_hammer_hit()
+ *197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		animate_hammer_hit()
  *1980  CALL    #1AC3         ; mario movement																												update_jumpman()
  *1983  CALL    #1F72         ; roll barrels																												move_barrels()
  *1986  CALL    #2C8F         ; deploy barrels ?																											deploy_barrel()
@@ -365,21 +402,19 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
- * use y-old and x-old in hammer collision
  * Add collision detection for oilcan fire and kong in rivets
- * Change some things in spawn_bonus_score()
  * check ground checking for all entities
- * Check if bouncers are still spawning on the correct place and if they are drawn on the right layer.
- * Fix that there is a quick change in color when you quit a stage(Don't know if it's visible on calc)
  */
 
 /* In progress
- * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible
- * start menu and splash screen with credits
+ * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible. (almost done)
+ * splash screen with credits
  */
 
 
 /* bugs:
+ * you have to press enter/2nd twice when deleting charactar
+ * end cinematic elevators(elevators blinking end not removed at end) and rivets(jumpman and ladders not removed) are not done
  * Crazy barrels can escape out of the screen(leave artifacts)?
- * You can get unlimited points by quiting and then continueing
+ * You can get points quick by quiting and then continueing
  */

@@ -14,22 +14,21 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
 #include "stages.h"
-#include "jumpman.h"
-#include "overlay.h"
-#include "kong.h"
-#include "bonus_scores.h"
-#include "drawsprites.h"
 #include "barrels.h"
-#include "firefoxes.h"
+#include "bonus_scores.h"
 #include "conveyors.h"
-#include "rivets.h"
+#include "defines.h"
+#include "drawsprites.h"
+#include "elevators.h"
+#include "firefoxes.h"
 #include "hammers.h"
 #include "images.h"
-#include "elevators.h"
+#include "jumpman.h"
+#include "kong.h"
+#include "overlay.h"
+#include "rivets.h"
 
-#include "screens.h"
 
 /* Draw the stage with overlay and initialize the begin variables */
 void initialize_stage(void) {
@@ -205,7 +204,7 @@ void initialize_stage(void) {
 		}
 
 		// Draw the pillars
-		gfx_SetColor(22);
+		gfx_SetColor(COLOR_LIGHT_BLUE);
 		gfx_Rectangle_NoClip(119, 40, 2, 32);
 		gfx_Rectangle_NoClip(199, 40, 2, 32);
 

@@ -14,12 +14,12 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
 #include "elevators.h"
 #include "bonus_scores.h"
-#include "overlay.h"
+#include "defines.h"
 #include "images.h"
+#include "jumpman.h"
+#include "overlay.h"
 #include "stages.h"
 
 
@@ -169,19 +169,21 @@ void move_bouncers(void) {
 		for (i = 0; i < num_bouncers; i++) {
 			bouncer_t *this_bouncer = &bouncer[i];
 			
+			// Change sprite every 16 ticks
 			if ((frameCounter & 15) == 0)
 				this_bouncer->sprite ^= 1;
 
 			if (!this_bouncer->movingDown) {
 				this_bouncer->x += 2;
 
-				this_bouncer->y += *this_bouncer->heightOffset;
-
-				this_bouncer->heightOffset++;
 				if (*this_bouncer->heightOffset == 0x7F) {
 					this_bouncer->heightOffset = &bouncer_heightOffset;
 					if (this_bouncer->x >= 210)
 						this_bouncer->movingDown = true;
+				}
+				else {
+					this_bouncer->y += *this_bouncer->heightOffset;
+					this_bouncer->heightOffset++;
 				}
 			}
 			else {
@@ -202,7 +204,7 @@ void move_bouncers(void) {
 			bouncer[num_bouncers].movingDown = false;
 			bouncer[num_bouncers].sprite = 0;
 			bouncer[num_bouncers].y_old = bouncer[num_bouncers].y = 57;
-			bouncer[num_bouncers].x_old = bouncer[num_bouncers].x = 27 + (rand() & 15);
+			bouncer[num_bouncers].x_old = bouncer[num_bouncers].x = 17 + (rand() & 15);
 			
 			bouncer[num_bouncers].background_data[0] = 16;
 			bouncer[num_bouncers].background_data[1] = 15;

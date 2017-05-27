@@ -11,12 +11,12 @@
 #define ExtraLifeThreshold 7000 // 7000(standard), 10000, 15000 or 20000
 
 #define dbg_sprinf dbg_sprintf
+
 void waitTicks(uint8_t ticks);
 void game_loop(void);
 extern const void(*game_state)(void);
 void handle_waitTimer(void);
 void handle_waitTimer1(void);
-extern uint8_t waitTimer;
 
 enum COLOR {
 	COLOR_BACKGROUND	= 0x1A,	//  0,  0,  0
@@ -28,6 +28,7 @@ enum COLOR {
 	COLOR_WHITE			= 0x0A, // 255,255,255
 	COLOR_COLLISION		= 0x04, // 151,  0,  0
 	COLOR_RED_DARK		= 0x0D, // 151,  1,  0
+	COLOR_LIGHT_BLUE	= 22,	//	 0,255,255 
 
 	COLOR_GREEN			= 0x14, // 0  ,255,  0
 	COLOR_YELLOW		= 0x13, // 255,255,  0
@@ -53,6 +54,7 @@ enum Items {
 };
 
 extern uint8_t frameCounter;
+extern uint8_t waitTimer;
 
 // Game
 typedef struct {
@@ -82,19 +84,5 @@ typedef struct {
 } game_data_t;
 
 extern game_data_t game_data;
-
-// Pauline's items
-extern uint8_t num_bonus_items;
-
-typedef struct {
-	uint8_t y;
-	uint24_t x;
-
-	uint8_t type;						// 0 = parasol, 1 = purse, 2 = hat
-
-	uint8_t background_data[16 * 15 + 2];
-} bonus_item_t;
-
-extern bonus_item_t bonus_item[3];
 
 #endif

@@ -14,16 +14,17 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
-#include "elevators.h"
-#include "barrels.h"
-#include "firefoxes.h"
-#include "conveyors.h"
-#include "hammers.h"
-#include "bonus_scores.h"
 #include "drawsprites.h"
+#include "barrels.h"
+#include "bonus_scores.h"
+#include "conveyors.h"
+#include "defines.h"
+#include "elevators.h"
+#include "firefoxes.h"
+#include "hammers.h"
 #include "images.h"
+#include "jumpman.h"
+#include "kong.h"
 
 
 void disable_sprites(void) {

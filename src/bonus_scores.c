@@ -11,8 +11,8 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
 #include "bonus_scores.h"
+#include "defines.h"
 #include "images.h"
 #include "overlay.h"
 

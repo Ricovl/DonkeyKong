@@ -14,10 +14,9 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
 #include "overlay.h"
-#include "gfx\sprites_gfx.h"
-
+#include "defines.h"
+#include "gfx/sprites_gfx.h"
 
 /* Draw the lives */
 void draw_player_lives(void) {
@@ -100,4 +99,27 @@ void draw_overlay_full(void) {
 	// Draw the scores, bonus time and lives
 	draw_player_score();
 	draw_player_lives();
+}
+
+char *rank_num[5] = { "ST", "ND", "RD", "TH", "TH" };
+
+/* Draws the rankings to the buffer*/
+void draw_rankings(void) {
+	uint8_t i = 0, y;
+	char str[4];
+
+	for (y = 144; y < 144 + 5 * 16; y += 16) {
+		gfx_SetTextFGColor((i < 3) ? COLOR_RED : COLOR_YELLOW);
+		sprintf(str, "%d%s", i + 1, rank_num[i]);
+		gfx_PrintStringXY(str, 57, y);
+		gfx_PrintStringXY(game_data.name[i], 160, y);
+		gfx_SetTextXY(97, y);
+		gfx_PrintUInt(game_data.Hscore[i], 6);
+		i++;
+	}
+
+	gfx_SetTextFGColor(COLOR_GREEN);
+	gfx_PrintStringXY("VERSION%0[9", 178, 232);
+
+	gfx_SetTextFGColor(COLOR_LIGHT_BLUE);
 }

@@ -14,15 +14,15 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
 #include "hammers.h"
 #include "barrels.h"
-#include "firefoxes.h"
-#include "conveyors.h"
-#include "drawsprites.h"
 #include "bonus_scores.h"
+#include "conveyors.h"
+#include "defines.h"
+#include "drawsprites.h"
+#include "firefoxes.h"
 #include "images.h"
+#include "jumpman.h"
 
 
 hammer_t hammer[MAX_HAMMERS];
@@ -193,7 +193,7 @@ void animate_hammer_hit(void) {
 				offset = 0;
 			}
 			gfx_GetSprite(background_data, x, y);
-			gfx_TransparentSprite_NoClip(hammer_hit[spriteNum], x + offset, y + offset + (spriteNum == 6));
+			gfx_TransparentSprite_NoClip(hammer_hit[spriteNum], x + offset, y + offset + (spriteNum == 2));
 			waitTicks(6 + (i > 3) * 6);
 			gfx_Sprite_NoClip(background_data, x, y);
 		}

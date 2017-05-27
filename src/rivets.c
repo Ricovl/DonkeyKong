@@ -14,10 +14,10 @@
 #include <keypadc.h>
 
 // donkeykong stuff
-#include "defines.h"
-#include "jumpman.h"
 #include "rivets.h"
 #include "bonus_scores.h"
+#include "defines.h"
+#include "jumpman.h"
 
 
 bool rivet_enabled[8];

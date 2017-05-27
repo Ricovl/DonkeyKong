@@ -10,11 +10,10 @@ void name_registration_screen(void);
 void pre_round_screen(void);
 void draw_rankings(void);
 
-void reset_game_data(void);
+void reset_game(void);
 void load_progress(void);
 void save_progress(void);
 
-extern char *rank_num[5];
 extern unsigned high_score_table[5];
 
 #endif

@@ -13,8 +13,8 @@
 
 // donkeykong stuff
 #include "images.h"
-#include "gfx\sprites_gfx.h"
-#include "gfx\kong_gfx.h"
+#include "gfx/kong_gfx.h"
+#include "gfx/sprites_gfx.h"
 
 
 // Jumpman
