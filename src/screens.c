@@ -105,7 +105,7 @@ void main_screen(void) {
 	gfx_SetColor(COLOR_BACKGROUND);
 	gfx_PrintStringXY("CONTINUE", 128, 51);
 	gfx_PrintStringXY("NEW%GAME", 128, 68);
-	gfx_PrintStringXY("SETTINGS", 128, 85);		
+	gfx_PrintStringXY("SETTINGS", 128, 85);
 
 	// Handle keypresses
 	key = get_key_fast();
@@ -119,6 +119,10 @@ void main_screen(void) {
 	if ((key == 13 || key == 48) && option <= 1) {		// Continue or New Game
 		game_state = pre_round_screen;
 		
+		if (game_data.game_state == end_stage_cinematic) {
+			//-------------------------------------- some things should happen here, but I forgot what exactly ----------------------------------------//
+		}
+
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
 			game_state = intro_cinematic;
@@ -161,15 +165,9 @@ void pre_round_screen(void) {
 	game_state = initialize_stage;
 }
 
-typedef struct {
-	uint8_t cursorX;
-	uint8_t cursorY;
-	uint8_t rankNum;
-	uint8_t charNum;
-	uint8_t timer;
-} HighScore_t;
 HighScore_t HighScore;
 
+/* Check if the player has a new high score; if so return to name registration screen else return to main */
 void pre_name_registration(void) {
 	uint8_t i;
 
@@ -255,11 +253,8 @@ void name_registration_screen(void) {
 	waitTimer++;
 	if (waitTimer == 62) {
 
-		if (HighScore.timer == 0) {
-			waitTimer = 0x80;
-			game_state = return_main;
-			return;
-		}
+		if (HighScore.timer == 0)
+			goto end_name_registration;
 
 		gfx_SetTextXY(192, 128);
 		gfx_PrintUInt(--HighScore.timer, 2);
@@ -299,6 +294,7 @@ void name_registration_screen(void) {
 				HighScore.charNum++;
 		}
 		else {							// End character
+		end_name_registration:
 			draw_rankings();
 			gfx_PrintStringXY("YOUR%NAME%WAS%REGISTERED", 66, 128);
 			gfx_Blit(gfx_buffer);

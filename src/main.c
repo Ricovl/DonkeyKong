@@ -53,14 +53,14 @@ void main(void) {
 
 	gfx_SetClipRegion(48, 16, 272, 239);
 	gfx_SetTransparentColor(0x15);
+	gfx_SetDrawBuffer();
 
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
-	gfx_SetFontData((&font_data) - 37 * 8);
+	gfx_SetFontData(&font_data - 37 * 8);
 	gfx_SetMonospaceFont(8);
 
 	decompress_images();
 	load_progress();
-	gfx_SetDrawBuffer();
 
 	game.quit = false;
 
@@ -100,6 +100,8 @@ void main(void) {
 		if (kb_Data[kb_group_6] & kb_Clear) {
 			if (game.quit == false) {
 				if (quitDelay == 0) {
+
+					game_data.game_state = game_state;
 
 					if (game_state == game_loop) {
 						disable_sprites();
@@ -321,22 +323,6 @@ void handle_bonus_timer(void) {
 			if (game.bonusTimer == 0)
 				game.timeRanOut = true;
 		}
-	}
-}
-
-/* This flashes the 1up text every 1/4th of a second */
-void flash_1up(void) {
-	if ((frameCounter & 15) == 0) {
-		if (((frameCounter >> 4) & 1) == 1) {
-			// Set the text color to black to remove text
-			gfx_SetTextFGColor(COLOR_BACKGROUND);
-		}
-		else {
-			// Set the text color to red to draw text
-			gfx_SetTextFGColor(COLOR_RED);
-		}
-		gfx_PrintStringXY("1UP", 27, 0);	// 1UP
-		gfx_BlitRectangle(gfx_buffer, 28, 0, 22, 7);
 	}
 }
 

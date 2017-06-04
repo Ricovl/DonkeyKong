@@ -97,6 +97,8 @@ void initialize_stage(void) {
 	oilcan.fireRelease = 0;
 	oilcan.updateTimer = 4;
 	oilcan.releaseTimer = 0x10;
+	oilcan.background_data[0] = 16;
+	oilcan.background_data[1] = 16;
 
 	releaseFirefox =
 		releaseBouncer =
@@ -220,6 +222,7 @@ void initialize_stage(void) {
 	kong.background_data[0] = 40;
 	kong.background_data[1] = 32;
 	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
+	gfx_GetSprite((gfx_image_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
 
 	// Bonus timer stuff
 	game.initialBonusValue = game_data.level * 10 + 40;

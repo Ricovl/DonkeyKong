@@ -282,21 +282,6 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 
 		asm("ld	(iy+13),c");	// jumpDir = c;
 		asm("ld (iy+14),a");	// jumpDirIndicator = a;
-		/*
-		231A  3A0362    LD      A,(#6203)		; load A with mario's X position
-		231D  DD9603    SUB     (IX+#03)        ; subtract the barrel's X position
-		2320  0EFF      LD      C,#FF           ; load C with #FF
-		2322  DA2623    JP      C,#2326         ; if barrel is to left of mario, then jump ahead
-
-		2325  0C        INC     C               ; else increase C to 0
-
-		2326  07        RLCA                    ; rotate left A (doubles A) jumpman.x << 1
-		2327  CB11      RL      C               ; rotate left C				C * 2
-		2329  07        RLCA                    ; rotate left A (doubles A) jumpman.x << 1
-		232A  CB11      RL      C               ; rotate left C				C * 2
-		232C  DD7110    LD      (IX+#10),C      ; store C into +10			this_barrel->jumpDir
-		232F  DD7711    LD      (IX+#11),A      ; store A into +11			this_barrel->jumpDirIndicator
-		*/
 	}
 }
 

@@ -81,6 +81,7 @@ typedef struct {
 	bool extraLifeAwarded;
 	unsigned score, Hscore[5];
 	char name[5][6];
+	void(*game_state)(void);
 } game_data_t;
 
 extern game_data_t game_data;

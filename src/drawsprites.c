@@ -32,7 +32,7 @@ void disable_sprites(void) {
 		num_bonus_scores =
 		num_bonus_items =
 		num_firefoxes =
-//		num_elevators =
+	//	num_elevators =
 		num_bouncers =
 		num_barrels =
 		num_hammers =
@@ -71,7 +71,7 @@ void update_screen(void) {
 		gfx_GetSprite((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
 
 	
-	/* Draw the moving sprites in the buffer */
+	/* Draw all the moving sprites to the buffer */
 	for (i = 0; i < num_retractable_ladders; i++)
 		gfx_TransparentSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
 
@@ -185,7 +185,7 @@ void update_screen(void) {
 	}
 
 	if (oilcan.onFire)
-		gfx_FillRectangle_NoClip(oilcan.x, oilcan.y - 16, 16, 16);
+		gfx_Sprite_NoClip((gfx_image_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
 		gfx_Sprite_NoClip((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);

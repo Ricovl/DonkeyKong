@@ -18,6 +18,23 @@
 #include "defines.h"
 #include "gfx/sprites_gfx.h"
 
+
+/* This flashes the 1up text every 1/4th of a second */
+void flash_1up(void) {
+	if ((frameCounter & 15) == 0) {
+		if (((frameCounter >> 4) & 1) == 1) {
+			// Set the text color to black to remove text
+			gfx_SetTextFGColor(COLOR_BACKGROUND);
+		}
+		else {
+			// Set the text color to red to draw text
+			gfx_SetTextFGColor(COLOR_RED);
+		}
+		gfx_PrintStringXY("1UP", 27, 0);	// 1UP
+		gfx_BlitRectangle(gfx_buffer, 28, 0, 22, 7);
+	}
+}
+
 /* Draw the lives */
 void draw_player_lives(void) {
 	uint8_t i;

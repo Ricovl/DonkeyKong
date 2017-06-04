@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+void flash_1up(void);
 void draw_player_score(void);
 void draw_bonus_time(void);
 void draw_bonus_box(void);
