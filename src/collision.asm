@@ -34,7 +34,7 @@
 	; firefoxes	:	4	1
 	; bouncers	:	2	2
 	; pies		:	8	3
-	; oilfire	:	2	0		(2, 2 if large fire)
+	; oilfire	:	2	0			(2, 2 if large fire)
 
 ;-------------------------------------------------------------------------------
 _check_collision_jumpman:
@@ -257,6 +257,45 @@ skip_pies:
 	pop	hl
 	pop	iy
 skip_bouncers:
+
+; check collision oilcan flame if stage is barrels or conveyors
+	ld	a,(_game)			; a = game.stage
+	cp	#03
+	jr	nc,skip_oilcan_fire	; skip if stage >= 3
+
+	ld	ix,_oilcan
+
+	ld	a,(ix+#08)			; a = oilcan.onFire
+	and	a,a
+	jr	z,skip_oilcan_fire	; skip if oilcan is not on fire
+	ld 	b,a					; b = 1 oilcan fire
+
+	push	hl
+    ld	hl,(iy+#05)
+	ld	de,8											; need to figure this number out
+	sbc	hl,de				; de = x item 1
+	ex	hl,de
+	pop	hl
+	ld	a,c
+	sub	a,8					; a  = y item 1				; need to figure this number out too
+	push	iy
+	ld	iy,data_stuff
+	ld	(iy+#01),de			; x item1
+	ld	(iy+#00),a			; y item1
+
+	push	hl
+	ld	a,(ix+#00)			; a = oilcan.sprite
+	cp	#02
+	ld 	de,0200h			; width += 2 + 1, height += 0 + 1
+	jr	c,smallFire			; jump if sprite is small fire
+	ld	de,0202h			; width += 2 + 1, height += 2 + 1
+smallFire:
+	add	hl,de
+
+    call check_collision
+	pop	hl
+	pop	iy
+skip_oilcan_fire:
 
 	xor	a,a					; A := 0 - code for no collision
 	ret

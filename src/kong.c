@@ -18,6 +18,7 @@
 #include "barrels.h"
 #include "conveyors.h"
 #include "defines.h"
+#include "elevators.h"
 #include "images.h"
 #include "jumpman.h"
 #include "overlay.h"
@@ -199,13 +200,19 @@ uint8_t cinematicProgress = 0;
 
 /* play end cinematic for all four stages */
 void end_stage_cinematic(void) {
+	if (cinematicProgress == 0) {
+		gfx_Blit(gfx_screen);
+		gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
+		kong.y_old = kong.y += 32;
+		kong.sprite = 0;
+		render_kong();
+	}
+
 	if ((game.stage == STAGE_BARRELS || game.stage == STAGE_ELEVATORS) && cinematicProgress <= 2) {
 		switch (cinematicProgress) {
 		case 0:
 			draw_pauline(false);
 			draw_heart(heart, 154, 10);
-			kong.sprite = 0;
-			render_kong();
 			waitTimer = 0x20;
 			cinematicProgress++;
 			break;
@@ -287,29 +294,26 @@ void end_stage_cinematic(void) {
 			break;
 		}
 	}
-	else {
+	else {								// stage is rivets
 		switch (cinematicProgress) {
 			uint8_t x, y;
 		case 0:
 			pauline.sprite = 1;
 			draw_pauline(false);
-			kong.sprite = 0;
-			render_kong();
 
 			// Clear space
-			for (y = 72; y <= 192; y += 40) {
-				gfx_FillRectangle_NoClip(112, y, 96, 8);
-				gfx_BlitRectangle(gfx_buffer, 112, y, 96, 8);
-			}
+			gfx_FillRectangle_NoClip(112, 72, 96, 160);
+			gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 			for (y = 200; y <= 224; y += 8)
 				for (x = 112; x <= 200; x += 8)
 					gfx_Sprite_NoClip(girder_circle, x, y);
-			gfx_BlitRectangle(gfx_buffer, 112, 200, 96, 32);
+			gfx_BlitRectangle(gfx_buffer, 112, 72, 96, 160);
 
 			kong.counter = 0x80;
 			waitTimer = 0x20;
 			cinematicProgress++;
 		case 1:
+			kong.sprite = 4;
 			handle_waitTimer();
 			cinematicProgress++;
 			break;
@@ -376,7 +380,7 @@ void end_stage_cinematic(void) {
 				if (kong.climbCounter == 0xE0) {
 					// move jumpman
 					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
-					gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 15, 16);
+					gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 16, 16);
 					gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
 					gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
 				}
@@ -396,8 +400,10 @@ void end_stage_cinematic(void) {
 		if (game_data.round > 19)
 			game_data.round = 14;
 
-		game.stage = 0xFF;
+		num_elevators = 0;
 		jumpman.enabled = false;
+
+		game.stage = 0xFF;
 	}
 }
 

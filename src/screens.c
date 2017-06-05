@@ -30,7 +30,7 @@ void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
 	game_data.score = 0;
-	game_data.round = 0;
+	game_data.round = 1;
 	game_data.lives = 3;
 	game_data.level = 1;
 }
@@ -125,7 +125,7 @@ void main_screen(void) {
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			game_state = intro_cinematic;
+			//game_state = intro_cinematic;
 		}
 	}
 

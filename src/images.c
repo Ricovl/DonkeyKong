@@ -63,6 +63,8 @@ gfx_image_t *pulley_right[3] =			{ pulley_right0, pulley_right1, pulley_right2 }
 gfx_image_t *pulley_left[3]  =			{ pulley_left0 , pulley_left2 , pulley_left1 };
 
 
+//const uint8_t *kong_compressed_images[] = { kong_standing_compressed, kong_left_compressed, kong_holding_compressed, kong_right_compressed, kong_arm_right_compressed, kong_climbing_left0_compressed, kong_climbing_right0_compressed, kong_climbing_left1_compressed, kong_climbing_right1_compressed, kong_onhead_compressed, kong_knockedout_compressed };
+
 void decompress_images(void) {
 	gfx_image_t *tmp_ptr;
 

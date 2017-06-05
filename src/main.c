@@ -277,10 +277,6 @@ void check_end_stage(void) {
 
 end_of_stage:
 	disable_sprites();
-	gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
-	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
-	gfx_Blit(gfx_buffer);
-	kong.y_old = kong.y += 32;
 	game_state = end_stage_cinematic;
 }
 
@@ -388,19 +384,18 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
- * Add collision detection for oilcan fire and kong in rivets
+ * splash screen with credits
  * check ground checking for all entities
  */
 
 /* In progress
+ * Add collision detection for oilcan fire and kong in rivets
  * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible. (almost done)
- * splash screen with credits
  */
 
 
 /* bugs:
  * you have to press enter/2nd twice when deleting charactar
- * end cinematic elevators(elevators blinking end not removed at end) and rivets(jumpman and ladders not removed) are not done
  * Crazy barrels can escape out of the screen(leave artifacts)?
  * You can get points quick by quiting and then continueing
  */
