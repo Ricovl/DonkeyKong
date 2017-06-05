@@ -395,7 +395,6 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* bugs:
- * you have to press enter/2nd twice when deleting charactar
  * Crazy barrels can escape out of the screen(leave artifacts)?
  * You can get points quick by quiting and then continueing
  */

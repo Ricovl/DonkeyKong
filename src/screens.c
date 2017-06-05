@@ -30,7 +30,7 @@ void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
 	game_data.score = 0;
-	game_data.round = 1;
+	game_data.round = 0;
 	game_data.lives = 3;
 	game_data.level = 1;
 }
@@ -44,7 +44,7 @@ void load_progress(void) {
 	reset_game();
 	memset(&game_data, 0, 7);
 	for (i = 0; i < 5; i++)
-		strcpy(game_data.name[i], "RICO");
+		sprintf(game_data.name[i], "RICO");
 	memcpy(game_data.Hscore, high_score_table, 5 * sizeof(unsigned));
 
 	ti_CloseAll();
@@ -125,7 +125,7 @@ void main_screen(void) {
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			//game_state = intro_cinematic;
+			game_state = intro_cinematic;
 		}
 	}
 
@@ -178,8 +178,8 @@ void pre_name_registration(void) {
 	// Check if high score and place score in list and ask for name if high score
 	for (i = 0; i < 5; i++) {
 		if (game_data.score >= game_data.Hscore[i]) {
-			memcpy(&game_data.Hscore[i + 1], &game_data.Hscore[i], (4 - i) * sizeof(unsigned));
-			memcpy(&game_data.name[i + 1], &game_data.name[i], 6 - i);
+			memmove(&game_data.Hscore[i + 1], &game_data.Hscore[i], (4 - i) * sizeof(unsigned));
+			memmove(&game_data.name[i + 1], &game_data.name[i], (4 - i) * (sizeof(game_data.name) / 5));
 			game_data.Hscore[i] = game_data.score;
 
 			waitTimer = 0;
@@ -284,14 +284,15 @@ void name_registration_screen(void) {
 		uint8_t character = ((HighScore.cursorX - 84) / 15) + 10 * ((HighScore.cursorY - 68) / 15);
 
 		if (character == 28) {			// Del character
-			game_data.name[HighScore.rankNum][HighScore.charNum] = '%';
 			if (HighScore.charNum > 0)
 				HighScore.charNum--;
+			game_data.name[HighScore.rankNum][HighScore.charNum] = '%';
 		}
 		else if (character != 29) {		// Normal character
+			if (HighScore.charNum >= 4)
+				HighScore.charNum = 4;
 			game_data.name[HighScore.rankNum][HighScore.charNum] = character + 65;
-			if (HighScore.charNum < 4)
-				HighScore.charNum++;
+			HighScore.charNum++;
 		}
 		else {							// End character
 		end_name_registration:

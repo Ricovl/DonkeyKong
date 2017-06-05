@@ -63,58 +63,17 @@ gfx_image_t *pulley_right[3] =			{ pulley_right0, pulley_right1, pulley_right2 }
 gfx_image_t *pulley_left[3]  =			{ pulley_left0 , pulley_left2 , pulley_left1 };
 
 
-//const uint8_t *kong_compressed_images[] = { kong_standing_compressed, kong_left_compressed, kong_holding_compressed, kong_right_compressed, kong_arm_right_compressed, kong_climbing_left0_compressed, kong_climbing_right0_compressed, kong_climbing_left1_compressed, kong_climbing_right1_compressed, kong_onhead_compressed, kong_knockedout_compressed };
+static const uint8_t *kong_compressed_images[] = { kong_standing_compressed, kong_left_compressed, kong_holding_compressed, kong_right_compressed, kong_arm_left_compressed, kong_arm_right_compressed, kong_climbing_left0_compressed, kong_climbing_right0_compressed, kong_climbing_left1_compressed, kong_climbing_right1_compressed, kong_onhead_compressed, kong_knockedout_compressed };
 
 void decompress_images(void) {
 	gfx_image_t *tmp_ptr;
+	uint8_t i;
 
-	tmp_ptr = gfx_MallocSprite(40, 32);
-	dzx7_Standard(kong_standing_compressed, tmp_ptr);
-	kong_sprite[0] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(43, 32);
-	dzx7_Standard(kong_left_compressed, tmp_ptr);
-	kong_sprite[1] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(40, 32);
-	dzx7_Standard(kong_holding_compressed, tmp_ptr);
-	kong_sprite[2] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(43, 32);
-	dzx7_Standard(kong_right_compressed, tmp_ptr);
-	kong_sprite[3] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(46, 32);
-	dzx7_Standard(kong_arm_left_compressed, tmp_ptr);
-	kong_sprite[4] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(46, 32);
-	dzx7_Standard(kong_arm_right_compressed, tmp_ptr);
-	kong_sprite[5] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(33, 36);
-	dzx7_Standard(kong_climbing_left0_compressed, tmp_ptr);
-	kong_sprite[6] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(33, 36);
-	dzx7_Standard(kong_climbing_right0_compressed, tmp_ptr);
-	kong_sprite[7] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(38, 36);
-	dzx7_Standard(kong_climbing_left1_compressed, tmp_ptr);
-	kong_sprite[8] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(43, 36);
-	dzx7_Standard(kong_climbing_right1_compressed, tmp_ptr);
-	kong_sprite[9] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(40, 32);
-	dzx7_Standard(kong_onhead_compressed, tmp_ptr);
-	kong_sprite[10] = tmp_ptr;
-
-	tmp_ptr = gfx_MallocSprite(40, 32);
-	dzx7_Standard(kong_knockedout_compressed, tmp_ptr);
-	kong_sprite[11] = tmp_ptr;
+	for (i = 0; i < 12; i++) {
+		tmp_ptr = gfx_MallocSprite(*kong_compressed_images[i], *(kong_compressed_images[i] + 2));
+		dzx7_Standard(kong_compressed_images[i], tmp_ptr);
+		kong_sprite[i] = tmp_ptr;
+	}
 
 	tmp_ptr = gfx_MallocSprite(40, 32);
 	kong_sprite[12] = gfx_RotateSpriteHalf(kong_sprite[10], tmp_ptr);
