@@ -206,6 +206,13 @@ void end_stage_cinematic(void) {
 		kong.y_old = kong.y += 32;
 		kong.sprite = 0;
 		render_kong();
+
+		// Add bonusTimer value to score
+		game_data.score += game.bonusTimer * 100;
+		
+		game_data.round++;
+		if (game_data.round > 19)
+			game_data.round = 14;
 	}
 
 	if ((game.stage == STAGE_BARRELS || game.stage == STAGE_ELEVATORS) && cinematicProgress <= 2) {
@@ -283,14 +290,9 @@ void end_stage_cinematic(void) {
 			break;
 		case 5:
 			handle_waitTimer();
-
-			// Add bonusTimer value to score
-			game_data.score += game.bonusTimer * 100;
-			draw_player_score();
 			
 			cinematicProgress = 0;
 			waitTimer = 0x30;
-			game_state = pre_round_screen;
 			break;
 		}
 	}
@@ -300,6 +302,7 @@ void end_stage_cinematic(void) {
 		case 0:
 			pauline.sprite = 1;
 			draw_pauline(false);
+			game_data.level++;
 
 			// Clear space
 			gfx_FillRectangle_NoClip(112, 72, 96, 160);
@@ -368,10 +371,8 @@ void end_stage_cinematic(void) {
 			kong.climbCounter--;
 
 			if (kong.climbCounter == 0) {
-				game_data.level++;
 				cinematicProgress = 0;
 				waitTimer = 0xE0;
-				game_state = pre_round_screen;
 			}
 
 			if ((kong.climbCounter & 7) == 0) {
@@ -379,7 +380,7 @@ void end_stage_cinematic(void) {
 
 				if (kong.climbCounter == 0xE0) {
 					// move jumpman
-					gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+					gfx_FillRectangle_NoClip(jumpman.x_old - 7, jumpman.y_old - 15, 16, 16);
 					gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 16, 16);
 					gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
 					gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
@@ -396,14 +397,14 @@ void end_stage_cinematic(void) {
 	}
 
 	if (cinematicProgress == 0) {
-		game_data.round++;
-		if (game_data.round > 19)
-			game_data.round = 14;
-
+		draw_player_score();
+		
 		num_elevators = 0;
 		jumpman.enabled = false;
 
 		game.stage = 0xFF;
+		gfx_Blit(gfx_screen);
+		game_state = pre_round_screen;
 	}
 }
 

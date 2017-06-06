@@ -154,10 +154,6 @@ check_collision_entities:
 skip_barrels:
 
 ; check collision fireballs/firefoxes if stage != conveyors
-    ld	a,(_game)			; a = game.stage
-	cp	#02
-	jr	z,skip_firefoxes
-	
 	ld  a,(_num_firefoxes)
 	and	a,a
 	jr	z,skip_firefoxes	; skip if there are no fireballs/firefoxes
@@ -187,10 +183,13 @@ skipFirefox:
     call check_collision
 	pop	hl
 	pop	iy
-	jr	skip_pies
 skip_firefoxes:
 
 ; check collision pies if stage is conveyors
+    ld	a,(_game)			; a = game.stage
+	cp	#02
+	jr	nz,skip_pies
+
     ld  a,(_num_pies)
 	and	a,a
 	jr	z,skip_pies			; skip if there are no pies
@@ -210,7 +209,7 @@ skip_firefoxes:
 	sub	a,11				; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
-	ld	(iy+#01),hl			; x item1
+	ld	(iy+#01),de			; x item1
 	ld	(iy+#00),a			; y item1
 
 	push	hl
@@ -272,12 +271,12 @@ skip_bouncers:
 
 	push	hl
     ld	hl,(iy+#05)
-	ld	de,8											; need to figure this number out
+	ld	de,6
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
 	pop	hl
 	ld	a,c
-	sub	a,8					; a  = y item 1				; need to figure this number out too
+	add	a,4					; a  = y item 1				; need to figure this number out
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
@@ -286,9 +285,9 @@ skip_bouncers:
 	push	hl
 	ld	a,(ix+#00)			; a = oilcan.sprite
 	cp	#02
-	ld 	de,0200h			; width += 2 + 1, height += 0 + 1
+	ld 	de,0100h			; width += 2 + 1, height += 0 + 1							; It seems like i shouldn't do the + 1 here(and probably also not everywhere else)
 	jr	c,smallFire			; jump if sprite is small fire
-	ld	de,0202h			; width += 2 + 1, height += 2 + 1
+	ld	de,0101h			; width += 2 + 1, height += 2 + 1
 smallFire:
 	add	hl,de
 

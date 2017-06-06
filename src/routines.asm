@@ -19,8 +19,8 @@ right:
 
 	; These lines change the barrels/jumpmans x-position
 	ld a,(ix+10h)	; load a with jumpcounterX
-	add a,(ix+0Eh)	; add jumpDirIndicator #80 for left or right, 0 for up, this way left en right jumping is slower than walking		
-	ld (ix+10h),a	; save in jumpcounterX
+	add a,(ix+0Eh)	; add jumpDirIndicator (jumpman: #80 for left or right, 0 for up, this way left en right jumping is slower than walking) this affects the x-jump-speed in a way
+	ld (ix+10h),a	; save back in jumpcounterX
 	
 	ld hl,(ix+2)	; load object's X position
 	adc hl,bc		; add jumpDir. Note this is add with carry

@@ -118,10 +118,6 @@ void main_screen(void) {
 	}
 	if ((key == 13 || key == 48) && option <= 1) {		// Continue or New Game
 		game_state = pre_round_screen;
-		
-		if (game_data.game_state == end_stage_cinematic) {
-			//-------------------------------------- some things should happen here, but I forgot what exactly ----------------------------------------//
-		}
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
@@ -141,6 +137,8 @@ void pre_round_screen(void) {
 	uint8_t i, y = 209;
 	uint8_t kongs = game_data.round + 2;
 	char str[6];
+
+	handle_waitTimer();
 
 	draw_overlay_full();
 

@@ -76,7 +76,7 @@ void decompress_images(void) {
 	}
 
 	tmp_ptr = gfx_MallocSprite(40, 32);
-	kong_sprite[12] = gfx_RotateSpriteHalf(kong_sprite[10], tmp_ptr);
+	kong_sprite[12] = gfx_FlipSpriteX(kong_sprite[10], tmp_ptr);
 
 	kong_goofy = gfx_MallocSprite(46, 32);
 	dzx7_Standard(kong_goofy_compressed, kong_goofy);

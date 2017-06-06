@@ -265,10 +265,10 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 	else {											// Difficulty is 5
 		asm("ld c,FFh");		// c = 0xFF;
 
-		asm("ld	bc,(iy+2)");	// bc = barrel.x
+		asm("ld	de,(iy+2)");	// bc = barrel.x
 		asm("ld	hl,(_jumpman+2)");
 		asm("or	a,a");			// reset flags
-		asm("sbc hl,bc");		// hl = jumpman.x - barrel.x;
+		asm("sbc hl,de");		// hl = jumpman.x - barrel.x;
 		asm("ld a,l");			// a = l;
 		asm("jp c,left");		
 

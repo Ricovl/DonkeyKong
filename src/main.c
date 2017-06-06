@@ -114,12 +114,14 @@ void main(void) {
 						game_data.lives = 0;
 						game_state = return_main;
 					}
+					if (game_state == end_stage_cinematic) {
+						cinematicProgress = 0;
+						jumpman.enabled = false;
+						game.stage = 0xFF;
+						num_elevators = 0;
+						game_state = return_main;
+					}
 					if (game_state == pre_round_screen) {
-						/* Idea: 
-						 * When you quit the game while in game_loop, pre_round_screen or end_stage_cinematic save the state in game_data.game_state
-						 * Then when you continue test if game_data is one of the above.
-						 * If it is then set game_state to game_data.game_state
-						 */
 						cinematicProgress = 0;
 						game_state = return_main;
 					}
@@ -389,12 +391,11 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  */
 
 /* In progress
- * Add collision detection for oilcan fire and kong in rivets
- * Change the way the game loop works so the 1UP flashes everywhere and the flame keeps animated when visible. (almost done)
+ * fix that you can get points quick by quiting and then contineuing
+ * Add collision detection for kong in rivets
  */
 
 
 /* bugs:
  * Crazy barrels can escape out of the screen(leave artifacts)?
- * You can get points quick by quiting and then continueing
  */
