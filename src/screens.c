@@ -118,10 +118,11 @@ void main_screen(void) {
 	}
 	if ((key == 13 || key == 48) && option <= 1) {		// Continue or New Game
 		game_state = pre_round_screen;
+		game.score = game_data.score;
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			game_state = intro_cinematic;
+			//game_state = intro_cinematic;
 		}
 	}
 

@@ -13,7 +13,6 @@
 // shared libraries
 #include <graphx.h>
 #include <keypadc.h>
-#include <fileioc.h>
 
 // donkeykong stuff
 #include "main.h"
@@ -35,6 +34,8 @@
 #include "stages.h"
 
 
+#define DEBUG_MODE	true
+
 game_t game;
 game_data_t game_data;
 
@@ -52,7 +53,7 @@ void main(void) {
 	gfx_Begin(gfx_8bpp);
 
 	gfx_SetClipRegion(48, 16, 272, 239);
-	gfx_SetTransparentColor(0x15);
+	gfx_SetTransparentColor(sprites_gfx_transparent_color_index);
 	gfx_SetDrawBuffer();
 
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
@@ -101,29 +102,20 @@ void main(void) {
 			if (game.quit == false) {
 				if (quitDelay == 0) {
 
-					game_data.game_state = game_state;
-
-					if (game_state == game_loop) {
+					if (game_state != return_main && game_state != main_screen) {
 						disable_sprites();
 						num_elevators = 0;
+						oilcan.onFire = false;
 						jumpman.enabled = false;
+
+						game_data.score = game.score;
+
+						game.stage = 0xFF;
+						cinematicProgress = 0;
 						game_state = return_main;
 					}
 					if (game_state == intro_cinematic) {
-						cinematicProgress = 0;
 						game_data.lives = 0;
-						game_state = return_main;
-					}
-					if (game_state == end_stage_cinematic) {
-						cinematicProgress = 0;
-						jumpman.enabled = false;
-						game.stage = 0xFF;
-						num_elevators = 0;
-						game_state = return_main;
-					}
-					if (game_state == pre_round_screen) {
-						cinematicProgress = 0;
-						game_state = return_main;
 					}
 
 					quitDelay = 10;
@@ -235,7 +227,7 @@ void game_loop(void) {
 
 	update_kong();
 
-#if !DEBUG_MODE
+#if DEBUG_MODE
 	check_collision_jumpman();
 #endif
 
@@ -391,11 +383,15 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  */
 
 /* In progress
- * fix that you can get points quick by quiting and then contineuing
+ * Fireball can get sort of stuck on a ladder at the conveyor stage(keep climbing up and down in a loop)
  * Add collision detection for kong in rivets
  */
 
 
 /* bugs:
  * Crazy barrels can escape out of the screen(leave artifacts)?
+ */
+
+/* Fixed?
+ * fix that you can get points quick by quiting and then contineuing(think I fixed this. Have to test it(move game_data.score = game.score at start of stage?))
  */

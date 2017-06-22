@@ -19,6 +19,7 @@
 #include "conveyors.h"
 #include "defines.h"
 #include "elevators.h"
+#include "firefoxes.h"
 #include "images.h"
 #include "jumpman.h"
 #include "overlay.h"
@@ -213,6 +214,9 @@ void end_stage_cinematic(void) {
 		game_data.round++;
 		if (game_data.round > 19)
 			game_data.round = 14;
+
+		// save the game_data score as the score saved when quitting the game
+		game.score = game_data.score;
 	}
 
 	if ((game.stage == STAGE_BARRELS || game.stage == STAGE_ELEVATORS) && cinematicProgress <= 2) {
@@ -401,6 +405,7 @@ void end_stage_cinematic(void) {
 		
 		num_elevators = 0;
 		jumpman.enabled = false;
+		oilcan.onFire = false;
 
 		game.stage = 0xFF;
 		gfx_Blit(gfx_screen);

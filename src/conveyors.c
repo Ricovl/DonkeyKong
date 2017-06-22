@@ -201,7 +201,7 @@ void move_pies(void) {
 
 			if (this_pie->y == 104) {		// pie on middle conveyor
 				// Delete if pie is in oilcan fire
-				if (this_pie->x == 153) {	// 152 is closer, but 143 is like the original
+				if (this_pie->x == 152) {	// 152 is closer, but 153 is like the original
 					del_pie(i);
 					continue;
 				}

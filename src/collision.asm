@@ -27,7 +27,7 @@
 	; something about the hitboxes: http://donkeykongforum.com/index.php?topic=493.0
 
 	; 	type	  width	height
-	; jumpman	:	4	8
+	; jumpman	:	4	7
 	; hammer	: 	3	9			(6,	3 if above head; 5, 6 if in front)
 	; barrels	:	2	2
 	; fireballs	:	3	2
@@ -50,7 +50,7 @@ _check_collision_jumpman:
 	pop	iy
 	ret	z					; return if there was no collision
 	xor	a,a
-	ld	(_jumpman+31),a		; else jumpman is dead
+	ld	(_jumpman+32),a		; else jumpman is dead
 	ret
 
 ;-------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ skip_firefoxes:
 	ld	(iy+#00),a			; y item1
 
 	push	hl
-	ld	de,0409h
+	ld	de,0803h
 	add	hl,de				; width += 3 + 1, height += 8 + 1
 
     ld  de,138				; pie struct size

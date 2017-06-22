@@ -37,7 +37,6 @@ void disable_sprites(void) {
 		num_barrels =
 		num_hammers =
 		num_pies = 0;
-	oilcan.onFire = false;
 }
 
 /* Draws all the moving sprites on the screen(I should write this in asm for more speed) */

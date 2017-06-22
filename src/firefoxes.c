@@ -169,7 +169,9 @@ void move_firefoxes(void) {
 				//+ firefox_bobbingTable[this_firefox->jumpCounter];
 			this_firefox->jumpCounter--;
 		}
-		else handle_firefox_spawning(this_firefox);
+		else {
+			handle_firefox_spawning(this_firefox);
+		}
 	}
 
 }

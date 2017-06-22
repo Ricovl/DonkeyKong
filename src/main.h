@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#define DEBUG_MODE	true
-
 sk_key_t get_key_fast(void);
 void game_loop(void);
 void check_end_stage(void);
