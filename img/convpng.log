@@ -2,9 +2,7 @@ Opened convpng.ini
 
 --- Group sprites_gfx (C) ---
 Using defined palette main_palette.png ...
-Transparent Color Index : 22
-Transparent Color : 0x0000
-117:
+82:
  barrel_falling_B0 : converted!
  barrel_falling_B1 : converted!
  barrel_falling_N0 : converted!
@@ -30,7 +28,6 @@ Transparent Color : 0x0000
  firefox_left1 : converted!
  firefox_right0 : converted!
  firefox_right1 : converted!
- oilcan_sprite : converted!
  burst : converted!
  circle0 : converted!
  circle1 : converted!
@@ -43,41 +40,6 @@ Transparent Color : 0x0000
  hammer_right_N1 : converted!
  hammer_right_Y0 : converted!
  hammer_right_Y1 : converted!
- jumpman_left_climbing0 : converted!
- jumpman_left_climbing1 : converted!
- jumpman_left_climbing2 : converted!
- jumpman_left_dying0 : converted!
- jumpman_left_dying1 : converted!
- jumpman_left_dying2 : converted!
- jumpman_left_hammer00 : converted!
- jumpman_left_hammer01 : converted!
- jumpman_left_hammer10 : converted!
- jumpman_left_hammer11 : converted!
- jumpman_left_hammer20 : converted!
- jumpman_left_hammer21 : converted!
- jumpman_left_jumping : converted!
- jumpman_left_landing : converted!
- jumpman_left_walking0 : converted!
- jumpman_left_walking1 : converted!
- jumpman_left_walking2 : converted!
- jumpman_right_climbing0 : converted!
- jumpman_right_climbing1 : converted!
- jumpman_right_climbing2 : converted!
- jumpman_right_dying0 : converted!
- jumpman_right_dying1 : converted!
- jumpman_right_dying2 : converted!
- jumpman_right_hammer00 : converted!
- jumpman_right_hammer01 : converted!
- jumpman_right_hammer10 : converted!
- jumpman_right_hammer11 : converted!
- jumpman_right_hammer20 : converted!
- jumpman_right_hammer21 : converted!
- jumpman_right_jumping : converted!
- jumpman_right_landing : converted!
- jumpman_right_walking0 : converted!
- jumpman_right_walking1 : converted!
- jumpman_right_walking2 : converted!
- jumpman_standing : converted!
  bouncer0 : converted!
  bouncer1 : converted!
  elevator_platform : converted!
@@ -87,6 +49,7 @@ Transparent Color : 0x0000
  num300 : converted!
  num500 : converted!
  num800 : converted!
+ oilcan_sprite : converted!
  pie_sprite : converted!
  pulley_left0 : converted!
  pulley_left1 : converted!
@@ -122,6 +85,45 @@ Transparent Color : 0x0000
  knockedout_sprite1 : converted!
  kong_eye0 : converted!
  kong_eye1 : converted!
+
+--- Group rletsprites_gfx (C) ---
+Using defined palette main_palette.png ...
+35:
+ jumpman_left_climbing0 : converted!
+ jumpman_left_climbing1 : converted!
+ jumpman_left_climbing2 : converted!
+ jumpman_left_dying0 : converted!
+ jumpman_left_dying1 : converted!
+ jumpman_left_dying2 : converted!
+ jumpman_left_hammer00 : converted!
+ jumpman_left_hammer01 : converted!
+ jumpman_left_hammer10 : converted!
+ jumpman_left_hammer11 : converted!
+ jumpman_left_hammer20 : converted!
+ jumpman_left_hammer21 : converted!
+ jumpman_left_jumping : converted!
+ jumpman_left_landing : converted!
+ jumpman_left_walking0 : converted!
+ jumpman_left_walking1 : converted!
+ jumpman_left_walking2 : converted!
+ jumpman_right_climbing0 : converted!
+ jumpman_right_climbing1 : converted!
+ jumpman_right_climbing2 : converted!
+ jumpman_right_dying0 : converted!
+ jumpman_right_dying1 : converted!
+ jumpman_right_dying2 : converted!
+ jumpman_right_hammer00 : converted!
+ jumpman_right_hammer01 : converted!
+ jumpman_right_hammer10 : converted!
+ jumpman_right_hammer11 : converted!
+ jumpman_right_hammer20 : converted!
+ jumpman_right_hammer21 : converted!
+ jumpman_right_jumping : converted!
+ jumpman_right_landing : converted!
+ jumpman_right_walking0 : converted!
+ jumpman_right_walking1 : converted!
+ jumpman_right_walking2 : converted!
+ jumpman_standing : converted!
 
 --- Group kong_gfx (C) ---
 Using defined palette main_palette.png ...

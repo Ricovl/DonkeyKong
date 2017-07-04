@@ -134,7 +134,7 @@ void initialize_stage(void) {
 			bonus_item[i].x = item_locations_x[location];
 			bonus_item[i].background_data[0] = *(uint8_t*)(pauline_item[i]);
 			bonus_item[i].background_data[1] = bonus_item_height[i];
-			gfx_GetSprite((gfx_image_t*)bonus_item[i].background_data, bonus_item[i].x, bonus_item[i].y);
+			gfx_GetSprite((gfx_sprite_t*)bonus_item[i].background_data, bonus_item[i].x, bonus_item[i].y);
 		}
 		num_bonus_items = 3;
 	}
@@ -147,10 +147,10 @@ void initialize_stage(void) {
 		kong.y = 36;
 
 		// Draw some objects
-		gfx_Sprite_NoClip(barrel_standing, 48, 51);
-		gfx_Sprite_NoClip(barrel_standing, 58, 51);
-		gfx_Sprite_NoClip(barrel_standing, 48, 35);
-		gfx_Sprite_NoClip(barrel_standing, 58, 35);
+		gfx_TransparentSprite_NoClip(barrel_standing, 48, 51);
+		gfx_TransparentSprite_NoClip(barrel_standing, 58, 51);
+		gfx_TransparentSprite_NoClip(barrel_standing, 48, 35);
+		gfx_TransparentSprite_NoClip(barrel_standing, 58, 35);
 	}
 	else if (game.stage == STAGE_CONVEYORS) {		// Stage conveyors stuff
 		// Initialize some varialbes
@@ -223,8 +223,8 @@ void initialize_stage(void) {
 	kong.y_old = kong.y;
 	kong.background_data[0] = 40;
 	kong.background_data[1] = 32;
-	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
-	gfx_GetSprite((gfx_image_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
+	gfx_GetSprite((gfx_sprite_t*)kong.background_data, kong.x, kong.y);
+	gfx_GetSprite((gfx_sprite_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
 
 	// Bonus timer stuff
 	game.initialBonusValue = game_data.level * 10 + 40;

@@ -98,9 +98,9 @@ void draw_kong(void) {
 	}
 
 	// Clear kong in buffer and store background
-	gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
+	gfx_Sprite_NoClip((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old);
 	kong.background_data[0] = *(uint8_t*)kong_sprite[kong.sprite];
-	gfx_GetSprite((gfx_image_t*)kong.background_data, x, kong.y);
+	gfx_GetSprite((gfx_sprite_t*)kong.background_data, x, kong.y);
 
 	// Draw kong
 	gfx_TransparentSprite_NoClip(kong_sprite[kong.sprite], x, kong.y);
@@ -164,7 +164,7 @@ void render_kong(void) {
 		if (kong.sprite == 9) y += 4;
 	}
 
-	gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
+	gfx_GetSprite((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 	gfx_TransparentSprite(kong_sprite[kong.sprite], x, y - 32);
 	if (kong.sprite == 11) {
 		if ((kong.climbCounter % 3) != 0) {
@@ -174,7 +174,7 @@ void render_kong(void) {
 	}
 
 	gfx_SwapDraw();
-	gfx_Sprite((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old - 32);
+	gfx_Sprite((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 
 	kong.background_data[0] = *(uint8_t*)kong_sprite[kong.sprite];
 	kong.background_data[1] = *(uint8_t*)((uint8_t*)kong_sprite[kong.sprite] + 1);
@@ -182,7 +182,7 @@ void render_kong(void) {
 	kong.y_old = y;
 }
 
-void draw_heart(gfx_image_t* sprite, uint8_t x, uint8_t y) {
+void draw_heart(gfx_sprite_t* sprite, uint8_t x, uint8_t y) {
 	gfx_Sprite_NoClip(sprite, x, y);
 	gfx_BlitRectangle(gfx_buffer, x, y, 16, 13);	// Maybe use bool isbroken instead?
 }
@@ -203,7 +203,7 @@ uint8_t cinematicProgress = 0;
 void end_stage_cinematic(void) {
 	if (cinematicProgress == 0) {
 		gfx_Blit(gfx_screen);
-		gfx_Sprite_NoClip((gfx_image_t*)kong.background_data, kong.x_old, kong.y_old);
+		gfx_Sprite_NoClip((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old);
 		kong.y_old = kong.y += 32;
 		kong.sprite = 0;
 		render_kong();
@@ -310,7 +310,7 @@ void end_stage_cinematic(void) {
 
 			// Clear space
 			gfx_FillRectangle_NoClip(112, 72, 96, 160);
-			gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
+			gfx_RLETSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 			for (y = 200; y <= 224; y += 8)
 				for (x = 112; x <= 200; x += 8)
 					gfx_Sprite_NoClip(girder_circle, x, y);
@@ -386,7 +386,7 @@ void end_stage_cinematic(void) {
 					// move jumpman
 					gfx_FillRectangle_NoClip(jumpman.x_old - 7, jumpman.y_old - 15, 16, 16);
 					gfx_BlitRectangle(gfx_buffer, jumpman.x_old - 7, jumpman.y_old - 15, 16, 16);
-					gfx_TransparentSprite_NoClip(jumpman_right_walking0, 120, 56);
+					gfx_RLETSprite_NoClip(jumpman_right_walking0, 120, 56);
 					gfx_BlitRectangle(gfx_buffer, 120, 56, 14, 16);
 				}
 
@@ -443,7 +443,7 @@ void intro_cinematic(void) {
 		kong.y_old = kong.y = 221;
 		kong.background_data[0] = 40;
 		kong.background_data[1] = 32;
-		gfx_GetSprite((gfx_image_t*)kong.background_data, kong.x, kong.y);
+		gfx_GetSprite((gfx_sprite_t*)kong.background_data, kong.x, kong.y);
 		render_kong();
 		cinematicProgress++;
 		break;

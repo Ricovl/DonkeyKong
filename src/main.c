@@ -48,12 +48,10 @@ void main(void) {
 	bool debug = false;
 	uint8_t quitDelay = 0;
 
-	malloc(0);
-	srand(rtc_Time());
-	gfx_Begin(gfx_8bpp);
+	srand(/*rtc_Time()*/ 2374);
+	gfx_Begin();
 
 	gfx_SetClipRegion(48, 16, 272, 239);
-	gfx_SetTransparentColor(sprites_gfx_transparent_color_index);
 	gfx_SetDrawBuffer();
 
 	gfx_SetTextBGColor(COLOR_BACKGROUND);
@@ -74,11 +72,24 @@ void main(void) {
 
 		flash_1up();
 		increase_difficulty();
-
+		
 		(*game_state)();
 
-		if (cinematicProgress == 0)
-			update_screen();
+		if (cinematicProgress == 0) {
+			/*if (game_state == game_loop) {
+				timer_1_Counter = 0;
+				timer_Control = TIMER1_ENABLE | TIMER1_CPU | TIMER1_NOINT | TIMER1_UP;
+
+				update_screen();
+
+				timer_Control = TIMER1_DISABLE;
+				dbg_sprintf(dbgout, "%d\n", timer_1_Counter);
+				timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
+			}
+			else {*/
+				update_screen();
+			//}
+		}
 
 #if DEBUG_MODE
 		if (debug) {
@@ -379,11 +390,11 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 /* ToDo:
  * splash screen with credits
- * check ground checking for all entities
+ * check ground checking and collision detection for all entities
  */
 
 /* In progress
- * Fireball can get sort of stuck on a ladder at the conveyor stage(keep climbing up and down in a loop)
+ * Fix that fireball can get sort of stuck on a ladder at the conveyor stage(keep climbing up and down in a loop)
  * Add collision detection for kong in rivets
  */
 
@@ -393,5 +404,5 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  */
 
 /* Fixed?
- * fix that you can get points quick by quiting and then contineuing(think I fixed this. Have to test it(move game_data.score = game.score at start of stage?))
+ * fix that you can get points quick by quiting and then contineuing
  */

@@ -133,7 +133,7 @@ uint8_t hitItemNum;
 
 void animate_hammer_hit(void) {
 	if (wasItemHit) {
-		gfx_image_t *background_data;
+		gfx_sprite_t *background_data;
 		uint8_t points, i;
 		uint8_t y;
 		uint24_t x;

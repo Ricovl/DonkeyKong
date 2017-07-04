@@ -46,28 +46,28 @@ void update_screen(void) {
 
 	/* Get the background behind the moving sprites before they get drawn */
 	for (i = 0; i < num_retractable_ladders; i++)
-		gfx_GetSprite((gfx_image_t*)retractableLadder[i].background_data, retractableLadder[i].x, retractableLadder[i].y_old);
+		gfx_GetSprite((gfx_sprite_t*)retractableLadder[i].background_data, retractableLadder[i].x, retractableLadder[i].y_old);
 
 	if (jumpman.enabled)
-		gfx_GetSprite((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+		gfx_GetSprite((gfx_sprite_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
-		gfx_GetSprite((gfx_image_t*)hammer[i].background_data, hammer[i].x_old - 7, hammer[i].y_old - 9);
+		gfx_GetSprite((gfx_sprite_t*)hammer[i].background_data, hammer[i].x_old - 7, hammer[i].y_old - 9);
 
 	for (i = 0; i < num_barrels; i++)		// Barrels
-		gfx_GetSprite((gfx_image_t*)barrel[i].background_data, barrel[i].x_old - 7, barrel[i].y_old - 9);
+		gfx_GetSprite((gfx_sprite_t*)barrel[i].background_data, barrel[i].x_old - 7, barrel[i].y_old - 9);
 
 	for (i = 0; i < num_pies; i++)			// Pies
-		gfx_GetSprite((gfx_image_t*)pie[i].background_data, pie[i].x_old, pie[i].y_old);
+		gfx_GetSprite((gfx_sprite_t*)pie[i].background_data, pie[i].x_old, pie[i].y_old);
 
 	for (i = 0; i < num_bouncers; i++)		// Bouncers
-		gfx_GetSprite((gfx_image_t*)bouncer[i].background_data, bouncer[i].x_old, bouncer[i].y_old);
+		gfx_GetSprite((gfx_sprite_t*)bouncer[i].background_data, bouncer[i].x_old, bouncer[i].y_old);
 
 	for (i = 0; i < num_firefoxes; i++)		// Firefoxes
-		gfx_GetSprite((gfx_image_t*)firefox[i].background_data, firefox[i].x_old - 7, firefox[i].y_old - 15);
+		gfx_GetSprite((gfx_sprite_t*)firefox[i].background_data, firefox[i].x_old - 7, firefox[i].y_old - 15);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
-		gfx_GetSprite((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
+		gfx_GetSprite((gfx_sprite_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
 
 	
 	/* Draw all the moving sprites to the buffer */
@@ -75,7 +75,7 @@ void update_screen(void) {
 		gfx_TransparentSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
 
 	if (jumpman.enabled)
-		gfx_TransparentSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
+		gfx_RLETSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
 		gfx_TransparentSprite_NoClip(hammer_sprite[hammer[i].dir][hammer[i].sprite], hammer[i].x - 7, hammer[i].y - 9);
@@ -132,47 +132,47 @@ void update_screen(void) {
 
 	/* Remove the moving sprites out of the current buffer and updates their old positions */
 	for (i = 0; i < num_retractable_ladders; i++) {
-		gfx_Sprite_NoClip((gfx_image_t*)retractableLadder[i].background_data, retractableLadder[i].x, retractableLadder[i].y_old);
+		gfx_Sprite_NoClip((gfx_sprite_t*)retractableLadder[i].background_data, retractableLadder[i].x, retractableLadder[i].y_old);
 		retractableLadder[i].y_old = retractableLadder[i].y;
 	}
 	
 	if (jumpman.enabled) {
-		gfx_Sprite_NoClip((gfx_image_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
+		gfx_Sprite_NoClip((gfx_sprite_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 		jumpman.x_old = jumpman.x; jumpman.y_old = jumpman.y;
 	}
 
 	for (i = 0; i < num_hammers; i++) {		// Hammers
 		hammer_t *this_hammer = &hammer[i];
 
-		gfx_Sprite_NoClip((gfx_image_t*)this_hammer->background_data, this_hammer->x_old - 7, this_hammer->y_old - 9);
+		gfx_Sprite_NoClip((gfx_sprite_t*)this_hammer->background_data, this_hammer->x_old - 7, this_hammer->y_old - 9);
 		this_hammer->x_old = this_hammer->x; this_hammer->y_old = this_hammer->y;
 	}
 
 	for (i = 0; i < num_barrels; i++) {		// Barrels
 		barrel_t *this_barrel = &barrel[i];
 
-		gfx_Sprite_NoClip((gfx_image_t*)this_barrel->background_data, this_barrel->x_old - 7, this_barrel->y_old - 9);
+		gfx_Sprite_NoClip((gfx_sprite_t*)this_barrel->background_data, this_barrel->x_old - 7, this_barrel->y_old - 9);
 		this_barrel->x_old = this_barrel->x; this_barrel->y_old = this_barrel->y;
 	}
 
 	for (i = 0; i < num_pies; i++) {		// Bouncers
 		pie_t *this_pie = &pie[i];
 
-		gfx_Sprite((gfx_image_t*)this_pie->background_data, this_pie->x_old, this_pie->y_old);
+		gfx_Sprite((gfx_sprite_t*)this_pie->background_data, this_pie->x_old, this_pie->y_old);
 		this_pie->x_old = this_pie->x; this_pie->y_old = this_pie->y;
 	}
 
 	for (i = 0; i < num_bouncers; i++) {	// Bouncers
 		bouncer_t *this_bouncer = &bouncer[i];
 
-		gfx_Sprite((gfx_image_t*)this_bouncer->background_data, this_bouncer->x_old, this_bouncer->y_old);
+		gfx_Sprite((gfx_sprite_t*)this_bouncer->background_data, this_bouncer->x_old, this_bouncer->y_old);
 		this_bouncer->x_old = this_bouncer->x; this_bouncer->y_old = this_bouncer->y;
 	}
 
 	for (i = 0; i < num_firefoxes; i++) {	// Firefoxes
 		firefox_t *this_firefox = &firefox[i];
 
-		gfx_Sprite_NoClip((gfx_image_t*)this_firefox->background_data, this_firefox->x_old - 7, this_firefox->y_old - 15);
+		gfx_Sprite_NoClip((gfx_sprite_t*)this_firefox->background_data, this_firefox->x_old - 7, this_firefox->y_old - 15);
 		this_firefox->x_old = this_firefox->x; this_firefox->y_old = this_firefox->actualY;
 	}
 
@@ -184,8 +184,8 @@ void update_screen(void) {
 	}
 
 	if (oilcan.onFire)
-		gfx_Sprite_NoClip((gfx_image_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
+		gfx_Sprite_NoClip((gfx_sprite_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
-		gfx_Sprite_NoClip((gfx_image_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
+		gfx_Sprite_NoClip((gfx_sprite_t*)bonus_score[i].background_data, bonus_score[i].x, bonus_score[i].y);
 }
