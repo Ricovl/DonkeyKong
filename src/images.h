@@ -13,7 +13,7 @@ void decompress_images(void);
 extern gfx_rletsprite_t *jumpman_sprite[2][18];
 
 // Barrels
-extern gfx_sprite_t *rolling_barrel[2][6];
+extern gfx_rletsprite_t *rolling_barrel[2][6];
 
 // Firefoxes
 extern gfx_rletsprite_t *firefox_sprite[2][4];
@@ -39,7 +39,7 @@ extern gfx_rletsprite_t *fire[4];
 extern gfx_sprite_t *pauline_sprite[2][3];
 
 // Bouncers
-extern gfx_sprite_t *bouncer_sprite[2];
+extern gfx_rletsprite_t *bouncer_sprite[2];
 
 // Pauline's items
 extern gfx_rletsprite_t *pauline_item[3];

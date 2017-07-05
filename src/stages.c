@@ -140,6 +140,8 @@ void initialize_stage(void) {
 	}
 
 	if (game.stage == STAGE_BARRELS) {				// Stage barrels stuff
+		uint8_t i;
+
 		// Initialize some varialbes
 		oilcan.x = 64;
 		oilcan.y = 216;
@@ -147,10 +149,10 @@ void initialize_stage(void) {
 		kong.y = 36;
 
 		// Draw some objects
-		gfx_TransparentSprite_NoClip(barrel_standing, 48, 51);
-		gfx_TransparentSprite_NoClip(barrel_standing, 58, 51);
-		gfx_TransparentSprite_NoClip(barrel_standing, 48, 35);
-		gfx_TransparentSprite_NoClip(barrel_standing, 58, 35);
+		for (i = 48; i <= 58; i += 10) {
+			gfx_RLETSprite_NoClip(barrel_standing, i, 51);
+			gfx_RLETSprite_NoClip(barrel_standing, i, 35);
+		}
 	}
 	else if (game.stage == STAGE_CONVEYORS) {		// Stage conveyors stuff
 		// Initialize some varialbes

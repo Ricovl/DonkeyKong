@@ -2,22 +2,7 @@ Opened convpng.ini
 
 --- Group sprites_gfx (C) ---
 Using defined palette main_palette.png ...
-38:
- barrel_falling_B0 : converted!
- barrel_falling_B1 : converted!
- barrel_falling_N0 : converted!
- barrel_falling_N1 : converted!
- barrel_rolling_B0 : converted!
- barrel_rolling_B1 : converted!
- barrel_rolling_B2 : converted!
- barrel_rolling_B3 : converted!
- barrel_rolling_N0 : converted!
- barrel_rolling_N1 : converted!
- barrel_rolling_N2 : converted!
- barrel_rolling_N3 : converted!
- barrel_standing : converted!
- bouncer0 : converted!
- bouncer1 : converted!
+23:
  life : converted!
  text_bonus : converted!
  text_rub_end : converted!
@@ -44,7 +29,20 @@ Using defined palette main_palette.png ...
 
 --- Group rletsprites_gfx (C) ---
 Using defined palette main_palette.png ...
-79:
+94:
+ barrel_falling_B0 : converted!
+ barrel_falling_B1 : converted!
+ barrel_falling_N0 : converted!
+ barrel_falling_N1 : converted!
+ barrel_rolling_B0 : converted!
+ barrel_rolling_B1 : converted!
+ barrel_rolling_B2 : converted!
+ barrel_rolling_B3 : converted!
+ barrel_rolling_N0 : converted!
+ barrel_rolling_N1 : converted!
+ barrel_rolling_N2 : converted!
+ barrel_rolling_N3 : converted!
+ barrel_standing : converted!
  hat : converted!
  num100 : converted!
  num200 : converted!
@@ -61,6 +59,8 @@ Using defined palette main_palette.png ...
  pulley_right1 : converted!
  pulley_right2 : converted!
  retracting_ladder_sprite : converted!
+ bouncer0 : converted!
+ bouncer1 : converted!
  elevator_platform : converted!
  receptable_bottom : converted!
  receptable_top : converted!
@@ -142,7 +142,7 @@ Using defined palette main_palette.png ...
  kong_right : converted! (1378 > 232 bytes)
  kong_left : converted! (1378 > 236 bytes)
 
-Converted in 0 s
+Converted in 1 s
 
 [warning] image quality might be too low.
 please try grouping similar images, reducing image colors, 

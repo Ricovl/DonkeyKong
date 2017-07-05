@@ -7,7 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <tice.h>
-#include <intce.h>
 #include <debug.h>
 
 // shared libraries

@@ -82,14 +82,14 @@ void update_screen(void) {
 
 	for (i = 0; i < num_barrels; i++) {		// Barrels
 		barrel_t *this_barrel = &barrel[i];
-		gfx_TransparentSprite(rolling_barrel[this_barrel->isBlue][this_barrel->sprite], this_barrel->x - ((this_barrel->sprite & 4) ? 7 : 5), this_barrel->y - 9);	// draw new sprite
+		gfx_RLETSprite(rolling_barrel[this_barrel->isBlue][this_barrel->sprite], this_barrel->x - ((this_barrel->sprite & 4) ? 7 : 5), this_barrel->y - 9);
 	}	
 
 	for (i = 0; i < num_pies; i++)			// Pies
 		gfx_RLETSprite_NoClip(pie_sprite, pie[i].x, pie[i].y);
 
 	for (i = 0; i < num_bouncers; i++)		// Bouncers
-		gfx_TransparentSprite(bouncer_sprite[bouncer[i].sprite], bouncer[i].x, bouncer[i].y);
+		gfx_RLETSprite(bouncer_sprite[bouncer[i].sprite], bouncer[i].x, bouncer[i].y);
 
 	for (i = 0; i < num_firefoxes; i++)		// Firefoxes
 		gfx_RLETSprite_NoClip(firefox_sprite[firefox[i].dir & 1][firefox[i].sprite], firefox[i].x - 7, firefox[i].actualY - 15);
@@ -136,7 +136,7 @@ void update_screen(void) {
 		retractableLadder[i].y_old = retractableLadder[i].y;
 	}
 	
-	if (jumpman.enabled) {
+	if (jumpman.enabled) {					// Jumpman
 		gfx_Sprite_NoClip((gfx_sprite_t*)jumpman.buffer_data, jumpman.x_old - 7, jumpman.y_old - 15);
 		jumpman.x_old = jumpman.x; jumpman.y_old = jumpman.y;
 	}
@@ -183,7 +183,7 @@ void update_screen(void) {
 		gfx_SetColor(COLOR_BACKGROUND);
 	}
 
-	if (oilcan.onFire)
+	if (oilcan.onFire)						// Oilcan
 		gfx_Sprite_NoClip((gfx_sprite_t*)oilcan.background_data, oilcan.x, oilcan.y - 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores

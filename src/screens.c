@@ -122,7 +122,7 @@ void main_screen(void) {
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			//game_state = intro_cinematic;
+			game_state = intro_cinematic;
 		}
 	}
 
