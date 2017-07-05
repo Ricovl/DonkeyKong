@@ -27,8 +27,8 @@ gfx_sprite_t *rolling_barrel[2][6] =   { { barrel_rolling_N0, barrel_rolling_N1,
 										 { barrel_rolling_B0, barrel_rolling_B1, barrel_rolling_B2, barrel_rolling_B3, barrel_falling_B0, barrel_falling_B1 }, };
 
 // Firefoxes
-gfx_sprite_t *firefox_sprite[2][4] =   { { fireball_left0 , fireball_left1 , firefox_left0 , firefox_left1  },
-										 { fireball_right0, fireball_right1, firefox_right0, firefox_right1 }, };
+gfx_rletsprite_t *firefox_sprite[2][4] =   { { fireball_left0 , fireball_left1 , firefox_left0 , firefox_left1  },
+											 { fireball_right0, fireball_right1, firefox_right0, firefox_right1 }, };
 
 // Kong
 gfx_sprite_t *kong_goofy;
@@ -41,13 +41,13 @@ gfx_sprite_t *kong_knockedout_sprite[2] ={ knockedout_sprite1, knockedout_sprite
 gfx_sprite_t *bonus_score_sprite[5] =	 { num100, num200, num300, num500, num800 };
 
 // Hammer sprites
-gfx_sprite_t *hammer_sprite[2][4] =    { { hammer_left_N0 , hammer_left_N1 , hammer_left_Y0 , hammer_left_Y1  },
-										 { hammer_right_N0, hammer_right_N1, hammer_right_Y0, hammer_right_Y1 } };
+gfx_rletsprite_t *hammer_sprite[2][4] =    { { hammer_left_N0 , hammer_left_N1 , hammer_left_Y0 , hammer_left_Y1  },
+											 { hammer_right_N0, hammer_right_N1, hammer_right_Y0, hammer_right_Y1 } };
 
-gfx_sprite_t *hammer_hit[4] =			 { circle0, circle1, circle2, burst };
+gfx_rletsprite_t *hammer_hit[4] =			 { circle0, circle1, circle2, burst };
 
 // Flame on top of oilcan
-gfx_sprite_t *fire[4] =					 { fire0, fire1, fire2, fire3 };
+gfx_rletsprite_t *fire[4] =					 { fire0, fire1, fire2, fire3 };
 
 // Pauline
 gfx_sprite_t *pauline_sprite[2][3] =   { { pauline_left0 , pauline_left1 , pauline_left2  },
@@ -60,8 +60,8 @@ gfx_sprite_t *bouncer_sprite[2] =		 { bouncer0, bouncer1 };
 gfx_sprite_t *pauline_item[3] =			 { parasol, purse, hat };
 
 // Pulleys
-gfx_sprite_t *pulley_right[3] =			 { pulley_right0, pulley_right1, pulley_right2 };
-gfx_sprite_t *pulley_left[3]  =			 { pulley_left0 , pulley_left2 , pulley_left1 };
+gfx_rletsprite_t *pulley_right[3] =			 { pulley_right0, pulley_right1, pulley_right2 };
+gfx_rletsprite_t *pulley_left[3]  =			 { pulley_left0 , pulley_left2 , pulley_left1 };
 
 
 static const uint8_t *kong_compressed_images[] = { kong_standing_compressed, kong_left_compressed, kong_holding_compressed, kong_right_compressed, kong_arm_left_compressed, kong_arm_right_compressed, kong_climbing_left0_compressed, kong_climbing_right0_compressed, kong_climbing_left1_compressed, kong_climbing_right1_compressed, kong_onhead_compressed, kong_knockedout_compressed };

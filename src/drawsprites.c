@@ -72,44 +72,44 @@ void update_screen(void) {
 	
 	/* Draw all the moving sprites to the buffer */
 	for (i = 0; i < num_retractable_ladders; i++)
-		gfx_TransparentSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
+		gfx_RLETSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
 
 	if (jumpman.enabled)
 		gfx_RLETSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers
-		gfx_TransparentSprite_NoClip(hammer_sprite[hammer[i].dir][hammer[i].sprite], hammer[i].x - 7, hammer[i].y - 9);
+		gfx_RLETSprite_NoClip(hammer_sprite[hammer[i].dir][hammer[i].sprite], hammer[i].x - 7, hammer[i].y - 9);
 
 	for (i = 0; i < num_barrels; i++) {		// Barrels
 		barrel_t *this_barrel = &barrel[i];
 		gfx_TransparentSprite(rolling_barrel[this_barrel->isBlue][this_barrel->sprite], this_barrel->x - ((this_barrel->sprite & 4) ? 7 : 5), this_barrel->y - 9);	// draw new sprite
 	}	
 
-	for (i = 0; i < num_pies; i++)
-		gfx_TransparentSprite(pie_sprite, pie[i].x, pie[i].y);
+	for (i = 0; i < num_pies; i++)			// Pies
+		gfx_RLETSprite_NoClip(pie_sprite, pie[i].x, pie[i].y);
 
 	for (i = 0; i < num_bouncers; i++)		// Bouncers
 		gfx_TransparentSprite(bouncer_sprite[bouncer[i].sprite], bouncer[i].x, bouncer[i].y);
 
 	for (i = 0; i < num_firefoxes; i++)		// Firefoxes
-		gfx_TransparentSprite_NoClip(firefox_sprite[firefox[i].dir & 1][firefox[i].sprite], firefox[i].x - 7, firefox[i].actualY - 15);
+		gfx_RLETSprite_NoClip(firefox_sprite[firefox[i].dir & 1][firefox[i].sprite], firefox[i].x - 7, firefox[i].actualY - 15);
 
 	for (i = 0; i < num_elevators; i++)		// Elevator platforms
-		gfx_TransparentSprite_NoClip(elevator_platform, elevator[i].x, elevator[i].y);
+		gfx_RLETSprite_NoClip(elevator_platform, elevator[i].x, elevator[i].y);
 
 	if (game.stage == STAGE_ELEVATORS) {	// Elevator receptables
-		gfx_TransparentSprite_NoClip(receptable_bottom, 80, 223);
-		gfx_TransparentSprite_NoClip(receptable_bottom, 144, 223);
-		gfx_TransparentSprite_NoClip(receptable_top, 80, 72);
-		gfx_TransparentSprite_NoClip(receptable_top, 144, 72);
+		gfx_RLETSprite_NoClip(receptable_bottom, 80, 223);
+		gfx_RLETSprite_NoClip(receptable_bottom, 144, 223);
+		gfx_RLETSprite_NoClip(receptable_top, 80, 72);
+		gfx_RLETSprite_NoClip(receptable_top, 144, 72);
 	}
 
 	if (game.stage == STAGE_CONVEYORS) {	// Pulley's
 		uint8_t *y = &pulleyTable_y[0];
 
 		for (i = 0; i < NUM_CONVEYORS; i++) {
-			gfx_TransparentSprite_NoClip(conveyor[i].sprite0, pulleyTable_leftX[i], *y);
-			gfx_TransparentSprite_NoClip(conveyor[i].sprite1, pulleyTable_rightX[i], *y);
+			gfx_RLETSprite_NoClip(conveyor[i].sprite0, pulleyTable_leftX[i], *y);
+			gfx_RLETSprite_NoClip(conveyor[i].sprite1, pulleyTable_rightX[i], *y);
 			y++;
 		}
 	}
@@ -118,9 +118,9 @@ void update_screen(void) {
 		gfx_TransparentSprite_NoClip(pauline_item[bonus_item[i].type], bonus_item[i].x, bonus_item[i].y);
 
 	if(game.stage <= STAGE_CONVEYORS)		// Oilcan
-		gfx_TransparentSprite_NoClip(oilcan_sprite, oilcan.x, oilcan.y);
+		gfx_RLETSprite_NoClip(oilcan_sprite, oilcan.x, oilcan.y);
 	if (oilcan.onFire)
-		gfx_TransparentSprite_NoClip(fire[oilcan.sprite], oilcan.x, oilcan.y - 16);
+		gfx_RLETSprite_NoClip(fire[oilcan.sprite], oilcan.x, oilcan.y - 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
 		gfx_TransparentSprite_NoClip(bonus_score[i].sprite, bonus_score[i].x, bonus_score[i].y);

@@ -193,7 +193,7 @@ void animate_hammer_hit(void) {
 				offset = 0;
 			}
 			gfx_GetSprite(background_data, x, y);
-			gfx_TransparentSprite_NoClip(hammer_hit[spriteNum], x + offset, y + offset + (spriteNum == 2));
+			gfx_RLETSprite_NoClip(hammer_hit[spriteNum], x + offset, y + offset + (spriteNum == 2));
 			waitTicks(6 + (i > 3) * 6);
 			gfx_Sprite_NoClip(background_data, x, y);
 		}

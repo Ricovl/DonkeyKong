@@ -16,7 +16,7 @@ extern gfx_rletsprite_t *jumpman_sprite[2][18];
 extern gfx_sprite_t *rolling_barrel[2][6];
 
 // Firefoxes
-extern gfx_sprite_t *firefox_sprite[2][4];
+extern gfx_rletsprite_t *firefox_sprite[2][4];
 
 // Kong
 extern gfx_sprite_t *kong_goofy;
@@ -29,11 +29,11 @@ extern gfx_sprite_t *kong_knockedout_sprite[2];
 extern gfx_sprite_t *bonus_score_sprite[5];
 
 // Hammer sprites
-extern gfx_sprite_t *hammer_sprite[2][4];
-extern gfx_sprite_t *hammer_hit[4];
+extern gfx_rletsprite_t *hammer_sprite[2][4];
+extern gfx_rletsprite_t *hammer_hit[4];
 
 // Flame on top of oilcan
-extern gfx_sprite_t *fire[4];
+extern gfx_rletsprite_t *fire[4];
 
 // Pauline
 extern gfx_sprite_t *pauline_sprite[2][3];
@@ -45,7 +45,7 @@ extern gfx_sprite_t *bouncer_sprite[2];
 extern gfx_sprite_t *pauline_item[3];
 
 // Pulleys
-extern gfx_sprite_t *pulley_right[3];
-extern gfx_sprite_t *pulley_left[3];
+extern gfx_rletsprite_t *pulley_right[3];
+extern gfx_rletsprite_t *pulley_left[3];
 
 #endif

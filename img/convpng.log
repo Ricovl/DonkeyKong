@@ -2,7 +2,7 @@ Opened convpng.ini
 
 --- Group sprites_gfx (C) ---
 Using defined palette main_palette.png ...
-82:
+46:
  barrel_falling_B0 : converted!
  barrel_falling_B1 : converted!
  barrel_falling_N0 : converted!
@@ -16,50 +16,14 @@ Using defined palette main_palette.png ...
  barrel_rolling_N2 : converted!
  barrel_rolling_N3 : converted!
  barrel_standing : converted!
- fire0 : converted!
- fire1 : converted!
- fire2 : converted!
- fire3 : converted!
- fireball_left0 : converted!
- fireball_left1 : converted!
- fireball_right0 : converted!
- fireball_right1 : converted!
- firefox_left0 : converted!
- firefox_left1 : converted!
- firefox_right0 : converted!
- firefox_right1 : converted!
- burst : converted!
- circle0 : converted!
- circle1 : converted!
- circle2 : converted!
- hammer_left_N0 : converted!
- hammer_left_N1 : converted!
- hammer_left_Y0 : converted!
- hammer_left_Y1 : converted!
- hammer_right_N0 : converted!
- hammer_right_N1 : converted!
- hammer_right_Y0 : converted!
- hammer_right_Y1 : converted!
  bouncer0 : converted!
  bouncer1 : converted!
- elevator_platform : converted!
  life : converted!
  num100 : converted!
  num200 : converted!
  num300 : converted!
  num500 : converted!
  num800 : converted!
- oilcan_sprite : converted!
- pie_sprite : converted!
- pulley_left0 : converted!
- pulley_left1 : converted!
- pulley_left2 : converted!
- pulley_right0 : converted!
- pulley_right1 : converted!
- pulley_right2 : converted!
- receptable_bottom : converted!
- receptable_top : converted!
- retracting_ladder_sprite : converted!
  text_bonus : converted!
  text_rub_end : converted!
  hat : converted!
@@ -88,7 +52,38 @@ Using defined palette main_palette.png ...
 
 --- Group rletsprites_gfx (C) ---
 Using defined palette main_palette.png ...
-35:
+71:
+ pie_sprite : converted!
+ pulley_left0 : converted!
+ pulley_left1 : converted!
+ pulley_left2 : converted!
+ pulley_right0 : converted!
+ pulley_right1 : converted!
+ pulley_right2 : converted!
+ retracting_ladder_sprite : converted!
+ elevator_platform : converted!
+ receptable_bottom : converted!
+ receptable_top : converted!
+ fireball_left0 : converted!
+ fireball_left1 : converted!
+ fireball_right0 : converted!
+ fireball_right1 : converted!
+ firefox_left0 : converted!
+ firefox_left1 : converted!
+ firefox_right0 : converted!
+ firefox_right1 : converted!
+ burst : converted!
+ circle0 : converted!
+ circle1 : converted!
+ circle2 : converted!
+ hammer_left_N0 : converted!
+ hammer_left_N1 : converted!
+ hammer_left_Y0 : converted!
+ hammer_left_Y1 : converted!
+ hammer_right_N0 : converted!
+ hammer_right_N1 : converted!
+ hammer_right_Y0 : converted!
+ hammer_right_Y1 : converted!
  jumpman_left_climbing0 : converted!
  jumpman_left_climbing1 : converted!
  jumpman_left_climbing2 : converted!
@@ -124,6 +119,11 @@ Using defined palette main_palette.png ...
  jumpman_right_walking1 : converted!
  jumpman_right_walking2 : converted!
  jumpman_standing : converted!
+ fire0 : converted!
+ fire1 : converted!
+ fire2 : converted!
+ fire3 : converted!
+ oilcan_sprite : converted!
 
 --- Group kong_gfx (C) ---
 Using defined palette main_palette.png ...
