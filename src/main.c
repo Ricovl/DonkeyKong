@@ -45,7 +45,9 @@ uint8_t frameCounter;
 const void(*game_state)(void) = return_main;
 
 void main(void) {
+#if DEBUG_MODE
 	bool debug = false;
+#endif
 	uint8_t quitDelay = 0;
 
 	srand(/*rtc_Time()*/ 2374);

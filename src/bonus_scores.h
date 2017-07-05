@@ -13,7 +13,7 @@ typedef struct {
 	uint8_t y;
 	uint24_t x;
 	uint8_t counter;
-	gfx_sprite_t *sprite;
+	gfx_rletsprite_t *sprite;
 	uint8_t background_data[15 * 7 + 2];
 } bonus_score_t;
 

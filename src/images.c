@@ -32,13 +32,13 @@ gfx_rletsprite_t *firefox_sprite[2][4] =   { { fireball_left0 , fireball_left1 ,
 
 // Kong
 gfx_sprite_t *kong_goofy;
-gfx_sprite_t *kong_sprite[13];		 // { kong_standing, kong_left, kong_holding, kong_right, kong_arm_left, kong_arm_right, kong_climbing_left0, kong_climbing_right0, kong_climbing_left1, kong_climbing_right1, kong_onhead, kong_knockedOut, kong_teeth };
+gfx_rletsprite_t *kong_sprite[13];		 // { kong_standing, kong_left, kong_holding, kong_right, kong_arm_left, kong_arm_right, kong_climbing_left0, kong_climbing_right0, kong_climbing_left1, kong_climbing_right1, kong_onhead, kong_knockedOut, kong_teeth };
 
 gfx_sprite_t *kong_crazy_eye[2] =		 { kong_eye1, kong_eye0 };
 gfx_sprite_t *kong_knockedout_sprite[2] ={ knockedout_sprite1, knockedout_sprite0 };
 
 // Bonus sprites
-gfx_sprite_t *bonus_score_sprite[5] =	 { num100, num200, num300, num500, num800 };
+gfx_rletsprite_t *bonus_score_sprite[5] =	 { num100, num200, num300, num500, num800 };
 
 // Hammer sprites
 gfx_rletsprite_t *hammer_sprite[2][4] =    { { hammer_left_N0 , hammer_left_N1 , hammer_left_Y0 , hammer_left_Y1  },
@@ -57,7 +57,7 @@ gfx_sprite_t *pauline_sprite[2][3] =   { { pauline_left0 , pauline_left1 , pauli
 gfx_sprite_t *bouncer_sprite[2] =		 { bouncer0, bouncer1 };
 
 // Pauline's items
-gfx_sprite_t *pauline_item[3] =			 { parasol, purse, hat };
+gfx_rletsprite_t *pauline_item[3] =			 { parasol, purse, hat };
 
 // Pulleys
 gfx_rletsprite_t *pulley_right[3] =			 { pulley_right0, pulley_right1, pulley_right2 };
@@ -68,16 +68,22 @@ static const uint8_t *kong_compressed_images[] = { kong_standing_compressed, kon
 
 void decompress_images(void) {
 	gfx_sprite_t *tmp_ptr;
-	uint8_t i;
+	gfx_sprite_t *flip_tmp;
+	uint8_t i = 0;
 
-	for (i = 0; i < 12; i++) {
+	do {
 		tmp_ptr = gfx_MallocSprite(*kong_compressed_images[i], *(kong_compressed_images[i] + 2));
 		dzx7_Standard(kong_compressed_images[i], tmp_ptr);
-		kong_sprite[i] = tmp_ptr;
-	}
+		kong_sprite[i] = gfx_ConvertMallocRLETSprite(tmp_ptr);
+		if (i < 11)
+			free(tmp_ptr);	// Not sure if this is really necessary here
+	} while (++i < 12);
 
-	tmp_ptr = gfx_MallocSprite(40, 32);
-	kong_sprite[12] = gfx_FlipSpriteX(kong_sprite[10], tmp_ptr);
+	flip_tmp = gfx_MallocSprite(40, 32);
+	tmp_ptr = gfx_FlipSpriteX(tmp_ptr, flip_tmp);
+	kong_sprite[12] = gfx_ConvertMallocRLETSprite(flip_tmp);
+	
+	free(tmp_ptr);
 
 	kong_goofy = gfx_MallocSprite(46, 32);
 	dzx7_Standard(kong_goofy_compressed, kong_goofy);

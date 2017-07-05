@@ -227,7 +227,7 @@ void mount_dismount_ladder(firefox_t *this_firefox) {
 	// Check if firefox is climbing up a ladder
 	if (this_firefox->onLadder) { // Firefox is climbing up or down a ladder
 		if (this_firefox->y == this_firefox->dismountY) {
-			if (this_firefox->dir & 8)
+			if (this_firefox->dir & 8)							// if ((this_firefox->dir & 8) == FACE_RIGHT)?
 				if (this_firefox->freezerMode == 2)
 					this_firefox->freezeFlag = true;
 

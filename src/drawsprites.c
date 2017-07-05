@@ -115,7 +115,7 @@ void update_screen(void) {
 	}
 
 	for (i = 0; i < num_bonus_items; i++)	// Bonus items
-		gfx_TransparentSprite_NoClip(pauline_item[bonus_item[i].type], bonus_item[i].x, bonus_item[i].y);
+		gfx_RLETSprite_NoClip(pauline_item[bonus_item[i].type], bonus_item[i].x, bonus_item[i].y);
 
 	if(game.stage <= STAGE_CONVEYORS)		// Oilcan
 		gfx_RLETSprite_NoClip(oilcan_sprite, oilcan.x, oilcan.y);
@@ -123,7 +123,7 @@ void update_screen(void) {
 		gfx_RLETSprite_NoClip(fire[oilcan.sprite], oilcan.x, oilcan.y - 16);
 
 	for (i = 0; i < num_bonus_scores; i++)	// Bonus scores
-		gfx_TransparentSprite_NoClip(bonus_score[i].sprite, bonus_score[i].x, bonus_score[i].y);
+		gfx_RLETSprite_NoClip(bonus_score[i].sprite, bonus_score[i].x, bonus_score[i].y);
 
 
 	/* Swaps the buffer with the screen.. */

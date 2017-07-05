@@ -103,7 +103,7 @@ void draw_kong(void) {
 	gfx_GetSprite((gfx_sprite_t*)kong.background_data, x, kong.y);
 
 	// Draw kong
-	gfx_TransparentSprite_NoClip(kong_sprite[kong.sprite], x, kong.y);
+	gfx_RLETSprite_NoClip(kong_sprite[kong.sprite], x, kong.y);
 
 	// Copy the sprite to the buffer and the erased area ^
 	if (kong.x_old < x) {
@@ -165,7 +165,7 @@ void render_kong(void) {
 	}
 
 	gfx_GetSprite((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old - 32);
-	gfx_TransparentSprite(kong_sprite[kong.sprite], x, y - 32);
+	gfx_RLETSprite_NoClip(kong_sprite[kong.sprite], x, y - 32);
 	if (kong.sprite == 11) {
 		if ((kong.climbCounter % 3) != 0) {
 			gfx_Sprite_NoClip(kong_crazy_eye[(kong.climbCounter % 3) - 1], 155, 193);
@@ -174,7 +174,7 @@ void render_kong(void) {
 	}
 
 	gfx_SwapDraw();
-	gfx_Sprite((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old - 32);
+	gfx_Sprite_NoClip((gfx_sprite_t*)kong.background_data, kong.x_old, kong.y_old - 32);
 
 	kong.background_data[0] = *(uint8_t*)kong_sprite[kong.sprite];
 	kong.background_data[1] = *(uint8_t*)((uint8_t*)kong_sprite[kong.sprite] + 1);
