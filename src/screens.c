@@ -30,9 +30,9 @@ void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
 	game_data.score = 0;
-	game_data.round = 0;
+	game_data.round = 0;	// 6 for conveyors
 	game_data.lives = 3;
-	game_data.level = 1;
+	game_data.level = 1;	// 3 for conveyors
 }
 
 static const char *save_name = "DKONGSV";
@@ -122,7 +122,7 @@ void main_screen(void) {
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			//game_state = intro_cinematic;
+			game_state = intro_cinematic;
 		}
 	}
 
@@ -325,6 +325,10 @@ void name_registration_screen(void) {
 		if (HighScore.cursorY < 100)
 			HighScore.cursorY += 16;
 	}
+}
+
+void credits_screen(void) {
+
 }
 
 unsigned high_score_table[5] = { 7650, 6100, 5950, 5050, 4300 };

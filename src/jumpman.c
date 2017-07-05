@@ -380,7 +380,7 @@ void bonus_item_picked_up(void) {
 		if (jumpman.x == this_bonus_item->x + bonus_item_width[this_bonus_item->type]) {
 			if (jumpman.y == this_bonus_item->y + bonus_item_height[this_bonus_item->type]) {
 				uint8_t score;
-				gfx_Sprite_NoClip((gfx_image_t*)this_bonus_item->background_data, this_bonus_item->x, this_bonus_item->y);
+				gfx_Sprite_NoClip((gfx_sprite_t*)this_bonus_item->background_data, this_bonus_item->x, this_bonus_item->y);
 				gfx_BlitRectangle(gfx_buffer, this_bonus_item->x, this_bonus_item->y, 16, bonus_item_height[this_bonus_item->type]);
 
 				score = game_data.level + 1;

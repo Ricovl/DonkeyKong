@@ -20,19 +20,19 @@ void handle_waitTimer1(void);
 
 enum COLOR {
 	COLOR_BACKGROUND	= 0x1B,	//  0,  0,  0
-	COLOR_BLACK_FAKE	= 0x00,	//  1,  1,  1
-	COLOR_LADDER		= 0x05,	//  0,254,254
-	COLOR_FLOOR			= 0x03,	// 255, 33, 85
-	COLOR_RED			= 0x0F, // 255,  0,  0
+	COLOR_BLACK_FAKE	= 0x01,	//  1,  1,  1
+	COLOR_LADDER		= 0x06,	//  0,254,254
+	COLOR_FLOOR			= 0x04,	// 255, 33, 85
+	COLOR_RED			= 0x10, // 255,  0,  0
 	COLOR_BLUE			= 0x18, //  0,  0,255
-	COLOR_WHITE			= 0x0A, // 255,255,255
-	COLOR_COLLISION		= 0x04, // 151,  0,  0
-	COLOR_RED_DARK		= 0x0D, // 151,  1,  0
+	COLOR_WHITE			= 0x0B, // 255,255,255
+	COLOR_COLLISION		= 0x05, // 151,  0,  0
+	COLOR_RED_DARK		= 0x0E, // 151,  1,  0
 	COLOR_LIGHT_BLUE	= 0x17,	//	 0,255,255 
 
-	COLOR_GREEN			= 0x15, // 0  ,255,  0
-	COLOR_YELLOW		= 0x14, // 255,255,  0
-	COLOR_COLLISION		= 0x04, // red_dark
+	COLOR_GREEN			= 0x16, // 0  ,255,  0
+	COLOR_YELLOW		= 0x15, // 255,255,  0
+	COLOR_COLLISION		= 0x05, // red_dark
 };
 
 enum dirs {

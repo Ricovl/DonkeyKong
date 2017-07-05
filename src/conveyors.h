@@ -23,8 +23,8 @@ typedef struct {
 	uint8_t direction;
 	uint8_t sprite;
 	
-	gfx_image_t *sprite0;
-	gfx_image_t *sprite1;
+	gfx_rletsprite_t *sprite0;
+	gfx_rletsprite_t *sprite1;
 } conveyor_t;
 
 extern conveyor_t conveyor[NUM_CONVEYORS];

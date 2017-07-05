@@ -80,15 +80,15 @@ void move_firefoxes(void) {
 
 		if (!this_firefox->isSpawning) {
 			if (!this_firefox->onLadder) {
-				if (this_firefox->freezerMode != 2) {
-					reverse_firefox_random(this_firefox);
-
-					if ((rand() & 3))
-						goto skip_ladder_mounting;
-				}
-				else {
+				if (this_firefox->freezerMode == 2) {
 					// freezer mode is enguaged for this firefox
 					handle_freezer(this_firefox);
+				}
+				else {
+					reverse_firefox_random(this_firefox);
+
+					if ((rand() & 3) != 0)
+						goto skip_ladder_mounting;
 				}
 
 				// Jump to end if firefox is moving left
@@ -227,7 +227,7 @@ void mount_dismount_ladder(firefox_t *this_firefox) {
 	// Check if firefox is climbing up a ladder
 	if (this_firefox->onLadder) { // Firefox is climbing up or down a ladder
 		if (this_firefox->y == this_firefox->dismountY) {
-			if ((this_firefox->dir & 8) == FACE_RIGHT)
+			if (this_firefox->dir & 8)							// if ((this_firefox->dir & 8) == FACE_RIGHT)?
 				if (this_firefox->freezerMode == 2)
 					this_firefox->freezeFlag = true;
 

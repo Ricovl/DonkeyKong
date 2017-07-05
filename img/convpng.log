@@ -2,9 +2,34 @@ Opened convpng.ini
 
 --- Group sprites_gfx (C) ---
 Using defined palette main_palette.png ...
-Transparent Color Index : 22
-Transparent Color : 0x0000
-117:
+23:
+ life : converted!
+ text_bonus : converted!
+ text_rub_end : converted!
+ heart : converted!
+ heart_broken : converted!
+ help_left : converted!
+ help_right : converted!
+ pauline_left0 : converted!
+ pauline_left1 : converted!
+ pauline_left2 : converted!
+ pauline_right0 : converted!
+ pauline_right1 : converted!
+ pauline_right2 : converted!
+ conveyor_tile : converted!
+ girder : converted!
+ girder_circle : converted!
+ ladder : converted!
+ rivet : converted!
+ x_tile : converted!
+ knockedout_sprite0 : converted!
+ knockedout_sprite1 : converted!
+ kong_eye0 : converted!
+ kong_eye1 : converted!
+
+--- Group rletsprites_gfx (C) ---
+Using defined palette main_palette.png ...
+94:
  barrel_falling_B0 : converted!
  barrel_falling_B1 : converted!
  barrel_falling_N0 : converted!
@@ -18,10 +43,27 @@ Transparent Color : 0x0000
  barrel_rolling_N2 : converted!
  barrel_rolling_N3 : converted!
  barrel_standing : converted!
- fire0 : converted!
- fire1 : converted!
- fire2 : converted!
- fire3 : converted!
+ hat : converted!
+ num100 : converted!
+ num200 : converted!
+ num300 : converted!
+ num500 : converted!
+ num800 : converted!
+ parasol : converted!
+ purse : converted!
+ pie_sprite : converted!
+ pulley_left0 : converted!
+ pulley_left1 : converted!
+ pulley_left2 : converted!
+ pulley_right0 : converted!
+ pulley_right1 : converted!
+ pulley_right2 : converted!
+ retracting_ladder_sprite : converted!
+ bouncer0 : converted!
+ bouncer1 : converted!
+ elevator_platform : converted!
+ receptable_bottom : converted!
+ receptable_top : converted!
  fireball_left0 : converted!
  fireball_left1 : converted!
  fireball_right0 : converted!
@@ -30,7 +72,6 @@ Transparent Color : 0x0000
  firefox_left1 : converted!
  firefox_right0 : converted!
  firefox_right1 : converted!
- oilcan_sprite : converted!
  burst : converted!
  circle0 : converted!
  circle1 : converted!
@@ -78,50 +119,11 @@ Transparent Color : 0x0000
  jumpman_right_walking1 : converted!
  jumpman_right_walking2 : converted!
  jumpman_standing : converted!
- bouncer0 : converted!
- bouncer1 : converted!
- elevator_platform : converted!
- life : converted!
- num100 : converted!
- num200 : converted!
- num300 : converted!
- num500 : converted!
- num800 : converted!
- pie_sprite : converted!
- pulley_left0 : converted!
- pulley_left1 : converted!
- pulley_left2 : converted!
- pulley_right0 : converted!
- pulley_right1 : converted!
- pulley_right2 : converted!
- receptable_bottom : converted!
- receptable_top : converted!
- retracting_ladder_sprite : converted!
- text_bonus : converted!
- text_rub_end : converted!
- hat : converted!
- heart : converted!
- heart_broken : converted!
- help_left : converted!
- help_right : converted!
- parasol : converted!
- pauline_left0 : converted!
- pauline_left1 : converted!
- pauline_left2 : converted!
- pauline_right0 : converted!
- pauline_right1 : converted!
- pauline_right2 : converted!
- purse : converted!
- conveyor_tile : converted!
- girder : converted!
- girder_circle : converted!
- ladder : converted!
- rivet : converted!
- x_tile : converted!
- knockedout_sprite0 : converted!
- knockedout_sprite1 : converted!
- kong_eye0 : converted!
- kong_eye1 : converted!
+ fire0 : converted!
+ fire1 : converted!
+ fire2 : converted!
+ fire3 : converted!
+ oilcan_sprite : converted!
 
 --- Group kong_gfx (C) ---
 Using defined palette main_palette.png ...
