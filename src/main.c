@@ -81,14 +81,14 @@ void main(void) {
 
 #if DEBUG_MODE
 		if (debug) {
-			while (!(kb_ScanGroup(kb_group_6) & kb_Add) && !(kb_Data[kb_group_6] & kb_Sub));
-			if (kb_Data[kb_group_6] & kb_Sub)
+			while (!(kb_ScanGroup(6) & kb_Add) && !(kb_Data[6] & kb_Sub));
+			if (kb_Data[6] & kb_Sub)
 				debug = false;
-			while ((kb_ScanGroup(kb_group_6) & kb_Add) || (kb_Data[kb_group_6] & kb_Sub));
+			while ((kb_ScanGroup(6) & kb_Add) || (kb_Data[6] & kb_Sub));
 		}
-		else if (kb_Data[kb_group_6] & kb_Sub) {
+		else if (kb_Data[6] & kb_Sub) {
 			debug = true;
-			while ((kb_ScanGroup(kb_group_6) & kb_Sub));
+			while ((kb_ScanGroup(6) & kb_Sub));
 		}
 #endif
 
@@ -97,7 +97,7 @@ void main(void) {
 		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
 
 		// Handle [clear] key pressed
-		if (kb_Data[kb_group_6] & kb_Clear) {
+		if (kb_Data[6] & kb_Clear) {
 			if (game.quit == false) {
 				if (quitDelay == 0) {
 
@@ -109,6 +109,7 @@ void main(void) {
 
 						game_data.score = game.score;
 
+						gfx_BlitScreen();
 						game.stage = 0xFF;
 						cinematicProgress = 0;
 						game_state = return_main;
@@ -377,12 +378,12 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 
 /* ToDo:
- * splash screen with credits
+ * find and fix bugs
+ * clean/optimize code
  */
 
 /* In progress
- * Fix flashing screen when quiting fast after dead.
- * Fix that fireball can get sort of stuck on a ladder at the conveyor stage(keep climbing up and down in a loop)
+ * splash screen with credits
  */
 
 

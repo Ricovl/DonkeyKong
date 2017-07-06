@@ -227,7 +227,7 @@ bool take_ladder(barrel_t *this_barrel) {
 
 	if ((R % 3) >= ((game.difficulty / 2) + 1))
 		return false;
-	if (this_barrel->x == jumpman.x || (this_barrel->x < jumpman.x && kb_Data[kb_group_7] == kb_Left) || (this_barrel->x > jumpman.x && kb_Data[kb_group_7] == kb_Right))
+	if (this_barrel->x == jumpman.x || (this_barrel->x < jumpman.x && kb_Data[7] == kb_Left) || (this_barrel->x > jumpman.x && kb_Data[7] == kb_Right))
 		return true;
 
 	if ((R & 0x18) != 0)

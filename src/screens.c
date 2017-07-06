@@ -30,7 +30,7 @@ void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
 	game_data.score = 0;
-	game_data.round = 1;	// 6 for conveyors
+	game_data.round = 0;	// 6 for conveyors
 	game_data.lives = 3;
 	game_data.level = 1;	// 3 for conveyors
 }

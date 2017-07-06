@@ -53,7 +53,7 @@ uint8_t check_jump_over_item(void);
 void move_jumpman(void) {
 	kb_key_t key;
 	kb_Scan();
-	key = kb_Data[kb_group_7];
+	key = kb_Data[7];
 
 	// Jumpman is jumping
 	if (jumpman.isJumping) {
@@ -155,7 +155,7 @@ void move_jumpman(void) {
 		}
 
 		// Player is pressing jump key, jumpman is about to jump
-		if (kb_Data[kb_group_1] & kb_2nd) {
+		if (kb_Data[1] & kb_2nd) {
 			// Initialize all the variables needed to make jumpman jump
 			jumpman.isJumping = true;
 
@@ -261,7 +261,7 @@ bool girder_collision(void) {
 
 /* Handles jumpman climbing a ladder */
 void climb_ladder(void) {
-	sk_key_t key = kb_Data[kb_group_7];
+	sk_key_t key = kb_Data[7];
 
 	if ((key & kb_Up || key & kb_Down) && !(key & kb_Up && key & kb_Down)) {
 		if (jumpman.moveIndicator == 0) {
@@ -316,13 +316,13 @@ void climb_ladder(void) {
 
 /* Check jumpman is in range of a ladder and make him ready to climb if there is one */
 bool ladder_in_range(void) {
-	if (kb_Data[kb_group_7] & kb_Up || kb_Data[kb_group_7] & kb_Down) {
+	if (kb_Data[7] & kb_Up || kb_Data[7] & kb_Down) {
 		uint8_t *array = stage_data[game.stage - 1];
 
 		while (*array < 2) {
 			if (jumpman.x > *(array + 1) + 47 && jumpman.x < (*(array + 1) + 56)) {
-				if ((kb_Data[kb_group_7] & kb_Up   && jumpman.y + 1 == *(array + 4)) ||
-					(kb_Data[kb_group_7] & kb_Down && jumpman.y + 1 == *(array + 2) && !(*array))) {
+				if ((kb_Data[7] & kb_Up   && jumpman.y + 1 == *(array + 4)) ||
+					(kb_Data[7] & kb_Down && jumpman.y + 1 == *(array + 2) && !(*array))) {
 					// There is a ladder nearby; initialize all variables for ladder movement
 					jumpman.sprite = 6;
 					jumpman.x = *(array + 1) + 51;
