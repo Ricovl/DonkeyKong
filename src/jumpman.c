@@ -111,9 +111,9 @@ void move_jumpman(void) {
 					hammer_t *this_hammer = &hammer[loop];
 
 					// Check if y position is in range
-					if (abs((jumpman.y_old - 7) - this_hammer->y) <= 9) {
+					if (abs((jumpman.y_old - 1) - this_hammer->y) <= 7) {
 						// Check if x position is in range
-						if (abs(jumpman.x_old - this_hammer->x) <= 3)
+						if (abs(jumpman.x_old - this_hammer->x) <= 7)
 							hammerActive = loop + 1;
 					}
 				}
@@ -261,10 +261,10 @@ bool girder_collision(void) {
 
 /* Handles jumpman climbing a ladder */
 void climb_ladder(void) {
-	uint8_t key = kb_Data[kb_group_7];
+	sk_key_t key = kb_Data[kb_group_7];
 
 	if ((key & kb_Up || key & kb_Down) && !(key & kb_Up && key & kb_Down)) {
-		if (!jumpman.moveIndicator) {
+		if (jumpman.moveIndicator == 0) {
 
 			if (key & kb_Down) {	// Player going down on ladder
 				jumpman.moveIndicator = 3;
@@ -276,7 +276,7 @@ void climb_ladder(void) {
 			}
 
 			jumpman.ladderToggle ^= 1;
-			if (!jumpman.ladderToggle) {
+			if (jumpman.ladderToggle == 0) {
 				uint8_t climbingHeight = jumpman.y - jumpman.ladderTop;
 
 				// Check if player is at the top or bottem of ladder.

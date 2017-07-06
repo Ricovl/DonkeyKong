@@ -76,21 +76,8 @@ void main(void) {
 		
 		(*game_state)();
 
-		if (cinematicProgress == 0) {
-			/*if (game_state == game_loop) {
-				timer_1_Counter = 0;
-				timer_Control = TIMER1_ENABLE | TIMER1_CPU | TIMER1_NOINT | TIMER1_UP;
-
+		if (cinematicProgress == 0)
 				update_screen();
-
-				timer_Control = TIMER1_DISABLE;
-				dbg_sprintf(dbgout, "%d\n", timer_1_Counter);
-				timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
-			}
-			else {*/
-				update_screen();
-			//}
-		}
 
 #if DEBUG_MODE
 		if (debug) {
@@ -391,19 +378,14 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 /* ToDo:
  * splash screen with credits
- * check ground checking and collision detection for all entities
  */
 
 /* In progress
+ * Fix flashing screen when quiting fast after dead.
  * Fix that fireball can get sort of stuck on a ladder at the conveyor stage(keep climbing up and down in a loop)
- * Add collision detection for kong in rivets
  */
 
 
 /* bugs:
  * Crazy barrels can escape out of the screen(leave artifacts)?
- */
-
-/* Fixed?
- * fix that you can get points quick by quiting and then contineuing
  */

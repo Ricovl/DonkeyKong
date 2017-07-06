@@ -164,7 +164,7 @@ void initialize_stage(void) {
 		num_retractable_ladders = 2;
 
 		// Change palette colors
-		gfx_SetPalette(conveyors_palette, 6, 3);
+		gfx_SetPalette(conveyors_palette, 6, COLOR_FLOOR);
 	}
 	else if (game.stage == STAGE_ELEVATORS) {		// Stage elevators stuff
 		// Initalize some variables
@@ -215,8 +215,8 @@ void initialize_stage(void) {
 		gfx_Rectangle_NoClip(199, 40, 2, 32);
 
 		// Change palette colors
-		gfx_SetPalette(rivets_palette, 6, 3);
-		gfx_palette[9] = gfx_palette[COLOR_COLLISION - 1];
+		gfx_SetPalette(rivets_palette, 6, COLOR_FLOOR);
+		gfx_palette[COLOR_WHITE - 1] = gfx_palette[COLOR_COLLISION - 1];
 	}
 
 	// Kong
@@ -322,7 +322,7 @@ void draw_stage(uint8_t *array_b) {
 
 /* Some lookup tables used above */
 uint8_t  hammer_locations_y[] = { 91, 183, 132, 171, 91 , 131 };
-uint24_t hammer_locations_x[] = { 68, 220, 68 , 156, 157, 60  };
+uint24_t hammer_locations_x[] = { 67, 219, 67 , 155, 156, 59  };
 uint8_t  item_locations_y[]	  =	{ 136, 222, 143, 104, 78, 183, 56, 222, 183 };
 uint24_t item_locations_x[]   =	{ 224, 167, 109, 52, 255, 117, 76, 175, 245 };
 uint16_t conveyors_palette[3] = { gfx_RGBTo1555(254, 104, 0),  gfx_RGBTo1555(254, 184, 84), gfx_RGBTo1555(255, 254, 255) };

@@ -296,6 +296,28 @@ smallFire:
 	pop	iy
 skip_oilcan_fire:
 
+; Check for collision with kong on stage rivets
+	ld	a,(_game)			; a = game.stage
+	cp	#04
+	jr	nz,skip_kong
+	
+	ld	a,c					; a = jumpman.y_old
+	sub	a,72				; a = jumpman.y_old - 72
+	jr	nc,skip_kong		; if y >= 72: skip_kong
+	ld	hl,(iy+#05)
+
+	ld	de,132
+	sbc	hl,de				; hl = jumpman.x_old - 136
+	jr	c,skip_kong
+	ld	a,l					; a = hl
+	sub a,52
+	jr	nc,skip_kong
+	ld	a,1
+	ret
+skip_kong:
+
+
+
 	xor	a,a					; A := 0 - code for no collision
 	ret
 
@@ -321,7 +343,7 @@ loop:
 
     neg					; a = 0 - a
 L__0:
-    sub a,l				; subtract l = width
+    sub a,l				; subtract l = height
     jr  nc,end_loop		; if no carry, loop again
 
 ; check for x in range
@@ -338,7 +360,7 @@ L__0:
 L__1:
 	pop	de
 	pop	hl
-	sub	h				; substract h = height
+	sub	h				; substract h = width
 	jr	nc,end_loop		; if no carry, loop again
 
 ; else a collision
@@ -489,31 +511,6 @@ end_loop1:
 
 
 
-
-
-
-
-	; Check for collision with kong on stage rivets
-	ld	a,(_game)			; a = game.stage
-	cp	4
-	jr	nz,skip_kong
-	
-	ld	a,c
-	sub	a,72
-	jr	nc,skip_kong
-	ld	hl,(iy+#01)
-	ld	de,159
-	sbc	hl,de
-	ld	a,h				; or l
-	and	a,a
-	jr	nc,L__4
-	neg	a
-L__4:
-	sub	a,22
-	jr	nc,skip_kong
-	ld	a,1
-	ret
-skip_kong:
 
 
 
