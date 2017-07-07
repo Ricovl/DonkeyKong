@@ -32,11 +32,11 @@ right:
 	; These lines change the barrels/jumpmans y-position
 	ld a,(ix+11h)	; load a with jumpCounterY
 	sub (ix+12h)	; subtract velocityY
-	ld l,a			; store into l
+	ld l,a			; l = jumpCounterY - velocityY
 	ld a,(ix+00)	; load a with barrel/jumpman Y position
 	sbc a,(ix+13h)	; subtract vertical speed == movingUp
-	ld h,a			; store into h
-	ld a,(ix+0Fh)	; load jumpcounter
+	ld h,a			; h = item_y - movingUp
+	ld a,(ix+0Fh)	; load a with jumpcounter
 	and a			; clear flags
 	rla				; rotate left (mult by 2)
 	inc a			; add 1
@@ -48,7 +48,7 @@ right:
 	rl b
 	sla a
 	rl b
-	ld c,a			; copy answer (a) to c. bc now has ???
+	ld c,a			; copy a to c. bc now has ???
 	add hl,bc		; add to hl
 	ld (ix+00),h	; update Y position
 	ld (ix+11h),l	; update jumpCounterY
@@ -70,23 +70,23 @@ _handle_bouncing
 	ld hl, 0
 	ld bc, 0
 
-	ld a,(IX+15)	; load a with +15 status
+	ld a,(IX+0Fh)	; load a with jumpcounter
 	rlca
 	rlca
 	rlca
 	rlca			; rotate left 4 times
-	ld c,a			; save to C for use next 2 steps
+	ld c,a			; save to c
 	and a,15		; mask with #0F.  now between #00 and #0F
-	ld h,a			; store into H
+	ld h,a			; store into h
 	ld a,c			; restore a to value saved above
 	and a,240		; mask with #F0
-	ld l,a			; store into L
-	ld c,(ix+18)	; load C with +18
-	ld b,(ix+19)	; load B with +19
-	sbc hl,bc		; hl := hl - BC
+	ld l,a			; store into l
+	ld c,(ix+12h)	; load c with velocityY
+	ld b,(ix+13h)	; load b with movingUp
+	sbc hl,bc		; hl := hl - bc
 
 	pop de			; pop return address in de
 	pop ix			; restore ix
-	push bc			; forced to do this by the compiler :(
+	push bc			; forced to do this by the compiler
 	push de
 	ret

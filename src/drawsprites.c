@@ -86,7 +86,7 @@ void update_screen(void) {
 	}	
 
 	for (i = 0; i < num_pies; i++)			// Pies
-		gfx_RLETSprite_NoClip(pie_sprite, pie[i].x, pie[i].y);
+		gfx_RLETSprite(pie_sprite, pie[i].x, pie[i].y);
 
 	for (i = 0; i < num_bouncers; i++)		// Bouncers
 		gfx_RLETSprite(bouncer_sprite[bouncer[i].sprite], bouncer[i].x, bouncer[i].y);

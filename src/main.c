@@ -41,7 +41,7 @@ game_data_t game_data;
 uint8_t waitTimer = 1;
 uint8_t frameCounter;
 
-const void(*game_state)(void) = return_main;
+const void(*game_state)(void) = credits_screen;
 
 void main(void) {
 #if DEBUG_MODE

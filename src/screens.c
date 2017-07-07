@@ -327,8 +327,70 @@ void name_registration_screen(void) {
 	}
 }
 
-void credits_screen(void) {
+void draw_girder_text(uint8_t *text_data, uint24_t x, uint8_t y) {
+	uint8_t i, j;
+	uint8_t width = *text_data;
 
+	for (j = 0; j < 5; j++) {
+		for (i = 0; i < width; i++) {
+			*text_data++;
+			if (*text_data)
+				gfx_Sprite_NoClip(girder_circle, x + i * 8, y);
+		}
+		y += 8;
+	}
+	
+}
+
+static uint8_t flash_counter = 0;
+
+void credits_screen(void) {
+	if (flash_counter == 0) {
+		draw_overlay_full();
+		draw_girder_text(donkey_text, 56, 48);
+		draw_girder_text(kong_text, 80, 104);
+		gfx_RLETSprite_NoClip(kong_sprite[5], 136, 160);
+		gfx_SetTextFGColor(9);
+		gfx_PrintStringXY("1981", 144, 208);
+		gfx_PrintStringXY("NINTENDO%OF%AMERICA%INC", 65, 216);
+		gfx_PrintStringXY("PORTED%TO%CE%BY%RICO", 81, 224);
+		gfx_BlitBuffer();
+		flash_counter = 0x60;
+	}
+	else {
+		flash_counter--;
+		if (flash_counter == 0) {
+			waitTimer = 180;
+			game_state = return_main;
+		}
+		else {
+			// change palette
+			if ((flash_counter & 1) == 1) {
+				if (gfx_palette[COLOR_FLOOR] == 0x7C8A)
+					gfx_SetPalette(rivets_palette, 6, COLOR_FLOOR);
+				else
+					gfx_SetPalette(sprites_gfx_pal, sizeof(sprites_gfx_pal), 0);
+			}
+		}
+	}
 }
 
 unsigned high_score_table[5] = { 7650, 6100, 5950, 5050, 4300 };
+
+const uint8_t donkey_text[] = {
+	25,
+	1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+	1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+	1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1,
+	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+	1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0
+};
+
+const uint8_t kong_text[] = {
+	20,
+	1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0,
+	1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0,
+	1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1,
+	1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1,
+	1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0
+};

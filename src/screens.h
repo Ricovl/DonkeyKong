@@ -9,6 +9,7 @@ void pre_name_registration(void);
 void name_registration_screen(void);
 void pre_round_screen(void);
 void draw_rankings(void);
+void credits_screen(void);
 
 void reset_game(void);
 void load_progress(void);
@@ -23,5 +24,8 @@ typedef struct {
 } HighScore_t;
 
 extern unsigned high_score_table[5];
+
+extern const uint8_t donkey_text[];
+extern const uint8_t kong_text[];
 
 #endif
