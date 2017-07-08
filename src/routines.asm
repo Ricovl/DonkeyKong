@@ -3,6 +3,7 @@
 	.def _handle_jumping
 	.def _handle_bouncing
 
+;-------------------------------------------------------------------------------
 _handle_jumping
 	pop hl			; get return address in de
 	ex (sp),ix		; store the given struct address in ix
@@ -61,7 +62,7 @@ right:
 	jp (hl)
 
 
-
+;-------------------------------------------------------------------------------
 _handle_bouncing
 	pop hl			; get return address in de
 	ex (sp),ix		; store the given struct address in ix

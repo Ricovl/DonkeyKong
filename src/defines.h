@@ -69,7 +69,6 @@ typedef struct {
 	
 	uint8_t timeRanOut, timeRanOutTimer;
 	unsigned score;
-	bool quit;
 } game_t;
 
 extern game_t game;

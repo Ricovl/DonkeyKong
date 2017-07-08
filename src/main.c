@@ -62,8 +62,6 @@ void main(void) {
 	decompress_images();
 	load_progress();
 
-	game.quit = false;
-
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 
@@ -96,38 +94,34 @@ void main(void) {
 		while (!(timer_IntStatus & TIMER1_RELOADED));	// Wait until the timer has reloaded
 		timer_IntStatus = TIMER1_RELOADED;				// Acknowledge the reload
 
-		// Handle [clear] key pressed
-		if (kb_Data[6] & kb_Clear) {
-			if (game.quit == false) {
-				if (quitDelay == 0) {
 
-					if (game_state != return_main && game_state != main_screen) {
-						disable_sprites();
-						num_elevators = 0;
-						oilcan.onFire = false;
-						jumpman.enabled = false;
-
-						game_data.score = game.score;
-
-						gfx_BlitScreen();
-						game.stage = 0xFF;
-						cinematicProgress = 0;
-						game_state = return_main;
-					}
-					if (game_state == intro_cinematic) {
-						game_data.lives = 0;
-					}
-
-					quitDelay = 10;
-					game.quit = true;
-				}
-				else {
-					quitDelay--;
-				}
+		if (quitDelay) {
+			quitDelay--;
+		}
+		else if (kb_Data[6] & kb_Clear) {
+			if (game_state == main_screen) {
+				// Usual cleanup
+				save_progress();
+				exit(0);
 			}
-			else {
-				game.quit = false;
+			else if (game_state != return_main && game_state != animate_jumpman_dead) {
+				disable_sprites();
+				num_elevators = 0;
+				oilcan.onFire = false;
+				jumpman.enabled = false;
+
+				game_data.score = game.score;
+
+				gfx_BlitScreen();
+				game.stage = 0xFF;
+				cinematicProgress = 0;
+				game_state = return_main;
 			}
+			if (game_state == intro_cinematic) {
+				game_data.lives = 0;
+			}
+
+			quitDelay = 10;
 		}
 	}
 }
@@ -157,33 +151,6 @@ void handle_waitTimer1(void) {
 	asm("inc sp");
 	asm("inc sp");
 	asm("inc sp");
-}
-
-static uint8_t keyDelay = 0;
-static kb_key_t prevKey = 0;
-
-// KeyNum = log(kb_key) / log(2) + group * 8
-sk_key_t get_key_fast(void) {
-	uint8_t i;
-	sk_key_t key = 0;
-
-	for (i = 1; i <= 7; i++) {
-		if (kb_Data[i] != 0) {
-			key = log(kb_Data[i]) / log(2);
-			key += i * 8;
-		}
-	}
-
-	if (keyDelay == 0 || prevKey != key) {
-		keyDelay = 15;
-		prevKey = key;
-	}
-	else {
-		keyDelay--;
-		key = 0;
-	}
-
-	return key;
 }
 
 void check_collision_jumpman(void);
@@ -227,9 +194,7 @@ void game_loop(void) {
 
 	update_kong();
 
-#if DEBUG_MODE
-	check_collision_jumpman();
-#endif
+	check_collision_jumpman();	// comment this line to disable collision
 
 	check_collision_hammer();
 
@@ -383,7 +348,6 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  */
 
 /* In progress
- * splash screen with credits
  */
 
 

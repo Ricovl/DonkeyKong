@@ -26,6 +26,33 @@
 #include "stages.h"
 
 
+static uint8_t keyDelay = 0;
+static kb_key_t prevKey = 0;
+
+// KeyNum = log(kb_key) / log(2) + group * 8
+sk_key_t get_key_fast(void) {
+	uint8_t i;
+	sk_key_t key = 0;
+
+	for (i = 1; i <= 7; i++) {
+		if (kb_Data[i] != 0) {
+			key = log(kb_Data[i]) / log(2);
+			key += i * 8;
+		}
+	}
+
+	if (keyDelay == 0 || prevKey != key) {
+		keyDelay = 15;
+		prevKey = key;
+	}
+	else {
+		keyDelay--;
+		key = 0;
+	}
+
+	return key;
+}
+
 void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
@@ -37,6 +64,7 @@ void reset_game(void) {
 
 static const char *save_name = "DKONGSV";
 
+/* load progress from an appvar */
 void load_progress(void) {
 	ti_var_t variable;
 	uint8_t i;
@@ -54,6 +82,7 @@ void load_progress(void) {
 	ti_CloseAll();
 }
 
+/* save progress to an appvar */
 void save_progress(void) {
 	ti_var_t variable;
 
@@ -122,14 +151,8 @@ void main_screen(void) {
 
 		if (option == 1 || game_data.lives == 0) {
 			reset_game();
-			//game_state = intro_cinematic;
+			game_state = intro_cinematic;
 		}
-	}
-
-	if (game.quit) {
-		/* Usual cleanup */
-		save_progress();
-		exit(0);
 	}
 }
 
