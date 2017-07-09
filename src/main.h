@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-sk_key_t get_key_fast(void);
 void game_loop(void);
 void check_end_stage(void);
 void handle_bonus_timer(void);

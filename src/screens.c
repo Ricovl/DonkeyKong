@@ -26,33 +26,6 @@
 #include "stages.h"
 
 
-static uint8_t keyDelay = 0;
-static kb_key_t prevKey = 0;
-
-// KeyNum = log(kb_key) / log(2) + group * 8
-sk_key_t get_key_fast(void) {
-	uint8_t i;
-	sk_key_t key = 0;
-
-	for (i = 1; i <= 7; i++) {
-		if (kb_Data[i] != 0) {
-			key = log(kb_Data[i]) / log(2);
-			key += i * 8;
-		}
-	}
-
-	if (keyDelay == 0 || prevKey != key) {
-		keyDelay = 15;
-		prevKey = key;
-	}
-	else {
-		keyDelay--;
-		key = 0;
-	}
-
-	return key;
-}
-
 void reset_game(void) {
 	memset(&game, 0, sizeof(game_t));
 	game.stage = 0xFF;
@@ -350,23 +323,9 @@ void name_registration_screen(void) {
 	}
 }
 
-void draw_girder_text(uint8_t *text_data, uint24_t x, uint8_t y) {
-	uint8_t i, j;
-	uint8_t width = *text_data;
-
-	for (j = 0; j < 5; j++) {
-		for (i = 0; i < width; i++) {
-			*text_data++;
-			if (*text_data)
-				gfx_Sprite_NoClip(girder_circle, x + i * 8, y);
-		}
-		y += 8;
-	}
-	
-}
-
 static uint8_t flash_counter = 0;
 
+/* Draw and handle the credits screen */
 void credits_screen(void) {
 	if (flash_counter == 0) {
 		draw_overlay_full();
@@ -396,6 +355,49 @@ void credits_screen(void) {
 			}
 		}
 	}
+}
+
+/* Draws text to the screen using girders as pixels */
+void draw_girder_text(uint8_t *text_data, uint24_t x, uint8_t y) {
+	uint8_t i, j;
+	uint8_t width = *text_data;
+
+	for (j = 0; j < 5; j++) {
+		for (i = 0; i < width; i++) {
+			*text_data++;
+			if (*text_data)
+				gfx_Sprite_NoClip(girder_circle, x + i * 8, y);
+		}
+		y += 8;
+	}
+
+}
+
+static uint8_t keyDelay = 0;
+static kb_key_t prevKey = 0;
+
+// KeyNum = log(kb_key) / log(2) + group * 8
+sk_key_t get_key_fast(void) {
+	uint8_t i;
+	sk_key_t key = 0;
+
+	for (i = 1; i <= 7; i++) {
+		if (kb_Data[i] != 0) {
+			key = log(kb_Data[i]) / log(2);
+			key += i * 8;
+		}
+	}
+
+	if (keyDelay == 0 || prevKey != key) {
+		keyDelay = 15;
+		prevKey = key;
+	}
+	else {
+		keyDelay--;
+		key = 0;
+	}
+
+	return key;
 }
 
 unsigned high_score_table[5] = { 7650, 6100, 5950, 5050, 4300 };
