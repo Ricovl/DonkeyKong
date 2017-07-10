@@ -49,7 +49,7 @@ void main(void) {
 #endif
 	uint8_t quitDelay = 0;
 
-	srand(/*rtc_Time()*/ 2374);
+	srand(rtc_Time());
 	gfx_Begin();
 
 	gfx_SetClipRegion(48, 16, 272, 239);
