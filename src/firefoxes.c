@@ -165,8 +165,7 @@ void move_firefoxes(void) {
 
 			// Add bobbing effect to firefox movement
 			this_firefox->actualY =
-				this_firefox->y;
-				//+ firefox_bobbingTable[this_firefox->jumpCounter];
+				this_firefox->y + firefox_bobbingTable[this_firefox->jumpCounter];
 			this_firefox->jumpCounter--;
 		}
 		else {

@@ -214,9 +214,6 @@ void end_stage_cinematic(void) {
 		game_data.round++;
 		if (game_data.round > 19)
 			game_data.round = 14;
-
-		// save the game_data score as the score saved when quitting the game
-		game.score = game_data.score;
 	}
 
 	if ((game.stage == STAGE_BARRELS || game.stage == STAGE_ELEVATORS) && cinematicProgress <= 2) {

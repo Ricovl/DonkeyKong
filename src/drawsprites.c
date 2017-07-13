@@ -74,7 +74,7 @@ void update_screen(void) {
 	for (i = 0; i < num_retractable_ladders; i++)
 		gfx_RLETSprite_NoClip(retracting_ladder_sprite, retractableLadder[i].x, retractableLadder[i].y);
 
-	if (jumpman.enabled)
+	if (jumpman.enabled)					// Jumpman
 		gfx_RLETSprite_NoClip(jumpman_sprite[jumpman.dir][jumpman.sprite], jumpman.x - 7, jumpman.y - 15);
 
 	for (i = 0; i < num_hammers; i++)		// Hammers

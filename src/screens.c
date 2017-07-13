@@ -137,6 +137,9 @@ void pre_round_screen(void) {
 
 	handle_waitTimer();
 
+	// save the game_data score as the score saved when quitting the game
+	game.score = game_data.score;
+
 	draw_overlay_full();
 
 	gfx_SetTextFGColor(COLOR_WHITE);

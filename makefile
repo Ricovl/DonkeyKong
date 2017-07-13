@@ -14,7 +14,7 @@ ARCHIVED ?= NO
 COMPRESSED ?= YES
 #----------------------------
 ICONPNG ?= iconc.png
-DESCRIPTION ?= "Donkey Kong v0.9"
+DESCRIPTION ?= "Donkey Kong v1.0"
 #----------------------------
 
 #Add shared library names to the L varible, for instance:

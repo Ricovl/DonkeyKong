@@ -136,7 +136,7 @@ void draw_rankings(void) {
 	}
 
 	gfx_SetTextFGColor(COLOR_GREEN);
-	gfx_PrintStringXY("VERSION%0[9", 178, 232);
+	gfx_PrintStringXY("VERSION%1[0", 178, 232);
 
 	gfx_SetTextFGColor(COLOR_LIGHT_BLUE);
 }

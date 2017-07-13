@@ -12,9 +12,9 @@ void release_firefox(void);
 #define MAX_FIREFOXES 5
 
 typedef struct {
-	uint8_t y, y_old;
+	uint8_t actualY, y_old;
 	uint24_t x, x_old;
-	uint8_t actualY;
+	uint8_t y;
 
 	uint8_t sprite, dir;
 
@@ -42,14 +42,13 @@ void handle_firefox_spawning(firefox_t *this_firefox);
 
 // Oilcan
 typedef struct {
-	uint8_t sprite;
-
 	uint8_t y;
+	uint8_t sprite;
+	uint24_t x;
+	
 
 	uint8_t fireRelease;				// 1 when fire on screen(flame is on), 3 when a fire is to be released, else 0
 	uint8_t updateTimer, releaseTimer;
-
-	uint24_t x;
 
 	bool onFire;
 

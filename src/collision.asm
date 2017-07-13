@@ -23,7 +23,6 @@
 	.def _check_collision_hammer
 	.def _check_jump_over_item
 	
-	; link to collision code from original DonkeyKong:
 	; something about the hitboxes: http://donkeykongforum.com/index.php?topic=493.0
 
 	; 	type	  width	height
@@ -42,9 +41,9 @@ _check_collision_jumpman:
 	push	iy
 	push	ix
     ld  iy,_jumpman
-	ld	a,(iy+#01)			; a = jumpman.y_old
-	ld	c,a					; c = jumpman.y_old
-	ld  hl,0407h			; width = 4, height = 7
+	ld	a,(iy+#00)			; a = jumpman.y
+	ld	c,a					; c = jumpman.y
+	ld  hl,0406h			; width = 4, height = 7 - 1 (all item1 heights are decreased by 1)
     call    check_collision_entities
 	pop	ix
 	pop	iy
@@ -66,14 +65,14 @@ _check_collision_hammer:
 	jr	z,firstHammer
 	ld	iy,_hammer+173		; iy = address second hammer
 firstHammer:
-	ld	a,(iy+#01)			; a = hammer.y_old
-	ld	c,a					; c = hammer.y_old
+	ld	a,(iy+#00)			; a = hammer.y
+	ld	c,a					; c = hammer.y
 
 	ld	a,(_hammer+0Ah)		; a = hammer.sprite
 	and	a,1
-	ld	hl,0603h			; width = 6; height = 3
+	ld	hl,0602h			; width = 6; height = 3 - 1
 	jr	z,aboveHead
-	ld	hl,0506h			; width = 6; height = 5
+	ld	hl,0604h			; width = 6; height = 5 - 1
 aboveHead:
 	call	check_collision_entities
 	pop	ix
@@ -95,14 +94,14 @@ _check_jump_over_item:
 	push	iy
 	push	ix
 	ld	iy,_jumpman
-	ld	a,(iy+#01)			; a = jumpman.y_old
+	ld	a,(iy+#00)			; a = jumpman.y
 	add	a,09h				; 0C-7?
-	ld	c,a					; c = jumpman.y_old + 5
+	ld	c,a					; c = jumpman.y + 5
 	ld	a,(iy+0Eh)			; a = jumpDirIndicator
 	or	a,a
-	ld	hl,0508h			; hitbox when jumping straight up
+	ld	hl,0507h			; hitbox when jumping straight up: width = 5; height = 8 - 1
 	jr	z,jumpingUp
-	ld	hl,1208h			; hitbox when jumping right/left
+	ld	hl,1207h			; hitbox when jumping right/left: width = 12; height = 8 - 1
 jumpingUp:
 	ld	a,(_game)
 	cp	1
@@ -134,7 +133,7 @@ check_collision_entities:
 	ld	a,#00
 	ld	(_hitItemType),a
 
-    ld	de,(iy+05h)			; de = x item 1
+    ld	de,(iy+#02)			; de = x item 1
 	ld	a,c
 	sub	a,#03				; a  = y item 1
 	push	iy
@@ -143,8 +142,8 @@ check_collision_entities:
 	ld	(iy+#00),a			; y item1
 
 	push	hl
-	ld	de,0303h
-	add	hl,de				; width += 2 + 1, height += 2 + 1
+	ld	de,0202h
+	add	hl,de				; width += 2, height += 2
 
     ld  de,187				; barrel struct size
     ld  ix,_barrel			; ix = &barrel
@@ -163,7 +162,7 @@ skip_barrels:
 	ld	a,#01
 	ld	(_hitItemType),a
 
-    ld	de,(iy+#05)			; de = x item 1
+    ld	de,(iy+#02)			; de = x item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
@@ -171,10 +170,10 @@ skip_barrels:
 	
 	push	hl
 	ld	a,(_game)			; a = game.stage
-	cp	4
-	ld 	de,0403h			; width += 3 + 1, height += 2 + 1
+	cp	#04
+	ld 	de,0302h			; width += 3, height += 2
 	jr	nz,skipFirefox		; if (stage != rivets) fireball else firefox
-	ld	de,0502h			; width += 4 + 1, height += 1 + 1
+	ld	de,0401h			; width += 4, height += 1
 skipFirefox:
 	add	hl,de
 
@@ -200,7 +199,7 @@ skip_firefoxes:
 	ld	(_hitItemType),a
 
 	push	hl
-    ld	hl,(iy+#05)
+    ld	hl,(iy+#02)
 	ld	de,7
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
@@ -214,7 +213,7 @@ skip_firefoxes:
 
 	push	hl
 	ld	de,0803h
-	add	hl,de				; width += 3 + 1, height += 8 + 1
+	add	hl,de				; width += 8, height += 3
 
     ld  de,138				; pie struct size
     ld  ix,_pie				; ix = &pie
@@ -234,21 +233,21 @@ skip_pies:
     ld  b,a					; b = num_bouncers
 
 	push	hl
-    ld	hl,(iy+#05)
-	ld	de,7
+    ld	hl,(iy+#02)
+	ld	de,8
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
 	pop	hl
 	ld	a,c
-	sub	a,7					; a  = y item 1
+	sub a,12
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
 	ld	(iy+#00),a			; y item1
 
 	push	hl
-	ld	de,0303h
-	add	hl,de				; width += 2 + 1; height += 2 + 1
+	ld	de,0202h
+	add	hl,de				; width += 2, height += 2
 
     ld  de,255				; bouncer struct size
     ld  ix,_bouncer			; ix = &bouncer
@@ -270,24 +269,24 @@ skip_bouncers:
 	ld 	b,a					; b = 1 oilcan fire
 
 	push	hl
-    ld	hl,(iy+#05)
-	ld	de,6
+    ld	hl,(iy+#02)
+	ld	de,8
 	sbc	hl,de				; de = x item 1
 	ex	hl,de
 	pop	hl
 	ld	a,c
-	add	a,4					; a  = y item 1				; need to figure this number out
+	inc	a					; a  = y item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
 	ld	(iy+#00),a			; y item1
 
 	push	hl
-	ld	a,(ix+#00)			; a = oilcan.sprite
+	ld	a,(ix+#01)			; a = oilcan.sprite
 	cp	#02
-	ld 	de,0100h			; width += 2 + 1, height += 0 + 1							; It seems like i shouldn't do the + 1 here(and probably also not everywhere else)
+	ld 	de,0200h			; small fire: width += 2, height += 0
 	jr	c,smallFire			; jump if sprite is small fire
-	ld	de,0101h			; width += 2 + 1, height += 2 + 1
+	ld	de,0202h			; big fire  : width += 2, height += 2
 smallFire:
 	add	hl,de
 
@@ -301,21 +300,20 @@ skip_oilcan_fire:
 	cp	#04
 	jr	nz,skip_kong
 	
-	ld	a,c					; a = jumpman.y_old
-	sub	a,72				; a = jumpman.y_old - 72
+	ld	a,c					; a = jumpman.y
+	sub	a,74				; a = jumpman.y - 72
 	jr	nc,skip_kong		; if y >= 72: skip_kong
-	ld	hl,(iy+#05)
+	ld	hl,(iy+#02)
 
 	ld	de,132
-	sbc	hl,de				; hl = jumpman.x_old - 136
+	sbc	hl,de				; hl = jumpman.x - 136
 	jr	c,skip_kong
 	ld	a,l					; a = hl
-	sub a,52
+	sub a,50
 	jr	nc,skip_kong
 	ld	a,1
 	ret
 skip_kong:
-
 
 
 	xor	a,a					; A := 0 - code for no collision
@@ -337,8 +335,8 @@ check_collision:
 ;  none
 loop:
 ; check for y in range
-    ld  a,(iy+00h)		; load a with c = y of item 1
-    sub a,(ix+01h)		; subtract the y-pos of item 2
+    ld  a,(iy+#00)		; load a with y-pos of item 1
+    sub a,(ix+#00)		; subtract the y-pos of item 2
     jr  nc,L__0			; if no carry, skip next step
 
     neg					; a = 0 - a
@@ -349,8 +347,8 @@ L__0:
 ; check for x in range
 	push	hl
 	push	de
-	ld	hl,(iy+01h)		; hl = item_1_x
-	ld	de,(ix+05h)		; de = item_2_x
+	ld	hl,(iy+#01)		; hl = item_1_x
+	ld	de,(ix+#02)		; de = item_2_x
 	or	a,a				; reset flags
 	sbc	hl,de			; substract item_1_x from item_2_x
 	ld	a,l				; put in a
@@ -392,7 +390,7 @@ check_jump_stage_barrels:
 	jr	z,skip_barrels_		; skip if there are no barrels
     ld  b,a					; b = num_barrels
 
-    ld	de,(iy+05h)			; de = x item 1
+    ld	de,(iy+#02)			; de = x item 1
 	ld	a,c
 	sub	a,3					; a  = y item 1
 	push	iy
@@ -401,8 +399,8 @@ check_jump_stage_barrels:
 	ld	(iy+#00),a			; y item1
 
 	push	hl
-	ld	de,0303h
-	add	hl,de				; width += 2 + 1, height += 2 + 1
+	ld	de,0202h
+	add	hl,de				; width += 2, height += 2
 
     ld  de,187				; barrel struct size
     ld  ix,_barrel			; ix = &barrel
@@ -417,7 +415,7 @@ skip_barrels_:
 	jr	z,skip_firefoxes_	; skip if there are no fireballs/firefoxes
     ld  b,a					; b = num_firefoxes
 
-    ld	de,(iy+#05)			; de = x item 1
+    ld	de,(iy+#02)			; de = x item 1
 	push	iy
 	ld	iy,data_stuff
 	ld	(iy+#01),de			; x item1
@@ -425,10 +423,10 @@ skip_barrels_:
 	
 	push	hl
 	ld	a,(_game)			; a = game.stage
-	cp	4
-	ld 	de,0403h			; width += 3 + 1, height += 2 + 1
+	cp	#04
+	ld 	de,0302h			; width += 3, height += 2
 	jr	nz,skipFirefox_		; if (stage != rivets) fireball else firefox
-	ld	de,0502h			; width += 4 + 1, height += 1 + 1
+	ld	de,0401h			; width += 4, height += 1
 skipFirefox_:
 	add	hl,de
 
@@ -466,8 +464,8 @@ count_items_colliding:
 ;  a	= obstacles jumped
 loop1:
 ; check for y in range
-    ld  a,(iy+00h)		; no, load A with c = y of item 1
-    sub a,(ix+01h)		; subtract the y-pos of item 2
+    ld  a,(iy+#00)		; load A with y-pos of item 1
+    sub a,(ix+#00)		; subtract the y-pos of item 2
     jr  nc,L__2			; if no carry, skip next step
 
     neg					; a = 0 - a
@@ -478,8 +476,8 @@ L__2:
 ; check for x in range
 	push	hl
 	push	de
-	ld	hl,(iy+01h)		; hl = item_1_x
-	ld	de,(ix+05h)		; de = item_2_x
+	ld	hl,(iy+#01)		; hl = item_1_x
+	ld	de,(ix+#02)		; de = item_2_x
 	or	a,a				; reset flags
 	sbc	hl,de			; substract item_1_x from item_2_x
 	ld	a,l				; put in a

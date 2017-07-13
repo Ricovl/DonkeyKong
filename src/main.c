@@ -167,6 +167,21 @@ void game_loop(void) {
 
 	update_kong();
 
+
+	/*if (game.stage == STAGE_BARRELS) {
+		uint8_t i;
+
+		for (i = 0; i < num_barrels; i++) {	// check collision barrels
+			barrel_t *this_barrel = &barrel[i];
+
+			if (abs((jumpman.y - 3) - this_barrel->y) < 2 + 6) {
+				if (abs(jumpman.x - this_barrel->x) < 2 + 4) {
+					dbg_sprinf(dbgout, "%d\n", abs((jumpman.y - 3) - this_barrel->y));
+					jumpman.isAlive = false;
+				}
+			}
+		}
+	}*/
 	check_collision_jumpman();	// comment this line to disable collision
 
 	check_collision_hammer();
@@ -312,8 +327,6 @@ timer_Control = TIMER1_DISABLE;
 dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
 
 /*
-; arrive here from #0701 when playing
-
  *197A  CALL    #1DBD         ; check for bonus items and jumping scores, rivets																			update_bonus_scores()
  *197D  CALL    #1E8C         ; do stuff for items hit with hammer														 give points and animate hit		animate_hammer_hit()
  *1980  CALL    #1AC3         ; mario movement																												update_jumpman()
@@ -351,6 +364,7 @@ dbg_sprintf(dbgout, "timer_1_counter: %d\n", timer_1_Counter);*/
  */
 
 
-/* bugs:
- * Crazy barrels can escape out of the screen(leave artifacts)?
+/* bugs?:
+ * You can get killed by an spawning fireball what shouldn't be able to happen(won't fix this as it is a lot of work that is not worth it)
+ * Crazy barrels can escape out of the screen(leave artifacts)?(I think this has been fixed)
  */

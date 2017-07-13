@@ -445,7 +445,7 @@ void animate_jumpman_dead(void) {
 void handle_dead(void) {
 	game_data.lives--;
 
-	game_data.score = game.score;
+	//game_data.score = game.score;		// This actually doesn't happen in the real game
 
 	if (game_data.lives == 0) {	// Game Over
 		gfx_FillRectangle_NoClip(104, 144, 112, 40);
