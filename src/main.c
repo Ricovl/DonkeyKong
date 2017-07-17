@@ -102,6 +102,8 @@ void main(void) {
 			if (game_state == main_screen) {
 				// Usual cleanup
 				save_progress();
+				gfx_End();
+				prgm_CleanUp();
 				exit(0);
 			}
 			else if (game_state != return_main && game_state != animate_jumpman_dead) {
@@ -167,21 +169,6 @@ void game_loop(void) {
 
 	update_kong();
 
-
-	/*if (game.stage == STAGE_BARRELS) {
-		uint8_t i;
-
-		for (i = 0; i < num_barrels; i++) {	// check collision barrels
-			barrel_t *this_barrel = &barrel[i];
-
-			if (abs((jumpman.y - 3) - this_barrel->y) < 2 + 6) {
-				if (abs(jumpman.x - this_barrel->x) < 2 + 4) {
-					dbg_sprinf(dbgout, "%d\n", abs((jumpman.y - 3) - this_barrel->y));
-					jumpman.isAlive = false;
-				}
-			}
-		}
-	}*/
 	check_collision_jumpman();	// comment this line to disable collision
 
 	check_collision_hammer();

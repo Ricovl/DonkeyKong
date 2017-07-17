@@ -262,7 +262,7 @@ void move_retractable_ladders(void) {
 					if (jumpman.y < 95) {
 						jumpman.y++;
 
-						jumpman.sprite = 5;
+						jumpman.sprite = 3;
 						if ((jumpman.y & 1) == 0)
 							jumpman.y++;
 					}

@@ -7,7 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <tice.h>
-#include <intce.h>
 #include <debug.h>
 
 // shared libraries
@@ -65,8 +64,6 @@ void save_progress(void) {
 		ti_SetArchiveStatus(true, variable);
 	}
 	ti_CloseAll();
-	gfx_End();
-	prgm_CleanUp();
 }
 
 static uint8_t option = 0;
@@ -100,31 +97,46 @@ void main_screen(void) {
 
 	// Draw a line underneath and above the selected option
 	gfx_SetColor(COLOR_LIGHT_BLUE);
+	/*gfx_HorizLine_NoClip(127, 68 + 17 * option, 65);
+	gfx_HorizLine_NoClip(127, 58 + 17 * option, 65);*/
+
 	gfx_HorizLine_NoClip(127, 59 + 17 * option, 65);
 	gfx_HorizLine_NoClip(127, 49 + 17 * option, 65);
 
 	// Draw the options
 	gfx_SetColor(COLOR_BACKGROUND);
+	/*gfx_PrintStringXY("CONTINUE", 128, 60);
+	gfx_PrintStringXY("NEW%GAME", 128, 77);*/
+
 	gfx_PrintStringXY("CONTINUE", 128, 51);
 	gfx_PrintStringXY("NEW%GAME", 128, 68);
-	gfx_PrintStringXY("SETTINGS", 128, 85);
+	gfx_PrintStringXY("EXIT", 144, 85);
 
 	// Handle keypresses
 	key = get_key_fast();
 
-	if (key == 56 && option < 1) {
+	if (key == 56 && option < 2) {
 		option++;
 	}
 	if (key == 59 && option > 0) {
 		option--;
 	}
-	if ((key == 13 || key == 48) && option <= 1) {		// Continue or New Game
-		game_state = pre_round_screen;
-		game.score = game_data.score;
+	if (key == 13 || key == 48) {		
+		if (option <= 1) {				// Continue or New Game
+			game_state = pre_round_screen;
+			game.score = game_data.score;
 
-		if (option == 1 || game_data.lives == 0) {
-			reset_game();
-			game_state = intro_cinematic;
+			if (option == 1 || game_data.lives == 0) {
+				reset_game();
+				game_state = intro_cinematic;
+			}
+		}
+		else {							// Exit
+			// Usual cleanup
+			save_progress();
+			gfx_End();
+			prgm_CleanUp();
+			exit(0);
 		}
 	}
 }

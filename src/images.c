@@ -73,21 +73,20 @@ void decompress_images(void) {
 	gfx_sprite_t *tmp_ptr;
 	uint8_t i = 0;
 
+	tmp_ptr = gfx_MallocSprite(46, 36);
 	do {
-		tmp_ptr = gfx_MallocSprite(*kong_compressed_images[i], *(kong_compressed_images[i] + 2));
 		dzx7_Standard(kong_compressed_images[i], tmp_ptr);
 		kong_sprite[i] = gfx_ConvertMallocRLETSprite(tmp_ptr);
-		
+
 		if (i == 10) {	// if at kong_sprite 10 flip it and put in in kong_sprite 12
 			gfx_sprite_t *flip_tmp;
 
 			flip_tmp = gfx_MallocSprite(40, 32);
-			tmp_ptr = gfx_FlipSpriteX(tmp_ptr, flip_tmp);
-			kong_sprite[12] = gfx_ConvertMallocRLETSprite(flip_tmp);
+			kong_sprite[12] = gfx_ConvertMallocRLETSprite(gfx_FlipSpriteX(tmp_ptr, flip_tmp));
+			free(flip_tmp);
 		}
-		
-		free(tmp_ptr);
 	} while (++i < 12);
+	free(tmp_ptr);
 
 	kong_goofy = gfx_MallocSprite(46, 32);
 	dzx7_Standard(kong_goofy_compressed, kong_goofy);

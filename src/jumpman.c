@@ -487,12 +487,14 @@ void check_jump_over(void) {
 
 #if 0	
 void check_collision_jumpman(void) {
+	uint8_t i;
+	
 	if (game.stage == STAGE_BARRELS) {
 		for (i = 0; i < num_barrels; i++) {	// check collision barrels
 			barrel_t *this_barrel = &barrel[i];
 
-			if (abs((jumpman.y_old - 3) - this_barrel->y_old) <= 2 + 6) {
-				if (abs(jumpman.x_old - this_barrel->x_old) <= 2 + 4) {
+			if (abs((jumpman.y - 3) - this_barrel->y) < 2 + 6) {
+				if (abs(jumpman.x - this_barrel->x) < 2 + 4) {
 					jumpman.isAlive = false;
 				}
 			}
@@ -502,8 +504,8 @@ void check_collision_jumpman(void) {
 	for (i = 0; i < num_firefoxes; i++) {	// check collision fireballs
 		firefox_t *this_firefox = &firefox[i];
 
-		if (abs(jumpman.y_old - this_firefox->y_old) <= 2 + 6) {		// 1 + 6 if firefox
-			if (abs(jumpman.x_old - this_firefox->x_old) <= 3 + 4) {	// 4 + 4 if firefox
+		if (abs(jumpman.y_old - this_firefox->y_old) < 2 + 6) {		// 1 + 6 if firefox
+			if (abs(jumpman.x_old - this_firefox->x_old) < 3 + 4) {	// 4 + 4 if firefox
 				jumpman.isAlive = false;
 			}
 		}
@@ -513,8 +515,8 @@ void check_collision_jumpman(void) {
 		for (i = 0; i < num_pies; i++) {		// check collision pies
 			pie_t *this_pie = &pie[i];
 
-			if (abs(jumpman.y_old - (this_pie->y_old + 11)) <= 3 + 6) {
-				if (abs(jumpman.x_old - (this_pie->x_old + 7)) <= 8 + 4) {
+			if (abs(jumpman.y_old - (this_pie->y_old + 11)) < 3 + 6) {
+				if (abs(jumpman.x_old - (this_pie->x_old + 7)) < 8 + 4) {
 					jumpman.isAlive = false;
 				}
 			}
