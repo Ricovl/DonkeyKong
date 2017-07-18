@@ -382,9 +382,7 @@ void draw_girder_text(uint8_t *text_data, uint24_t x, uint8_t y) {
 
 	for (j = 0; j < 5; j++) {
 		for (i = 0; i < width; i++) {
-			*text_data++;
-
-			if (*text_data)
+			if (*(++text_data))
 				gfx_Sprite_NoClip(girder_circle, x + i * 8, y);
 		}
 		y += 8;
