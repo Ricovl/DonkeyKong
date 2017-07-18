@@ -373,6 +373,7 @@ void credits_screen(void) {
 			}
 		}
 	}
+	//timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
 }
 
 /* Draws text to the screen using girders as pixels */

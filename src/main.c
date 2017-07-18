@@ -64,6 +64,7 @@ void main(void) {
 
 	// Enable the timer, set it to the 32768 kHz clock, enable an interrupt once it reaches 0, and make it count down
 	timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
+	timer_1_ReloadValue = timer_1_Counter = (ONE_TICK);
 
 	// Game loop
 	for (;;) {
