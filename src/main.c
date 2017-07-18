@@ -99,11 +99,9 @@ void main(void) {
 			quitDelay--;
 		}
 		else if (kb_Data[6] & kb_Clear) {
-			if (game_state == main_screen) {
-				// Usual cleanup
+			if (game_state == main_screen) {			// exit
 				save_progress();
 				gfx_End();
-				prgm_CleanUp();
 				exit(0);
 			}
 			else if (game_state != return_main && game_state != animate_jumpman_dead) {
@@ -223,6 +221,7 @@ void handle_time_ran_out(void) {
 		}
 		else if (game.timeRanOut == 2) {
 			game.timeRanOutTimer--;
+
 			if (game.timeRanOutTimer == 0) {
 				game.timeRanOut = 3;
 			}
@@ -240,6 +239,7 @@ void handle_time_ran_out(void) {
 void handle_bonus_timer(void) {
 	if (game.stage != STAGE_BARRELS && game.bonusTimer) {
 		game.bonusDelay--;
+
 		if (game.bonusDelay == 0) {
 			game.bonusDelay = game.initialBonusDelay;
 

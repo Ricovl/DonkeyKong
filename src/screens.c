@@ -132,10 +132,8 @@ void main_screen(void) {
 			}
 		}
 		else {							// Exit
-			// Usual cleanup
 			save_progress();
 			gfx_End();
-			prgm_CleanUp();
 			exit(0);
 		}
 	}
@@ -344,18 +342,23 @@ static uint8_t flash_counter = 0;
 void credits_screen(void) {
 	if (flash_counter == 0) {
 		draw_overlay_full();
+		
 		draw_girder_text(donkey_text, 56, 48);
 		draw_girder_text(kong_text, 80, 104);
+		
 		gfx_RLETSprite_NoClip(kong_sprite[5], 136, 160);
+
 		gfx_SetTextFGColor(9);
 		gfx_PrintStringXY("1981", 144, 208);
 		gfx_PrintStringXY("NINTENDO%OF%AMERICA%INC", 65, 216);
 		gfx_PrintStringXY("PORTED%TO%CE%BY%RICO", 81, 224);
+		
 		gfx_BlitBuffer();
 		flash_counter = 0x60;
 	}
 	else {
 		flash_counter--;
+
 		if (flash_counter == 0) {
 			waitTimer = 180;
 			game_state = return_main;
@@ -380,6 +383,7 @@ void draw_girder_text(uint8_t *text_data, uint24_t x, uint8_t y) {
 	for (j = 0; j < 5; j++) {
 		for (i = 0; i < width; i++) {
 			*text_data++;
+
 			if (*text_data)
 				gfx_Sprite_NoClip(girder_circle, x + i * 8, y);
 		}
