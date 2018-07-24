@@ -263,7 +263,7 @@ void bounce_crazy_barrel(barrel_t *this_barrel) {
 			this_barrel->jumpDir = 1;
 	}
 	else {											// Difficulty is 5
-		asm("ld c,FFh");		// c = 0xFF;
+		asm("ld c,0xFF");		// c = 0xFF;
 
 		asm("ld	de,(iy+2)");	// bc = barrel.x
 		asm("ld	hl,(_jumpman+2)");
